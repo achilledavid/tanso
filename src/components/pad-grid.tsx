@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import Pad from "./pad"
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
+import { Howler } from "howler"
 
 // Les raccourcis par défaut pour les pads (jusqu'à 9 pads)
 const DEFAULT_SHORTCUTS = ['a', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o']
@@ -73,13 +74,9 @@ export default function PadGrid({ padCount = SOUNDS.length }: PadGridProps) {
 
     // Fonction pour arrêter tous les sons
     const stopAllSounds = useCallback(() => {
-        activeSounds.forEach(padId => {
-            const stopEvent = new CustomEvent('stop-sound');
-            const padElement = document.getElementById(padId);
-            padElement?.dispatchEvent(stopEvent);
-        });
+        Howler.stop();
         setActiveSounds(new Set());
-    }, [activeSounds]);
+    }, []);
 
     // Configurer le gestionnaire d'arrêt global pour la touche Escape
     useEffect(() => {

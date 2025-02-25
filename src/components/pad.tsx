@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Howl } from "howler"
+import { Howl, Howler } from "howler"
 import { useMemo, useCallback, useEffect, useState, useRef } from "react"
 import { ShortcutContextMenu } from "@/components/shortcut-context-menu"
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
@@ -30,7 +30,7 @@ export default function Pad({
   const soundRef = useRef<Howl | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentShortcut, setCurrentShortcut] = useState<string>(defaultShortcut);
-  const { assignShortcut, clearShortcut } = useKeyboardShortcuts();
+  const { assignShortcut, clearShortcut, setStopActionHandler } = useKeyboardShortcuts();
 
   useEffect(() => {
     soundRef.current = new Howl({
@@ -91,6 +91,15 @@ export default function Pad({
       };
     }
   }, [id, handleSoundStop]);
+
+  // Ajouter un gestionnaire global pour arrêter tous les sons
+  useEffect(() => {
+    setStopActionHandler(() => {
+      Howler.stop();
+      setIsPlaying(false);
+      onSoundStop();
+    });
+  }, [setStopActionHandler, onSoundStop]);
 
   return (
     <div id={id} className="flex flex-col items-center gap-2">
