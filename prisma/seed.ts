@@ -5,6 +5,7 @@ async function main() {
   // Création d'utilisateurs tests
   const user1 = await prisma.user.create({
     data: {
+      auth0Id: "auth0|testuser1",
       username: "testuser1",
       email: "test1@example.com",
       profile: {
@@ -19,6 +20,7 @@ async function main() {
 
   const user2 = await prisma.user.create({
     data: {
+      auth0Id: "auth0|testuser2",
       username: "testuser2",
       email: "test2@example.com",
       profile: {
