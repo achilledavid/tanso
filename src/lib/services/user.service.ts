@@ -10,11 +10,6 @@ export class UserService {
     sub: string;
   }): Promise<User | null> {
     if (!profile.email) return null;
-
-    const username =
-      profile.name?.replace(/\s+/g, "").toLowerCase() ||
-      profile.email.split("@")[0];
-
     try {
       const existingUser = await prisma.user.findUnique({
         where: { email: profile.email },
@@ -23,6 +18,23 @@ export class UserService {
       if (existingUser) {
         return existingUser;
       } else {
+        let username =
+          profile.name?.replace(/\s+/g, "").toLowerCase() ||
+          profile.email.split("@")[0];
+
+        let usernameExists = await prisma.user.findUnique({
+          where: { username },
+        });
+
+        let suffix = 1;
+        while (usernameExists) {
+          username = `${username}${suffix}`;
+          usernameExists = await prisma.user.findUnique({
+            where: { username },
+          });
+          suffix++;
+        }
+
         return await prisma.user.create({
           data: {
             email: profile.email,

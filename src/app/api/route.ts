@@ -5,18 +5,18 @@ export async function GET() {
     name: "BeatFlow API",
     version: "1.0.0",
     endpoints: {
+      // DONE
       auth: {
         login: "POST /api/auth/login",
-        register: "POST /api/auth/register",
         logout: "POST /api/auth/logout",
       },
       users: {
         list: "GET /api/users",
-        create: "POST /api/users",
         get: "GET /api/users/:id",
         update: "PUT /api/users/:id",
         delete: "DELETE /api/users/:id",
       },
+      // TO DO
       sessions: {
         list: "GET /api/sessions",
         create: "POST /api/sessions",
