@@ -1,9 +1,10 @@
-import Pad from "@/components/pad";
+
+import PadGrid from "@/components/pad-grid"
 
 export default function Home() {
   return (
-    <div>
-      <Pad />
+    <div className="flex justify-center items-center h-screen">
+      <PadGrid padCount={9} />
     </div>
-  );
+  )
 }
