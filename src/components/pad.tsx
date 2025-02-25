@@ -5,7 +5,6 @@ import { Howl } from "howler"
 import { useMemo, useCallback, useEffect, useState, useRef } from "react"
 import { ShortcutContextMenu } from "@/components/shortcut-context-menu"
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
-import { clear } from "console"
 
 interface PadProps {
   id: string;
@@ -17,6 +16,8 @@ interface PadProps {
   onSoundStop: () => void;
 }
 
+const DISALLOWED_SHORTCUTS = [" ", "Space"];
+
 export default function Pad({
   id,
   soundFile,
@@ -26,84 +27,64 @@ export default function Pad({
   onSoundPlay,
   onSoundStop
 }: PadProps) {
-  const sound = useMemo(
-    () =>
-      new Howl({
-        src: [soundFile],
-        volume: 1,
-        onend: () => {
-          setIsPlaying(false);
-          onSoundStop();
-        }
-      }),
-    [soundFile, onSoundStop],
-  )
+  const soundRef = useRef<Howl | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentShortcut, setCurrentShortcut] = useState<string>(defaultShortcut);
+  const { assignShortcut, clearShortcut } = useKeyboardShortcuts();
 
-  const { assignShortcut, clearShortcut } = useKeyboardShortcuts()
-  const [currentShortcut, setCurrentShortcut] = useState<string>(defaultShortcut)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const isInitialized = useRef(false)
+  useEffect(() => {
+    soundRef.current = new Howl({
+      src: [soundFile],
+      volume: 1,
+      onend: () => {
+        setIsPlaying(false);
+        onSoundStop();
+      },
+    });
+  }, [soundFile, onSoundStop]);
 
   const handleSoundPlay = useCallback(() => {
     if (isPlaying) {
-      sound.stop()
-      setIsPlaying(false)
-      onSoundStop()
+      soundRef.current?.stop();
+      setIsPlaying(false);
+      onSoundStop();
     } else {
-      sound.play()
-      setIsPlaying(true)
-      onSoundPlay()
+      soundRef.current?.play();
+      setIsPlaying(true);
+      onSoundPlay();
     }
-  }, [sound, isPlaying, onSoundPlay, onSoundStop])
+  }, [isPlaying, onSoundPlay, onSoundStop]);
 
   const handleSoundStop = useCallback(() => {
-    sound.stop()
-    setIsPlaying(false)
-    onSoundStop()
-  }, [sound, onSoundStop])
+    soundRef.current?.stop();
+    setIsPlaying(false);
+    onSoundStop();
+  }, [onSoundStop]);
 
   const handleAssignShortcut = useCallback(
     (key: string) => {
-      // Ne pas permettre d'assigner Escape comme raccourci
-      if (key === " " || key === "Space") return;
+      if (DISALLOWED_SHORTCUTS.includes(key)) return;
       
-    clearShortcut(currentShortcut)
-      assignShortcut(key, handleSoundPlay)
-      setCurrentShortcut(key)
-      onShortcutChange(key)
+      clearShortcut(currentShortcut);
+      assignShortcut(key, handleSoundPlay);
+      setCurrentShortcut(key);
+      onShortcutChange(key);
     },
-    [assignShortcut, clearShortcut, currentShortcut, handleSoundPlay, onShortcutChange],
-  )
+    [assignShortcut, clearShortcut, currentShortcut, handleSoundPlay, onShortcutChange]
+  );
 
-  // Initialiser le raccourci au montage
-  useEffect(() => {
-    if (isInitialized.current) return;
-    
-    if (defaultShortcut) {
-      assignShortcut(defaultShortcut, handleSoundPlay)
-      setCurrentShortcut(defaultShortcut)
-    }
-    
-    isInitialized.current = true;
-  }, [defaultShortcut, assignShortcut, handleSoundPlay])
-
-  // Mettre à jour le raccourci si celui par défaut change
   useEffect(() => {
     if (defaultShortcut !== currentShortcut && defaultShortcut) {
-        clearShortcut(currentShortcut)
-      assignShortcut(defaultShortcut, handleSoundPlay)
-      setCurrentShortcut(defaultShortcut)
+      clearShortcut(currentShortcut);
+      assignShortcut(defaultShortcut, handleSoundPlay);
+      setCurrentShortcut(defaultShortcut);
     }
-  }, [defaultShortcut, currentShortcut, assignShortcut, clearShortcut, handleSoundPlay])
+  }, [defaultShortcut, currentShortcut, assignShortcut, clearShortcut, handleSoundPlay]);
 
-  // Écouter l'événement custom pour arrêter le son
   useEffect(() => {
     const element = document.getElementById(id);
     if (element) {
-      const stopHandler = () => {
-        handleSoundStop();
-      };
-      
+      const stopHandler = () => handleSoundStop();
       element.addEventListener('stop-sound', stopHandler);
       return () => {
         element.removeEventListener('stop-sound', stopHandler);

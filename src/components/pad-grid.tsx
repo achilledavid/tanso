@@ -31,66 +31,52 @@ interface PadGridProps {
 }
 
 export default function PadGrid({ padCount = SOUNDS.length }: PadGridProps) {
-    // Limiter à 9 pads maximum
-    const actualPadCount = Math.min(padCount, 9);
-
+    const actualPadCount = Math.min(padCount, 9);  // Limiter à 9 pads maximum
     const [pads, setPads] = useState<PadInfo[]>([]);
     const { setStopActionHandler } = useKeyboardShortcuts();
     const [activeSounds, setActiveSounds] = useState<Set<string>>(new Set());
 
-    // Initialiser les pads au chargement
+    // Initialiser et charger les pads et les raccourcis
     useEffect(() => {
-        // Créer les infos de pads avec des raccourcis par défaut
         const initialPads = Array.from({ length: actualPadCount }, (_, index) => ({
             id: `pad-${index}`,
             sound: SOUNDS[index].file,
             shortcut: DEFAULT_SHORTCUTS[index]
         }));
 
-        setPads(initialPads);
-
         // Charger les raccourcis sauvegardés
         try {
             const savedShortcuts = localStorage.getItem("padShortcuts");
             if (savedShortcuts) {
                 const parsedShortcuts = JSON.parse(savedShortcuts);
-
-                // Mettre à jour les pads avec les raccourcis sauvegardés
-                setPads(prevPads =>
-                    prevPads.map((pad, index) => ({
-                        ...pad,
-                        shortcut: index < parsedShortcuts.length ? parsedShortcuts[index].shortcut : pad.shortcut
-                    }))
-                );
+                initialPads.forEach((pad, index) => {
+                    if (index < parsedShortcuts.length) pad.shortcut = parsedShortcuts[index].shortcut;
+                });
             }
         } catch (error) {
             console.error("Erreur lors du chargement des raccourcis:", error);
         }
+
+        setPads(initialPads);
     }, [actualPadCount]);
 
-    // Enregistrer les raccourcis quand ils changent
+    // Enregistrer les raccourcis dans localStorage
     useEffect(() => {
         if (pads.length > 0) {
             const shortcutsToSave = pads.map(pad => ({
                 id: pad.id,
                 shortcut: pad.shortcut
             }));
-
             localStorage.setItem("padShortcuts", JSON.stringify(shortcutsToSave));
         }
     }, [pads]);
 
     // Fonction pour arrêter tous les sons
     const stopAllSounds = useCallback(() => {
-        // Créer une copie pour éviter les problèmes de mutation pendant l'itération
-        const soundsToStop = Array.from(activeSounds);
-        soundsToStop.forEach(padId => {
+        activeSounds.forEach(padId => {
+            const stopEvent = new CustomEvent('stop-sound');
             const padElement = document.getElementById(padId);
-            if (padElement) {
-                // Simuler un clic sur le bouton stop
-                const stopEvent = new CustomEvent('stop-sound');
-                padElement.dispatchEvent(stopEvent);
-            }
+            padElement?.dispatchEvent(stopEvent);
         });
         setActiveSounds(new Set());
     }, [activeSounds]);
@@ -109,24 +95,18 @@ export default function PadGrid({ padCount = SOUNDS.length }: PadGridProps) {
         );
     };
 
-    // Ajouter un son actif
-    const addActiveSound = (padId: string) => {
-        setActiveSounds(prev => new Set(prev).add(padId));
-    };
-
-    // Retirer un son actif
-    const removeActiveSound = (padId: string) => {
+    // Ajouter ou retirer un son actif
+    const toggleActiveSound = (padId: string, isActive: boolean) => {
         setActiveSounds(prev => {
             const newSet = new Set(prev);
-            newSet.delete(padId);
+            if (isActive) newSet.add(padId);
+            else newSet.delete(padId);
             return newSet;
         });
     };
 
     return (
-        <div
-            className="grid grid-cols-3 grid-rows-3 gap-4 w-full max-w-xl"
-        >
+        <div className="grid grid-cols-3 grid-rows-3 gap-4 w-full max-w-xl">
             {pads.map((pad, index) => (
                 <Pad
                     key={pad.id}
@@ -135,8 +115,8 @@ export default function PadGrid({ padCount = SOUNDS.length }: PadGridProps) {
                     soundName={SOUNDS[index].name}
                     defaultShortcut={pad.shortcut}
                     onShortcutChange={(newShortcut) => updatePadShortcut(pad.id, newShortcut)}
-                    onSoundPlay={() => addActiveSound(pad.id)}
-                    onSoundStop={() => removeActiveSound(pad.id)}
+                    onSoundPlay={() => toggleActiveSound(pad.id, true)}
+                    onSoundStop={() => toggleActiveSound(pad.id, false)}
                 />
             ))}
         </div>
