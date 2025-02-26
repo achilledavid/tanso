@@ -1,7 +1,6 @@
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
-    "auth0Id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "avatarUrl" TEXT,

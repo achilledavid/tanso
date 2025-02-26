@@ -9,7 +9,6 @@ datasource db {
 
 model User {
   id         Int             @id @default(autoincrement())
-  auth0Id    String          @unique
   username   String          @unique
   email      String          @unique
   avatarUrl  String?

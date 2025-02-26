@@ -40,7 +40,6 @@ export class UserService {
             email: profile.email,
             username,
             avatarUrl: profile.image,
-            auth0Id: profile.sub,
             profile: {
               create: {},
             },
