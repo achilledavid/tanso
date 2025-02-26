@@ -26,7 +26,7 @@ export async function GET(
     return NextResponse.json(user);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch user" + error },
+      { error: "Failed to fetch user : " + error },
       { status: 500 }
     );
   }
@@ -145,7 +145,7 @@ export async function DELETE(
     );
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to delete user" + error },
+      { error: "Failed to delete user : " + error },
       { status: 500 }
     );
   }
