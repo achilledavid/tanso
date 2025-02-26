@@ -1,12 +1,14 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Check, X } from "lucide-react";
 import Image from "next/image";
 import { Session } from "next-auth";
+
+// Extension du type Session
 interface ExtendedSession extends Session {
   user: {
     name?: string | null;
@@ -30,6 +32,7 @@ interface UserData {
   avatarUrl: string | null;
   profile: UserProfile;
 }
+
 export default function Profile() {
   const { data: session, status } = useSession() as {
     data: ExtendedSession | null;
@@ -49,6 +52,54 @@ export default function Profile() {
     defaultBpm: 120,
     volumeDefault: 1.0,
   });
+
+  // État pour le nom d'utilisateur
+  const [usernameStatus, setUsernameStatus] = useState<
+    "checking" | "available" | "taken" | "initial"
+  >("initial");
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Fonction pour vérifier la disponibilité du nom d'utilisateur
+  const checkUsernameAvailability = useCallback(
+    async (username: string) => {
+      if (!username || username === userData?.username) {
+        setUsernameStatus("initial");
+        return;
+      }
+
+      setUsernameStatus("checking");
+
+      try {
+        const response = await fetch(
+          `/api/users/check-username?username=${encodeURIComponent(username)}`
+        );
+        const data = await response.json();
+
+        setUsernameStatus(data.available ? "available" : "taken");
+      } catch (error) {
+        console.error("Failed to check username:", error);
+        setUsernameStatus("initial");
+      }
+    },
+    [userData?.username]
+  );
+
+  // Effet pour mettre à jour le nom d'utilisateur avec debounce
+  useEffect(() => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      checkUsernameAvailability(formData.username);
+    }, 500);
+
+    return () => {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
+  }, [formData.username, checkUsernameAvailability]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -77,7 +128,13 @@ export default function Profile() {
   }, [session]);
 
   const handleUpdateProfile = async () => {
-    if (!session?.user?.id || !userData) return;
+    if (
+      !session?.user?.id ||
+      !userData ||
+      usernameStatus === "checking" ||
+      usernameStatus === "taken"
+    )
+      return;
 
     setIsUpdating(true);
 
@@ -180,14 +237,47 @@ export default function Profile() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Username
             </label>
-            <input
-              type="text"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-violet-500"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={formData.username}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
+                className={`w-full px-3 py-2 border rounded pr-10 focus:outline-none focus:ring-2 ${
+                  usernameStatus === "available"
+                    ? "border-green-500 focus:ring-green-500"
+                    : usernameStatus === "taken"
+                    ? "border-red-500 focus:ring-red-500"
+                    : "focus:ring-violet-500"
+                }`}
+              />
+              {usernameStatus === "checking" && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="animate-spin h-5 w-5 border-2 border-violet-500 rounded-full border-t-transparent"></div>
+                </div>
+              )}
+              {usernameStatus === "available" && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500">
+                  <Check size={20} />
+                </div>
+              )}
+              {usernameStatus === "taken" && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500">
+                  <X size={20} />
+                </div>
+              )}
+            </div>
+            {usernameStatus === "taken" && (
+              <p className="mt-1 text-sm text-red-500">
+                This username is already taken
+              </p>
+            )}
+            {usernameStatus === "available" && (
+              <p className="mt-1 text-sm text-green-500">
+                Username is available
+              </p>
+            )}
           </div>
 
           {/* Theme */}
@@ -255,7 +345,11 @@ export default function Profile() {
           <div className="pt-4">
             <button
               onClick={handleUpdateProfile}
-              disabled={isUpdating}
+              disabled={
+                isUpdating ||
+                usernameStatus === "checking" ||
+                usernameStatus === "taken"
+              }
               className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition disabled:opacity-50"
             >
               {isUpdating ? "Saving..." : "Save Changes"}
