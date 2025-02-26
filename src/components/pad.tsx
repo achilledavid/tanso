@@ -1,10 +1,10 @@
-"use client"
-
 import { Button } from "@/components/ui/button"
-import { Howl, Howler } from "howler"
-import { useMemo, useCallback, useEffect, useState, useRef } from "react"
-import { ShortcutContextMenu } from "@/components/shortcut-context-menu"
-import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts"
+import { useEffect } from "react"
+import { ShortcutContextMenu } from "@/components/ShortcutContextMenu"
+import { useSoundPlayer } from "@/hooks/useSoundPlayer"
+import { useShortcutAssigner } from "@/hooks/useShortcutAssigner"
+import { useKeyboardContext } from "@/contexts/KeyboardContext"
+import { useSoundContext } from "@/contexts/SoundContext"
 
 interface PadProps {
   id: string;
@@ -12,94 +12,38 @@ interface PadProps {
   soundName: string;
   defaultShortcut: string;
   onShortcutChange: (shortcut: string) => void;
-  onSoundPlay: () => void;
-  onSoundStop: () => void;
 }
-
-const DISALLOWED_SHORTCUTS = [" ", "Space"];
 
 export default function Pad({
   id,
   soundFile,
   soundName,
   defaultShortcut,
-  onShortcutChange,
-  onSoundPlay,
-  onSoundStop
+  onShortcutChange
 }: PadProps) {
-  const soundRef = useRef<Howl | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentShortcut, setCurrentShortcut] = useState<string>(defaultShortcut);
-  const { assignShortcut, clearShortcut, setStopActionHandler } = useKeyboardShortcuts();
-
-  useEffect(() => {
-    soundRef.current = new Howl({
-      src: [soundFile],
-      volume: 1,
-      onend: () => {
-        setIsPlaying(false);
-        onSoundStop();
-      },
-    });
-  }, [soundFile, onSoundStop]);
-
-  const handleSoundPlay = useCallback(() => {
-    if (isPlaying) {
-      soundRef.current?.stop();
-      setIsPlaying(false);
-      onSoundStop();
-    } else {
-      soundRef.current?.play();
-      setIsPlaying(true);
-      onSoundPlay();
-    }
-  }, [isPlaying, onSoundPlay, onSoundStop]);
-
-  const handleSoundStop = useCallback(() => {
-    soundRef.current?.stop();
-    setIsPlaying(false);
-    onSoundStop();
-  }, [onSoundStop]);
-
-  const handleAssignShortcut = useCallback(
-    (key: string) => {
-      if (DISALLOWED_SHORTCUTS.includes(key)) return;
-      
-      clearShortcut(currentShortcut);
-      assignShortcut(key, handleSoundPlay);
-      setCurrentShortcut(key);
-      onShortcutChange(key);
-    },
-    [assignShortcut, clearShortcut, currentShortcut, handleSoundPlay, onShortcutChange]
+  const { isPlaying, play, stop } = useSoundPlayer(soundFile, id);
+  const { currentShortcut, handleAssignShortcut } = useShortcutAssigner(
+    defaultShortcut,
+    play,
+    onShortcutChange
   );
-
-  useEffect(() => {
-    if (defaultShortcut !== currentShortcut && defaultShortcut) {
-      clearShortcut(currentShortcut);
-      assignShortcut(defaultShortcut, handleSoundPlay);
-      setCurrentShortcut(defaultShortcut);
-    }
-  }, [defaultShortcut, currentShortcut, assignShortcut, clearShortcut, handleSoundPlay]);
+  const { setStopAction } = useKeyboardContext();
+  const { stopAllSounds } = useSoundContext();
 
   useEffect(() => {
     const element = document.getElementById(id);
     if (element) {
-      const stopHandler = () => handleSoundStop();
+      const stopHandler = () => stop();
       element.addEventListener('stop-sound', stopHandler);
       return () => {
         element.removeEventListener('stop-sound', stopHandler);
       };
     }
-  }, [id, handleSoundStop]);
+  }, [id, stop]);
 
-  // Ajouter un gestionnaire global pour arrêter tous les sons
   useEffect(() => {
-    setStopActionHandler(() => {
-      Howler.stop();
-      setIsPlaying(false);
-      onSoundStop();
-    });
-  }, [setStopActionHandler, onSoundStop]);
+    setStopAction(stopAllSounds);
+  }, [setStopAction, stopAllSounds]);
 
   return (
     <div id={id} className="flex flex-col items-center gap-2">
@@ -107,7 +51,7 @@ export default function Pad({
         <Button 
           variant={isPlaying ? "destructive" : "default"} 
           size="pads" 
-          onClick={handleSoundPlay} 
+          onClick={play} 
           className="relative w-full"
         >
             <span className="text-sm font-medium">{soundName}</span>

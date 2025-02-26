@@ -1,10 +1,21 @@
+"use client"
 
-import PadGrid from "@/components/pad-grid"
+import PadGrid from "@/components/PadGrid"
+import { SoundProvider } from "@/contexts/SoundContext"
+import { KeyboardProvider } from "@/contexts/KeyboardContext"
+import { PadConfigProvider } from "@/contexts/PadConfigContext"
 
-export default function Home() {
-  return (
-    <div className="flex justify-center items-center h-screen">
-      <PadGrid padCount={9} />
-    </div>
-  )
+export default function SoundPadApp() {
+    return (
+        <KeyboardProvider>
+            <SoundProvider>
+                <PadConfigProvider>
+                    <div className="container mx-auto py-8 flex flex-col items-center">
+                        <h1 className="text-2xl font-bold mb-8">Pads Sonores</h1>
+                        <PadGrid />
+                    </div>
+                </PadConfigProvider>
+            </SoundProvider>
+        </KeyboardProvider>
+    )
 }
