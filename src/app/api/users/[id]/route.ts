@@ -39,38 +39,82 @@ export async function PUT(
   try {
     const userId = parseInt(params.id);
     const body = await request.json();
-    const { username, email, profile } = body;
+    const { username, avatarUrl, profile } = body;
+
+    console.log("Received update data:", body); // Log pour debug
 
     const existingUser = await prisma.user.findUnique({
       where: { id: userId },
+      include: { profile: true },
     });
 
     if (!existingUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Vérification du nom d'utilisateur seulement s'il est différent de l'actuel
+    let updatedUsername = username;
+    if (username && username !== existingUser.username) {
+      let usernameExists = await prisma.user.findUnique({
+        where: {
+          username,
+          NOT: { id: userId }, // Exclure l'utilisateur actuel
+        },
+      });
+
+      if (usernameExists) {
+        let suffix = 1;
+        while (usernameExists) {
+          updatedUsername = `${username}${suffix}`;
+          usernameExists = await prisma.user.findUnique({
+            where: { username: updatedUsername },
+          });
+          suffix++;
+        }
+      }
+    }
+
+    type UserUpdateData = {
+      username?: string;
+      avatarUrl?: string | null;
+      profile?: {
+        update: {
+          theme?: string;
+          defaultBpm?: number;
+          volumeDefault?: number;
+          metronomeEnabled?: boolean;
+          preferredPadSize?: number;
+        };
+      };
+    };
+
+    const updateData: UserUpdateData = {};
+
+    if (updatedUsername) updateData.username = updatedUsername;
+    if (avatarUrl) updateData.avatarUrl = avatarUrl;
+
+    if (profile) {
+      updateData.profile = {
+        update: { ...profile },
+      };
+    }
+
+    console.log("Update data:", updateData); // Log pour debug
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: {
-        username,
-        email,
-        profile: profile
-          ? {
-              update: {
-                ...profile,
-              },
-            }
-          : undefined,
-      },
+      data: updateData,
       include: {
         profile: true,
       },
     });
 
+    console.log("Updated user:", updatedUser); // Log pour debug
     return NextResponse.json(updatedUser);
   } catch (error) {
+    console.error("Update error:", error);
     return NextResponse.json(
-      { error: "Failed to update user" + error },
+      { error: `Failed to update user: ${error}` },
       { status: 500 }
     );
   }
