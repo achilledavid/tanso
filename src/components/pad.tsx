@@ -1,10 +1,11 @@
-import { Button } from "@/components/ui/button"
-import { useEffect } from "react"
-import { ShortcutContextMenu } from "@/components/ShortcutContextMenu"
-import { useSoundPlayer } from "@/hooks/useSoundPlayer"
-import { useShortcutAssigner } from "@/hooks/useShortcutAssigner"
-import { useKeyboardContext } from "@/contexts/KeyboardContext"
-import { useSoundContext } from "@/contexts/SoundContext"
+import { Button } from "@/components/ui/button";
+import { useEffect, useState, useCallback } from "react";
+import { ShortcutContextMenu } from "@/components/ShortcutContextMenu";
+import { useSoundPlayer } from "@/hooks/useSoundPlayer";
+import { useShortcutAssigner } from "@/hooks/useShortcutAssigner";
+import { useKeyboardContext } from "@/contexts/KeyboardContext";
+import { useSoundContext } from "@/contexts/SoundContext";
+import { usePadConfigContext } from "@/contexts/PadConfigContext";
 
 interface PadProps {
   id: string;
@@ -28,30 +29,63 @@ export default function Pad({
     onShortcutChange
   );
   const { setStopAction } = useKeyboardContext();
-  const { stopAllSounds } = useSoundContext();
+  const { stopAllSounds, stopAll, triggerStopAll } = useSoundContext();
+  const { pads } = usePadConfigContext();
+  const [playing, setPlaying] = useState(isPlaying);
+
+  const handlePlay = useCallback(() => {
+    play();
+    setPlaying(true);
+  }, [play]);
+
+  const handleStop = useCallback(() => {
+    stop();
+    setPlaying(false);
+  }, [stop]);
 
   useEffect(() => {
     const element = document.getElementById(id);
     if (element) {
-      const stopHandler = () => stop();
+      const stopHandler = () => handleStop();
       element.addEventListener('stop-sound', stopHandler);
       return () => {
         element.removeEventListener('stop-sound', stopHandler);
       };
     }
-  }, [id, stop]);
+  }, [id, handleStop]);
 
   useEffect(() => {
-    setStopAction(stopAllSounds);
+    setStopAction(() => {
+      stopAllSounds();
+      setPlaying(false);
+    });
   }, [setStopAction, stopAllSounds]);
+
+  useEffect(() => {
+    if (stopAll) {
+      handleStop();
+      triggerStopAll();
+    }
+  }, [stopAll, handleStop, triggerStopAll]);
+
+  useEffect(() => {
+    setPlaying(isPlaying);
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const pad = pads.find(p => p.id === id);
+    if (pad && pad.shortcut !== currentShortcut) {
+      handleAssignShortcut(pad.shortcut);
+    }
+  }, [pads, id, currentShortcut, handleAssignShortcut]);
 
   return (
     <div id={id} className="flex flex-col items-center gap-2">
       <ShortcutContextMenu onAssignShortcut={handleAssignShortcut} currentShortcut={currentShortcut}>
         <Button 
-          variant={ isPlaying ? "destructive" : "default"} 
+          variant={playing ? "destructive" : "default"} 
           size="pads" 
-          onClick={play} 
+          onClick={handlePlay} 
           className="relative w-full"
         >
             <span className="text-sm font-medium">{soundName}</span>
@@ -63,5 +97,5 @@ export default function Pad({
         </Button>
       </ShortcutContextMenu>
     </div>
-  )
+  );
 }

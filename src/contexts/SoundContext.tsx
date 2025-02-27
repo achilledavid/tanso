@@ -5,12 +5,15 @@ interface SoundContextType {
     activeSounds: Set<string>;
     toggleActiveSound: (padId: string, isActive: boolean) => void;
     stopAllSounds: () => void;
+    stopAll: boolean;
+    triggerStopAll: () => void;
 }
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
 
 export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [activeSounds, setActiveSounds] = useState<Set<string>>(new Set());
+    const [stopAll, setStopAll] = useState(false);
 
     const toggleActiveSound = useCallback((padId: string, isActive: boolean) => {
         setActiveSounds(prev => {
@@ -24,10 +27,15 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const stopAllSounds = useCallback(() => {
         Howler.stop();
         setActiveSounds(new Set());
+        setStopAll(true);
+    }, []);
+
+    const triggerStopAll = useCallback(() => {
+        setStopAll(false);
     }, []);
 
     return (
-        <SoundContext.Provider value={{ activeSounds, toggleActiveSound, stopAllSounds }}>
+        <SoundContext.Provider value={{ activeSounds, toggleActiveSound, stopAllSounds, stopAll, triggerStopAll }}>
             {children}
         </SoundContext.Provider>
     );
