@@ -49,7 +49,7 @@ export default function Pad({
     <div id={id} className="flex flex-col items-center gap-2">
       <ShortcutContextMenu onAssignShortcut={handleAssignShortcut} currentShortcut={currentShortcut}>
         <Button 
-          variant={isPlaying ? "destructive" : "default"} 
+          variant={ isPlaying ? "destructive" : "default"} 
           size="pads" 
           onClick={play} 
           className="relative w-full"

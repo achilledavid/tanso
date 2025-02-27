@@ -1,12 +1,8 @@
-import Pad from "./Pad"
+import Pad from "@/components/pad"
 import { SOUNDS } from "@/config/sounds"
 import { usePadConfigContext } from "@/contexts/PadConfigContext"
 
-interface PadGridProps {
-    padCount?: number;
-}
-
-export default function PadGrid({ padCount = SOUNDS.length }: PadGridProps) {
+export default function PadGrid() {
     const { pads, updatePadShortcut } = usePadConfigContext();
 
     return (

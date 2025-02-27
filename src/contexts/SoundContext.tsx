@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
 import { Howler } from 'howler';
-import { PadInfo } from '@/types';
 
 interface SoundContextType {
     activeSounds: Set<string>;
