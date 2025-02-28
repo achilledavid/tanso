@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server';
+import { isEmpty } from 'lodash';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from 'redis';
 
 const client = createClient({
@@ -13,22 +14,29 @@ const connectRedis = async () => {
   return client;
 };
 
-export async function GET({ params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const sessionId = params.id;
+    const { id: sessionId } = await params;
 
     const redis = await connectRedis();
 
     const keys = await redis.keys(`session:${sessionId}:pad:*`);
 
-    if (!keys || keys.length === 0) {
+    if (!keys || isEmpty(keys)) {
       return NextResponse.json([]);
     }
 
     const padPromises = keys.map(async (key) => {
       const padData = await redis.get(key);
       if (padData) {
-        const padId = key.split(':').pop();
+        const keyParts = key.split(':');
+        const padId = keyParts.length > 0 ? keyParts[keyParts.length - 1] : null;
+
+        if (!padId) {
+          console.error(`Impossible d'extraire l'ID du pad depuis la clé: ${key}`);
+          return null;
+        }
+
         return { id: padId, sessionId, ...JSON.parse(padData) };
       }
       return null;
@@ -39,16 +47,16 @@ export async function GET({ params }: { params: { id: string } }) {
     return NextResponse.json(pads);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to retrieve pads' },
+      { error: error instanceof Error ? error.message : 'Server error' },
       { status: 500 }
     );
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id, url } = await request.json();
-    const sessionId = params.id;
+    const { id, url } = await req.json();
+    const { id: sessionId } = await params;
 
     if (!id || !url) {
       return NextResponse.json({ error: 'ID and URL required' }, { status: 400 });
@@ -72,7 +80,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       success: true,
     });
   } catch (error) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Server error' },
+      { status: 500 }
+    );
   }
 }
 

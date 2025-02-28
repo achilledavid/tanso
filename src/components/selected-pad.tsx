@@ -15,7 +15,12 @@ export default function SelectedPad() {
   const { selectedPad } = useSelectedPad();
 
   const updatePadFileMutation = useMutation({
-    mutationFn: (file: ListBlobResultBlob) => updatePad(selectedPad as Pad, file),
+    mutationFn: (file: ListBlobResultBlob) => {
+      if (!selectedPad) {
+        throw new Error("No pad selected");
+      }
+      return updatePad(selectedPad, file);
+    },
     onSuccess: () => {
       if (selectedPad) {
         queryClient.invalidateQueries({ queryKey: ['session', selectedPad.sessionId] });

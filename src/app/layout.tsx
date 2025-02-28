@@ -1,10 +1,8 @@
-"use client";
-
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers";
 import { PropsWithChildren } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SelectedPadProvider } from "@/contexts/selected-pad";
+import { Geist, Geist_Mono } from "next/font/google";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,17 +14,16 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const queryClient = new QueryClient();
-
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <QueryClientProvider client={queryClient}>
-          <SelectedPadProvider>
+        <Providers>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <div className="p-4">
             {children}
-          </SelectedPadProvider>
-        </QueryClientProvider>
+          </div>
+        </Providers>
       </body>
     </html>
   );

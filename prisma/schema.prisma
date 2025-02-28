@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int          @id @default(autoincrement())
+  username  String       @unique
+  email     String       @unique
+  avatarUrl String?
+  createdAt DateTime     @default(now())
+  profile   UserProfile?
+
+  @@map("users")
+}
+
+model UserProfile {
+  id                       Int     @id @default(autoincrement())
+  userId                   Int     @unique
+  language                 String  @default("en")
+  theme                    String  @default("dark")
+  defaultBpm               Int     @default(120)
+  metronomeEnabled         Boolean @default(true)
+  tutorialSeen             Boolean @default(false)
+  volumeDefault            Float   @default(1.0)
+  notificationsEnabled     Boolean @default(true)
+  keyboardShortcutsEnabled Boolean @default(true)
+  autoSaveEnabled          Boolean @default(true)
+  preferredPadSize         Int     @default(4)
+  user                     User    @relation(fields: [userId], references: [id])
+
+  @@map("user_profiles")
+}

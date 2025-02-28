@@ -19,7 +19,7 @@ export default function Session({ params }: { params: Promise<{ id: string }> })
   if (error) return <div>Error fetching pads: {(error as Error).message}</div>;
 
   return (
-    <div className="flex gap-4 h-screen p-4">
+    <div className="flex gap-4 h-screen">
       <div className="flex flex-col gap-4 justify-between min-w-[320px]">
         <SelectedPad />
       </div>
