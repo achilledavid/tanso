@@ -2,6 +2,7 @@ import { authOptions } from '@/lib/auth';
 import { del, list, put } from '@vercel/blob';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 
 export async function GET(): Promise<NextResponse> {
   const session = await getServerSession(authOptions);
@@ -62,6 +63,15 @@ export async function DELETE(request: Request): Promise<NextResponse> {
   if (!url) {
     return NextResponse.json({ error: 'Url is required' }, { status: 400 });
   }
+
+  await prisma.pad.updateMany({
+    where: {
+      url,
+    },
+    data: {
+      url: null,
+    },
+  });
 
   await del(url);
 

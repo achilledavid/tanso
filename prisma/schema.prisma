@@ -8,12 +8,33 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String    @unique
   name      String?
   avatarUrl String?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  Projects  Project[]
 
   @@map("users")
+}
+
+model Project {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  Pads      Pad[]
+
+  @@map("projects")
+}
+
+model Pad {
+  id        Int     @id @default(autoincrement())
+  url       String?
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("pads")
 }

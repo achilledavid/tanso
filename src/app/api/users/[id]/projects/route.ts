@@ -4,18 +4,20 @@ import prisma from "@/lib/prisma";
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const user = await prisma.user.findUnique({
-      where: { id: parseInt(id) }
+    const projects = await prisma.project.findMany({
+      where: {
+        userId: parseInt(id)
+      }
     });
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!projects) {
+      return NextResponse.json({ error: "No projects found" }, { status: 404 });
     }
 
-    return NextResponse.json(user);
+    return NextResponse.json(projects);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch user : " + error },
+      { error: "Failed to fetch projects : " + error },
       { status: 500 }
     );
   }

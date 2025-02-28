@@ -1,27 +1,36 @@
 "use client"
 
+import { MyProjects } from "@/components/my-projects";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/user";
 import { signOut, useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { Fragment } from "react";
 
 export default function Account() {
   const session = useSession();
-  const user = session?.data?.user as { id: number };
+  const user = session?.data?.user;
 
   if (session.status === "unauthenticated") redirect("/sign-in");
 
   const { data: extendedUser, isLoading } = useUser(user?.id);
 
-  if (isLoading || !user) return <div>Loading...</div>;
-  if (!extendedUser) return <div>Error loading user</div>;
+  if (isLoading || !user) return <div>loading...</div>;
+  if (!extendedUser) notFound();
 
   return (
-    <div className="flex flex-col gap-2 w-fit">
+    <Fragment>
       <p>you are signed in as {extendedUser.name || extendedUser.username}</p>
-      <Button size="sm" onClick={() => signOut({ callbackUrl: "/" })}>
-        sign out
-      </Button>
-    </div>
+      <div className="flex gap-2">
+        <Button size="sm" asChild>
+          <Link href="/">go to home</Link>
+        </Button>
+        <Button size="sm" onClick={() => signOut({ callbackUrl: "/" })}>
+          sign out
+        </Button>
+      </div>
+      <MyProjects userId={user.id} />
+    </Fragment>
   )
 }

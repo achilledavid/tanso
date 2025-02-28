@@ -1,10 +1,9 @@
-import { ListBlobResultBlob } from "@vercel/blob";
 import axiosClient from "./axios";
 
-export async function updatePad(pad: Pad, file: ListBlobResultBlob) {
-  const response = await axiosClient.put(`/api/sessions/${pad.sessionId}/pads`, {
+export async function updatePad(pad: Pad, url: string, projectId: number): Promise<Pad> {
+  const response = await axiosClient.put(`/api/projects/${projectId}/pads`, {
     id: pad.id,
-    url: file.url,
+    url: url,
   });
 
   return response.data;

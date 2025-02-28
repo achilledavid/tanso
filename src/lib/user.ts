@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import axiosClient from "./axios";
+import prisma from "@/lib/prisma";
 
 export async function upsertUser(profile: { email: string; name?: string | null; image?: string | null; }): Promise<User | null> {
   if (!profile.email) return null;
@@ -40,4 +39,9 @@ export async function upsertUser(profile: { email: string; name?: string | null;
     console.error("Error managing user:", error);
     return null;
   }
+}
+
+export async function getProjectsByUserId(id: number): Promise<Project[]> {
+  const response = await axiosClient.get(`/api/users/${id}/projects`);
+  return response.data;
 }
