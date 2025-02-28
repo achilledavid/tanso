@@ -28,24 +28,31 @@ export const authOptions: AuthOptions = {
       }
       return true;
     },
-    async session({ session }): Promise<ExtendedSession> {
-      const extendedSession = session as ExtendedSession;
-
-      if (extendedSession.user?.email) {
+    async session({ session }) {
+      if (session.user?.email) {
         try {
           const dbUser = await prisma.user.findUnique({
-            where: { email: extendedSession.user.email },
+            where: { email: session.user.email },
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              email: true,
+              avatarUrl: true
+            }
           });
 
           if (dbUser) {
-            extendedSession.user.id = dbUser.id;
-            extendedSession.user.name = dbUser.username;
+            session.user.id = dbUser.id;
+            session.user.username = dbUser.username;
+            session.user.name = dbUser.name || undefined;
+            session.user.avatarUrl = dbUser.avatarUrl || undefined;
           }
         } catch (error) {
           console.error("Session callback error:", error);
         }
       }
-      return extendedSession;
+      return session;
     },
   },
   pages: {

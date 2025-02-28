@@ -19,7 +19,7 @@ export async function deleteFileFromLibrary(url: string) {
   return response.data;
 }
 
-export async function getLibraryByUsername(username: string): Promise<{ files: ListBlobResultBlob[] }> {
-  const response = await axiosClient.get(`/api/library?username=${username}`);
+export async function getLibrary(): Promise<{ files: ListBlobResultBlob[] }> {
+  const response = await axiosClient.get(`/api/library`);
   return response.data;
 }

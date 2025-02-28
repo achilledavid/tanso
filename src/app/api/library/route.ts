@@ -1,9 +1,20 @@
+import { authOptions } from '@/lib/auth';
 import { del, list, put } from '@vercel/blob';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 export async function GET(): Promise<NextResponse> {
-  // TODO: get username from session
-  const username = 'achilledavid';
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+  }
+
+  if (!session.user.username) {
+    return NextResponse.json({ error: 'Username not found' }, { status: 404 });
+  }
+
+  const username = session.user.username;
 
   const files = await list({
     prefix: `${username}/`,
@@ -15,10 +26,19 @@ export async function GET(): Promise<NextResponse> {
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+  }
+
+  if (!session.user.username) {
+    return NextResponse.json({ error: 'Username not found' }, { status: 404 });
+  }
+
   const { searchParams } = new URL(request.url);
   const filename = searchParams.get('filename');
-  // TODO: get username from session
-  const username = 'achilledavid';
+  const username = session.user.username;
 
   if (!filename) {
     return NextResponse.json({ error: 'Filename is required' }, { status: 400 });

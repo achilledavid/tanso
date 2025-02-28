@@ -1,16 +1,15 @@
 "use client"
 
-import { getLibraryByUsername } from "@/lib/library";
 import File from "./file";
 import { useQuery } from "@tanstack/react-query";
 import { ListBlobResultBlob } from "@vercel/blob";
 import FileImport from "./file-import";
+import { getLibrary } from "@/lib/library";
 
 export default function Library({ onSelect }: { onSelect?: (file: ListBlobResultBlob) => void }) {
   const { data, isLoading } = useQuery({
     queryKey: ['library'],
-    // TODO: get username from session
-    queryFn: () => getLibraryByUsername("achilledavid"),
+    queryFn: () => getLibrary(),
   });
 
   if (isLoading || !data) {
