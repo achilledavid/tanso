@@ -14,17 +14,15 @@ export default function SelectedPad() {
   const [open, setOpen] = useState(false);
   const { selectedPad } = useSelectedPad();
 
-  const updatePadFileMutation = useMutation({
-    mutationFn: (file: ListBlobResultBlob) => {
-      if (!selectedPad) {
-        throw new Error("No pad selected");
-      }
-      return updatePad(selectedPad, file);
+  const updatePadMutation = useMutation({
+    mutationFn: async ({ pad, file }: { pad: Pad, file: ListBlobResultBlob }) => {
+      await updatePad(pad, file);
     },
     onSuccess: () => {
-      if (selectedPad) {
-        queryClient.invalidateQueries({ queryKey: ['session', selectedPad.sessionId] });
-      }
+      if (!selectedPad) return;
+      queryClient.invalidateQueries({ queryKey: ['session', selectedPad.sessionId] }).then(() => {
+        setOpen(false);
+      });
     }
   });
 
@@ -35,8 +33,8 @@ export default function SelectedPad() {
   );
 
   function handleSelect(file: ListBlobResultBlob) {
-    updatePadFileMutation.mutate(file);
-    setOpen(false);
+    if (!selectedPad) return;
+    updatePadMutation.mutate({ pad: selectedPad, file });
   }
 
   return (

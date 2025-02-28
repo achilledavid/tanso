@@ -25,7 +25,7 @@ export default function Session({ params }: { params: Promise<{ id: string }> })
       </div>
       <div className='grid grid-cols-4 gap-4'>
         {pads && !isEmpty(pads) && pads.map((pad) => (
-          <Pad key={JSON.stringify(pad)} pad={pad} />
+          <Pad key={pad.id.toString()} pad={pad} />
         ))}
       </div>
     </div>
