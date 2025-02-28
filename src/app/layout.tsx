@@ -20,7 +20,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <ReactQueryDevtools initialIsOpen={false} />
-          <div className="p-4">
+          <div className="p-4 flex flex-col gap-2">
             {children}
           </div>
         </Providers>

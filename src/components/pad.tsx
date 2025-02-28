@@ -11,21 +11,26 @@ export default function Pad({ pad }: { pad: Pad }) {
     const [sound, setSound] = useState<Howl | null>(null);
 
     useEffect(() => {
+        if (!pad.url) return;
         setSound(new Howl({
             src: pad.url,
             volume: 1,
         }));
     }, [pad.url]);
 
+    const handleClick = () => {
+        if (!isSelected(pad.id)) selectPad(pad);
+        handleSoundPlay();
+    }
+
     const handleSoundPlay = () => {
         if (!sound) return;
-        if (!isSelected(pad.id)) selectPad(pad);
         sound.stop();
         sound.play();
     };
 
     return (
-        <Button size="icon" onClick={handleSoundPlay}>
+        <Button size="icon" variant={pad.url ? "default" : "secondary"} onClick={handleClick}>
             <Volume2 />
         </Button>
     )

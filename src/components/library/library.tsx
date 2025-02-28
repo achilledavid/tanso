@@ -13,7 +13,7 @@ export default function Library({ onSelect }: { onSelect?: (file: ListBlobResult
   });
 
   if (isLoading || !data) {
-    return <div>Loading...</div>;
+    return <p>loading...</p>;
   }
 
   return (

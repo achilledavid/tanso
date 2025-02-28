@@ -3,7 +3,6 @@
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Fragment } from "react";
 import { signOut } from "next-auth/react"
 
 export default function AuthNavigation() {
@@ -11,14 +10,14 @@ export default function AuthNavigation() {
 
   if (session.status === "authenticated") {
     return (
-      <Fragment>
+      <div className="flex gap-2">
         <Button size="sm" onClick={() => signOut({ callbackUrl: "/" })}>
           sign out
         </Button>
         <Button size="sm" asChild>
           <Link href="/account">my account</Link>
         </Button>
-      </Fragment>
+      </div>
     )
   }
   else if (session.status === "unauthenticated") {

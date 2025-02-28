@@ -3,14 +3,19 @@
 import { Input } from "@/components/ui/input";
 import { uploadFileToLibrary } from "@/lib/library";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
 
 export default function FileImport() {
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadMutation = useMutation({
     mutationFn: uploadFileToLibrary,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['library'] });
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     },
   });
 
@@ -31,6 +36,7 @@ export default function FileImport() {
       onChange={handleFileChange}
       accept="audio/*"
       disabled={uploadMutation.isPending}
+      ref={fileInputRef}
     />
   );
 }
