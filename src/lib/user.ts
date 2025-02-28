@@ -30,6 +30,7 @@ export async function upsertUser(profile: { email: string; name?: string | null;
       return await prisma.user.create({
         data: {
           email: profile.email,
+          name: profile.name,
           username,
           avatarUrl: profile.image,
         },

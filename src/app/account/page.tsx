@@ -13,11 +13,12 @@ export default function Account() {
 
   const { data: extendedUser, isLoading } = useUser(user?.id);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading || !user) return <div>Loading...</div>;
+  if (!extendedUser) return <div>Error loading user</div>;
 
   return (
     <div className="flex flex-col gap-2 w-fit">
-      <p>you are signed in as {extendedUser?.username || extendedUser?.name}</p>
+      <p>you are signed in as {extendedUser.name || extendedUser.username}</p>
       <Button size="sm" onClick={() => signOut({ callbackUrl: "/" })}>
         sign out
       </Button>

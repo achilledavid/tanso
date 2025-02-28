@@ -15,7 +15,7 @@ export default function Home() {
       <Button size="sm" asChild>
         <Link href="/sessions/2">go to session</Link>
       </Button>
-      {user ? <p>you are signed in as {user.name}</p> : <p>you are not signed in</p>}
+      {user ? <p>you are signed in as {user.name || user.username}</p> : <p>you are not signed in</p>}
       <AuthNavigation />
     </div>
   );
