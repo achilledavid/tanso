@@ -10,8 +10,8 @@ export default function Login() {
   if (session?.data?.user) redirect('/account')
 
   return (
-    <Button onClick={() => signIn("google", { callbackUrl: "/account" })}>
-      connect with Google
+    <Button className="w-fit" onClick={() => signIn("google", { callbackUrl: "/account" })}>
+      connect with google
     </Button>
   );
 }

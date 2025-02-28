@@ -8,7 +8,7 @@ import Pad from '@/components/pad';
 import SelectedPad from '@/components/selected-pad';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 
 export default function Project({ params }: { params: Promise<{ id: string }> }) {
   const id = parseInt(use(params).id);
@@ -16,7 +16,7 @@ export default function Project({ params }: { params: Promise<{ id: string }> })
 
   const { data: project, isLoading: isLoadingProject } = useQuery({
     queryKey: ['project', id],
-    queryFn: () => getProject(id),
+    queryFn: () => getProject(id)
   });
 
   const { data: pads, isLoading: isLoadingPads } = useQuery({
@@ -37,8 +37,9 @@ export default function Project({ params }: { params: Promise<{ id: string }> })
   }
 
   if (isLoadingProject) return <div>loading...</div>;
+  else if (!project) notFound();
 
-  return project && (
+  return (
     <div className='flex gap-2'>
       <div className="flex flex-col gap-2 min-w-[320px]">
         <Button size="sm" className='w-fit' asChild>

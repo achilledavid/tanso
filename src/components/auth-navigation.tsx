@@ -22,7 +22,7 @@ export default function AuthNavigation() {
   }
   else if (session.status === "unauthenticated") {
     return (
-      <Button size="sm" asChild>
+      <Button size="sm" className="w-fit" asChild>
         <Link href="/sign-in">sign in</Link>
       </Button>
     )
