@@ -1,12 +1,13 @@
 {
-  "name": "pfe",
+  "name": "tanso",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -15,21 +16,32 @@
     "@auth/prisma-adapter": "^2.7.4",
     "@prisma/client": "6.3.1",
     "@radix-ui/react-context-menu": "^2.2.5",
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-popover": "^1.1.6",
     "@radix-ui/react-slot": "^1.1.1",
+    "@tanstack/react-query": "^5.66.0",
+    "@tanstack/react-query-devtools": "^5.66.9",
+    "@vercel/blob": "^0.27.1",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "1.0.0",
     "howler": "^2.2.4",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.474.0",
     "next": "15.1.6",
     "next-auth": "^4.24.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "redis": "^4.7.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/howler": "^2.2.12",
+    "@types/lodash": "^4.17.15",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
