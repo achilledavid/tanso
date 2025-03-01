@@ -11,18 +11,23 @@ export async function GET(): Promise<NextResponse> {
     return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
 
-  if (!session.user.username) {
-    return NextResponse.json({ error: 'Username not found' }, { status: 404 });
-  }
-
   const username = session.user.username;
 
   const files = await list({
-    prefix: `${username}/`,
+    prefix: `${username}/`
+  });
+
+  files.blobs = files.blobs.sort((a, b) => {
+    return new Date(a.uploadedAt).getTime() - new Date(b.uploadedAt).getTime();
   });
 
   return NextResponse.json({
-    files: files.blobs.map((file) => file),
+    files: files.blobs.map((file) => {
+      return {
+        ...file,
+        pathname: file.pathname.replace(`${username}/`, '')
+      };
+    }),
   });
 }
 

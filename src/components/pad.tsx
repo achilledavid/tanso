@@ -5,14 +5,15 @@ import { Button } from "./ui/button";
 import { Howl } from 'howler';
 import { useSelectedPad } from "@/contexts/selected-pad";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function Pad({ pad }: { pad: Pad }) {
     const { selectPad, isSelected } = useSelectedPad();
     const [sound, setSound] = useState<Howl | null>(null);
 
     useEffect(() => {
-        if (!pad.url) return;
-        setSound(new Howl({
+        if (!pad.url) setSound(null);
+        else setSound(new Howl({
             src: pad.url,
             volume: 1,
         }));
@@ -30,8 +31,18 @@ export default function Pad({ pad }: { pad: Pad }) {
     };
 
     return (
-        <Button size="icon" variant={pad.url ? "default" : "secondary"} onClick={handleClick}>
+        <Button
+            size="icon"
+            variant={pad.url ? "default" : "secondary"}
+            onClick={handleClick}
+            className={cn("relative", isSelected(pad.id) && "ring-2 ring-ring ring-offset-2")}
+        >
             <Volume2 />
+            {pad.keyBinding && (
+                <span className="absolute top-0 right-0 bg-primary-foreground text-primary text-xs rounded px-1 flex items-center justify-center transform translate-x-1/4 -translate-y-1/4">
+                    {pad.keyBinding.toUpperCase()}
+                </span>
+            )}
         </Button>
     )
 }

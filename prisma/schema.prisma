@@ -31,10 +31,12 @@ model Project {
 }
 
 model Pad {
-  id        Int     @id @default(autoincrement())
-  url       String?
-  projectId Int
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id         Int     @id @default(autoincrement())
+  url        String?
+  fileName   String?
+  keyBinding String?
+  projectId  Int
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("pads")
 }
