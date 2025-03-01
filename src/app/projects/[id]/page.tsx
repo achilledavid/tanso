@@ -5,10 +5,11 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { deleteProject, getPadsFromProject, getProject } from '@/lib/project';
 import { isEmpty } from 'lodash';
 import Pad from '@/components/pad';
-import SelectedPad from '@/components/selected-pad';
+import SelectedPad from '@/components/selected-pad/selected-pad';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { notFound, useRouter } from 'next/navigation';
+import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts';
 
 export default function Project({ params }: { params: Promise<{ id: string }> }) {
   const id = parseInt(use(params).id);
@@ -24,10 +25,11 @@ export default function Project({ params }: { params: Promise<{ id: string }> })
     queryFn: () => getPadsFromProject(id),
   });
 
+  useKeyboardShortcuts(pads);
+
   const deleteMutation = useMutation({
     mutationFn: () => deleteProject(id),
     onSuccess: () => {
-      console.log('deleted');
       router.push('/account');
     },
   });
@@ -40,7 +42,7 @@ export default function Project({ params }: { params: Promise<{ id: string }> })
   else if (!project) notFound();
 
   return (
-    <div className='flex gap-2'>
+    <div className='flex gap-4'>
       <div className="flex flex-col gap-2 min-w-[320px]">
         <Button size="sm" className='w-fit' asChild>
           <Link href="/">go to home</Link>
@@ -52,7 +54,7 @@ export default function Project({ params }: { params: Promise<{ id: string }> })
       {isLoadingPads ? (
         <p>loading...</p>
       ) : (
-        <div className='grid grid-cols-4 gap-4'>
+        <div className='grid grid-cols-4 gap-4 h-fit'>
           {pads && !isEmpty(pads) && pads.map((pad) => (
             <Pad key={`pad-${pad.id}`} pad={pad} />
           ))}

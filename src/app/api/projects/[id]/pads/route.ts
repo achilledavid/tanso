@@ -30,7 +30,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: projectId } = await params;
-    const { url, id } = await request.json() as { url: string, id: number };
+    const { url, id, path } = await request.json() as { url: string, id: number, path: string };
 
     const pad = await prisma.pad.update({
       where: {
@@ -38,7 +38,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         projectId: parseInt(projectId)
       },
       data: {
-        url
+        url,
+        fileName: path.split("/").pop()
       }
     });
 
