@@ -26,12 +26,15 @@ export default function FileImport() {
       throw new Error("No file selected");
     }
 
-    const file = e.target.files[0];
-    uploadMutation.mutate(file);
+    const files = e.target.files;
+    uploadMutation.mutate(files);
   };
 
-  return (
+  return uploadMutation.isPending ? (
+    <p>uploading...</p>
+  ) : (
     <Input
+      multiple
       type="file"
       onChange={handleFileChange}
       accept="audio/*"

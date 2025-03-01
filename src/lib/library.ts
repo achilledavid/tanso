@@ -1,11 +1,14 @@
 import { ListBlobResultBlob } from '@vercel/blob';
 import axiosClient from './axios';
 
-export async function uploadFileToLibrary(file: File) {
+export async function uploadFileToLibrary(files: FileList) {
   const formData = new FormData();
-  formData.append('file', file);
 
-  const response = await axiosClient.post(`/api/library?filename=${file.name}`, formData, {
+  for (let i = 0; i < files.length; i++) {
+    formData.append('file', files[i]);
+  }
+
+  const response = await axiosClient.post(`/api/library`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
