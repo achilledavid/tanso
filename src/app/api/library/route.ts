@@ -42,23 +42,39 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: 'Username not found' }, { status: 404 });
   }
 
-  const { searchParams } = new URL(request.url);
-  const filename = searchParams.get('filename');
   const username = session.user.username;
-
-  if (!filename) {
-    return NextResponse.json({ error: 'Filename is required' }, { status: 400 });
-  }
 
   if (!request.body) {
     return NextResponse.json({ error: 'Request body is required' }, { status: 400 });
   }
 
-  const blob = await put(`${username}/${filename}`, request.body, {
-    access: 'public',
-  });
+  try {
+    const formData = await request.formData();
+    const files = formData.getAll('file');
 
-  return NextResponse.json(blob);
+    if (!files.length) {
+      return NextResponse.json({ error: 'No files found in the request' }, { status: 400 });
+    }
+
+    const results = await Promise.all(
+      files.map(async (file) => {
+        if (!(file instanceof File)) {
+          return { error: 'Invalid file object' };
+        }
+
+        const blob = await put(`${username}/${file.name}`, file, {
+          access: 'public',
+        });
+
+        return { ...blob, original: file.name };
+      })
+    );
+
+    return NextResponse.json({ results });
+  } catch (error) {
+    console.error('Error processing files:', error);
+    return NextResponse.json({ error: 'Failed to process files' }, { status: 500 });
+  }
 }
 
 export async function DELETE(request: Request): Promise<NextResponse> {
