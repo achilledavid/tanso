@@ -21,6 +21,7 @@ model User {
 
 model Project {
   id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
   name      String
   createdAt DateTime @default(now())
   userId    Int
@@ -35,8 +36,8 @@ model Pad {
   url        String?
   fileName   String?
   keyBinding String?
-  projectId  Int
-  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectUuid  String
+  project    Project @relation(fields: [projectUuid], references: [uuid], onDelete: Cascade)
 
   @@map("pads")
 }

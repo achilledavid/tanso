@@ -1,28 +1,46 @@
 import axiosClient from "./axios";
 
-export async function updatePad(pad: Pad, url: string, projectId: number, path: string): Promise<Pad> {
-  const response = await axiosClient.put(`/api/projects/${projectId}/pads`, {
+export async function updatePad(
+  pad: Pad,
+  url: string,
+  projectUuid: string,
+  path: string
+): Promise<Pad> {
+  const response = await axiosClient.put(`/api/projects/${projectUuid}/pads`, {
     id: pad.id,
     url: url,
-    path: path
+    path: path,
   });
 
   return response.data;
 }
 
-export async function updatePadKeyBinding(pad: Pad, keyBinding: string | null, projectId: number): Promise<Pad> {
-  const response = await axiosClient.put(`/api/projects/${projectId}/pads/keybinding`, {
-    id: pad.id,
-    keyBinding
-  });
+export async function updatePadKeyBinding(
+  pad: Pad,
+  keyBinding: string | null,
+  projectUuid: string
+): Promise<Pad> {
+  const response = await axiosClient.put(
+    `/api/projects/${projectUuid}/pads/keybinding`,
+    {
+      id: pad.id,
+      keyBinding,
+    }
+  );
 
   return response.data;
 }
 
-export async function deletePadFile(pad: Pad, projectId: number): Promise<Pad> {
-  const response = await axiosClient.delete(`/api/projects/${projectId}/pads/file`, {
-    data: { id: pad.id }
-  });
+export async function deletePadFile(
+  pad: Pad,
+  projectUuid: string
+): Promise<Pad> {
+  const response = await axiosClient.delete(
+    `/api/projects/${projectUuid}/pads/file`,
+    {
+      data: { id: pad.id },
+    }
+  );
 
   return response.data;
 }

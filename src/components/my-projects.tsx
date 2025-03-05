@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { getProjectsByUserId } from "@/lib/user"
-import { useQuery } from "@tanstack/react-query"
-import { isEmpty } from "lodash"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import NewProject from "./new-project"
-import { Fragment } from "react"
+import { getProjectsByUserId } from "@/lib/user";
+import { useQuery } from "@tanstack/react-query";
+import { isEmpty } from "lodash";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import NewProject from "./new-project";
+import { Fragment } from "react";
 
 export function MyProjects({ userId }: { userId: number }) {
   const { data: projects, isLoading } = useQuery({
     queryKey: ["my-projects", userId],
-    queryFn: () => getProjectsByUserId(userId)
-  })
+    queryFn: () => getProjectsByUserId(userId),
+  });
 
   return (
     <Fragment>
@@ -26,7 +26,7 @@ export function MyProjects({ userId }: { userId: number }) {
               {projects.map((project) => (
                 <li key={`project-${project.id}`}>
                   <Button variant="secondary" size="sm" asChild>
-                    <Link href={`/projects/${project.id}`}>
+                    <Link href={`/projects/${project.uuid}`}>
                       {project.name}
                     </Link>
                   </Button>
@@ -40,5 +40,5 @@ export function MyProjects({ userId }: { userId: number }) {
         </Fragment>
       )}
     </Fragment>
-  )
+  );
 }
