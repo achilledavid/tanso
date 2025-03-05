@@ -1,21 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ uuid: string }> }
+) {
   try {
-    const { id } = await params;
+    const { uuid } = await params;
 
     const pads = await prisma.pad.findMany({
       where: {
-        projectId: parseInt(id)
+        projectUuid: uuid,
       },
       orderBy: {
-        id: "asc"
-      }
+        id: "asc",
+      },
     });
 
     if (!pads) {
-      return NextResponse.json({ error: "This project does not exist" }, { status: 404 });
+      return NextResponse.json(
+        { error: "This project does not exist" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(pads);
@@ -27,20 +33,27 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ uuid: string }> }
+) {
   try {
-    const { id: projectId } = await params;
-    const { url, id, path } = await request.json() as { url: string, id: number, path: string };
+    const { uuid } = await params;
+    const { url, id, path } = (await request.json()) as {
+      url: string;
+      id: number;
+      path: string;
+    };
 
     const pad = await prisma.pad.update({
       where: {
         id: id,
-        projectId: parseInt(projectId)
+        projectUuid: uuid,
       },
       data: {
         url,
-        fileName: path.split("/").pop()
-      }
+        fileName: path.split("/").pop(),
+      },
     });
 
     return NextResponse.json(pad);

@@ -3,9 +3,12 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ uuid: string }> }
+) {
   try {
-    const { id } = await params;
+    const { uuid } = await params;
     const session = await getServerSession(authOptions);
     const user = session?.user;
 
@@ -15,13 +18,16 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const projects = await prisma.project.findUnique({
       where: {
-        id: parseInt(id),
-        userId: user.id
-      }
+        uuid: uuid,
+        userId: user.id,
+      },
     });
 
     if (!projects) {
-      return NextResponse.json({ error: "This project does not exist" }, { status: 404 });
+      return NextResponse.json(
+        { error: "This project does not exist" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(projects);
@@ -32,9 +38,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     );
   }
 }
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ uuid: string }> }
+) {
   try {
-    const { id } = await params;
+    const { uuid } = await params;
     const session = await getServerSession(authOptions);
     const user = session?.user;
 
@@ -44,9 +53,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 
     await prisma.project.delete({
       where: {
-        id: parseInt(id),
-        userId: user.id
-      }
+        uuid: uuid,
+        userId: user.id,
+      },
     });
 
     return NextResponse.json({ success: true });
