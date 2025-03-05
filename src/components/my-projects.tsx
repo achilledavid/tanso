@@ -22,7 +22,7 @@ export function MyProjects({ userId }: { userId: number }) {
       ) : (
         <Fragment>
           {projects && !isEmpty(projects) ? (
-            <ul className="flex gap-2 mb-1">
+            <ul className="flex gap-2">
               {projects.map((project) => (
                 <li key={`project-${project.id}`}>
                   <Button variant="secondary" size="sm" asChild>
@@ -36,7 +36,9 @@ export function MyProjects({ userId }: { userId: number }) {
           ) : (
             <p>no projects found</p>
           )}
-          <NewProject userId={userId} />
+          <div className="mt-1 mb-2">
+            <NewProject userId={userId} />
+          </div>
         </Fragment>
       )}
     </Fragment>

@@ -1,5 +1,6 @@
 "use client"
 
+import Library from "@/components/library/library";
 import { MyProjects } from "@/components/my-projects";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/user";
@@ -31,6 +32,7 @@ export default function Account() {
         </Button>
       </div>
       <MyProjects userId={user.id} />
+      <Library />
     </Fragment>
   )
 }
