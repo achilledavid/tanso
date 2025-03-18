@@ -35,7 +35,9 @@ export default function NewProject({ userId }: { userId: number }) {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    createMutation.mutate({ name: values.projectName });
+    createMutation.mutate({
+      name: values.projectName
+    });
   }
 
   return (
