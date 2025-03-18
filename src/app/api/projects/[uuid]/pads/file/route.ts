@@ -3,10 +3,10 @@ import prisma from "@/lib/prisma";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ uuid: string }> }
 ) {
   try {
-    const { id: projectId } = await params;
+    const { uuid: projectUuid } = await params;
     const { id } = await request.json() as { id: number };
 
     if (!id) {
@@ -18,8 +18,8 @@ export async function DELETE(
 
     const pad = await prisma.pad.update({
       where: {
-        id: id,
-        projectId: parseInt(projectId)
+        id,
+        projectUuid
       },
       data: {
         url: null,

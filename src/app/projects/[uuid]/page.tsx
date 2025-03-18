@@ -11,11 +11,7 @@ import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 
-export default function Project({
-  params,
-}: {
-  params: Promise<{ uuid: string }>;
-}) {
+export default function Project({ params }: { params: Promise<{ uuid: string }> }) {
   const uuid = use(params).uuid;
   const router = useRouter();
 
@@ -60,7 +56,7 @@ export default function Project({
           delete project
         </Button>
         <p>{project.name}</p>
-        <SelectedPad projectId={uuid} />
+        <SelectedPad projectUuid={uuid} />
       </div>
       {isLoadingPads ? (
         <p>loading...</p>
