@@ -8,6 +8,6 @@ export default function SelectedPad({ projectId }: { projectId: number }) {
     <Fragment>
       <LinkedFile projectId={projectId} />
       <KeyBinding projectId={projectId} />
-    </Fragment >
+    </Fragment>
   );
 }
