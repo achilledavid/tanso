@@ -18,8 +18,8 @@ export async function DELETE(
 
     const pad = await prisma.pad.update({
       where: {
-        id: id,
-        projectUuid: projectUuid
+        id,
+        projectUuid
       },
       data: {
         url: null,
