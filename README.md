@@ -1,5 +1,7 @@
 # Tanso
 
+Node version 23.6.1
+
 ## Setup
 
 1. Navigate to the `/docker` directory in the project
