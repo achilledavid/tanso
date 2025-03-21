@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { ChevronLeftIcon } from "lucide-react";
 
 export default function Project({ params }: { params: Promise<{ uuid: string }> }) {
   const uuid = use(params).uuid;
@@ -42,20 +43,23 @@ export default function Project({ params }: { params: Promise<{ uuid: string }> 
   else if (!project) notFound();
 
   return (
-    <div className="flex gap-4">
-      <div className="flex flex-col gap-2 min-w-[320px]">
-        <Button size="sm" className="w-fit" asChild>
-          <Link href="/">go to home</Link>
-        </Button>
-        <Button
-          size="sm"
-          className="w-fit"
-          variant="destructive"
-          onClick={handleDelete}
-        >
-          delete project
-        </Button>
-        <p>{project.name}</p>
+    <div className="flex gap-8">
+      <div className="flex flex-col gap-4 min-w-[320px]">
+        <div className="grid grid-cols-2 gap-4">
+          <Button size="sm" className="w-fit" variant={'link'}>
+            <ChevronLeftIcon />
+            <Link href="/">go to home</Link>
+          </Button>
+          <Button
+            size="sm"
+            className="w-fit"
+            variant="destructive"
+            onClick={handleDelete}
+          >
+            delete project
+          </Button>
+        </div>
+        <p>Project name : {project.name}</p>
         <SelectedPad projectUuid={uuid} />
       </div>
       {isLoadingPads ? (

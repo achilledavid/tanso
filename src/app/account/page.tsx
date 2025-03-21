@@ -31,6 +31,11 @@ export default function Account() {
         </Button>
       </div>
       <MyProjects userId={user.id} />
+      <div className="w-fit">
+        <Button size={"sm"} variant={'secondary'} asChild>
+          <Link href='/library'>My Library</Link>
+        </Button>
+      </div>
     </Fragment>
   )
 }
