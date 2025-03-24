@@ -7,7 +7,7 @@ export default function Header({ children }: PropsWithChildren) {
     <header className={style.container}>
       <div className={style.content}>
         <Link href="/">tanso</Link>
-        <div>
+        <div className="flex gap-2 items-center">
           {children}
         </div>
       </div>

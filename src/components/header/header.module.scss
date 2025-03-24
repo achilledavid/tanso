@@ -28,3 +28,23 @@
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 1rem;
+
+    .content {
+      min-height: unset;
+
+      &>a {
+        aspect-ratio: unset;
+      }
+    }
+  }
+}
