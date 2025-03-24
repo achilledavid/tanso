@@ -1,6 +1,4 @@
 import { MyProjects } from "@/components/my-projects";
-import { Button } from "@/components/ui/button/button";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import style from "./account.module.scss";
 import { getServerSession } from "next-auth";

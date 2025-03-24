@@ -28,7 +28,7 @@ import { ListBlobResultBlob } from "@vercel/blob"
 const PAGE_SIZE = 5;
 
 interface DataTableProps<TData extends ListBlobResultBlob> {
-  columns: ColumnDef<TData, any>[]
+  columns: ColumnDef<TData, unknown>[]
   data: TData[]
   onSelect?: (file: ListBlobResultBlob) => void
   rowSelection: RowSelectionState
@@ -63,7 +63,7 @@ export function DataTable<TData extends ListBlobResultBlob>({
     columns.map(column => ({
       ...column,
       cell: column.id === 'actions' ?
-        (props: CellContext<TData, any>) => (
+        (props: CellContext<TData, unknown>) => (
           <ActionCell file={props.row.original} onSelect={onSelect} />
         ) : (
           column.cell
