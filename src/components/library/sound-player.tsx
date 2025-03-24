@@ -1,9 +1,9 @@
 "use client"
 
 import { ListBlobResultBlob } from "@vercel/blob";
-import { Button } from "../ui/button";
 import { Volume2 } from "lucide-react";
 import { Howl } from 'howler';
+import { Button } from "../ui/button/button";
 
 export function SoundPlayer({ file }: { file: ListBlobResultBlob }) {
   const sound = new Howl({

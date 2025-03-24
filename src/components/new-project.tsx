@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/button";
 import { createProject } from "@/lib/project";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -35,7 +35,9 @@ export default function NewProject({ userId }: { userId: number }) {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    createMutation.mutate({ name: values.projectName });
+    createMutation.mutate({
+      name: values.projectName
+    });
   }
 
   return (

@@ -7,6 +7,8 @@ import {
   getPaginationRowModel,
   useReactTable,
   CellContext,
+  RowSelectionState,
+  OnChangeFn,
 } from "@tanstack/react-table"
 
 import {
@@ -17,47 +19,60 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Button } from "../ui/button"
-import { useState } from "react"
+import { Button } from "@/components/ui/button/button"
+import { useMemo, memo } from "react"
 import { Upload } from "lucide-react"
 import { SoundPlayer } from "./sound-player"
 import { ListBlobResultBlob } from "@vercel/blob"
 
-interface DataTableProps<TData extends ListBlobResultBlob, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+const PAGE_SIZE = 5;
+
+interface DataTableProps<TData extends ListBlobResultBlob> {
+  columns: ColumnDef<TData, any>[]
   data: TData[]
-  onSelect?: (file: TData) => void
+  onSelect?: (file: ListBlobResultBlob) => void
+  rowSelection: RowSelectionState
+  setRowSelection: OnChangeFn<RowSelectionState>
 }
 
-export function DataTable<TData extends ListBlobResultBlob, TValue>({
+const ActionCell = memo(({ file, onSelect }: { file: ListBlobResultBlob, onSelect?: (file: ListBlobResultBlob) => void }) => (
+  <div className="flex w-full justify-end gap-2">
+    <SoundPlayer file={file} />
+    {onSelect && (
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+        onClick={() => onSelect(file)}
+      >
+        <Upload />
+      </Button>
+    )}
+  </div>
+));
+ActionCell.displayName = 'ActionCell';
+
+export function DataTable<TData extends ListBlobResultBlob>({
   columns,
   data,
   onSelect,
-}: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = useState({})
-  const table = useReactTable({
-    data,
-    columns: columns.map(column => ({
+  rowSelection,
+  setRowSelection
+}: DataTableProps<TData>) {
+  const enhancedColumns = useMemo(() =>
+    columns.map(column => ({
       ...column,
       cell: column.id === 'actions' ?
-        (props: CellContext<TData, TValue>) => (
-          <div className="flex w-full justify-end gap-2">
-            <SoundPlayer file={props.row.original} />
-            {onSelect && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => onSelect(props.row.original)}
-              >
-                <Upload />
-              </Button>
-            )}
-          </div>
+        (props: CellContext<TData, any>) => (
+          <ActionCell file={props.row.original} onSelect={onSelect} />
         ) : (
           column.cell
         )
-    })),
+    })), [columns, onSelect]);
+
+  const table = useReactTable({
+    data,
+    columns: enhancedColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
@@ -66,10 +81,10 @@ export function DataTable<TData extends ListBlobResultBlob, TValue>({
     },
     initialState: {
       pagination: {
-        pageSize: 5,
+        pageSize: PAGE_SIZE,
       },
     },
-  })
+  });
 
   return (
     <div>
@@ -78,18 +93,16 @@ export function DataTable<TData extends ListBlobResultBlob, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -110,7 +123,7 @@ export function DataTable<TData extends ListBlobResultBlob, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  no results.
                 </TableCell>
               </TableRow>
             )}
@@ -134,5 +147,5 @@ export function DataTable<TData extends ListBlobResultBlob, TValue>({
         </Button>
       </div>
     </div>
-  )
+  );
 }

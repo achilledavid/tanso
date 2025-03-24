@@ -1,7 +1,7 @@
 "use client"
 
 import { useSelectedPad } from "@/contexts/selected-pad";
-import { Button } from "../ui/button";
+import { Button } from "../ui/button/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog";
@@ -11,17 +11,17 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { deletePadFile, updatePad } from "@/lib/pad";
 
-export default function LinkedFile({ projectId }: { projectId: number }) {
+export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const { selectedPad, selectPad } = useSelectedPad();
 
   const updatePadMutation = useMutation({
     mutationFn: async ({ pad, url, path }: { pad: Pad, url: string, path: string }) => {
-      await updatePad(pad, url, projectId, path);
+      await updatePad(pad, url, projectUuid, path);
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['project-pads', projectId] }).then(() => {
+      queryClient.invalidateQueries({ queryKey: ['project-pads', projectUuid] }).then(() => {
         selectPad({
           ...selectedPad!,
           fileName: variables.path.split('/').pop() || '',
@@ -34,10 +34,10 @@ export default function LinkedFile({ projectId }: { projectId: number }) {
 
   const deletePadFileMutation = useMutation({
     mutationFn: async ({ pad }: { pad: Pad }) => {
-      await deletePadFile(pad, projectId);
+      await deletePadFile(pad, projectUuid);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['project-pads', projectId] }).then(() => {
+      queryClient.invalidateQueries({ queryKey: ['project-pads', projectUuid] }).then(() => {
         selectPad({
           ...selectedPad!,
           fileName: '',

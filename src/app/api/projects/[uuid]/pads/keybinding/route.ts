@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ uuid: string }> }) {
   try {
-    const { id: projectId } = await params;
+    const { uuid: projectUuid } = await params;
     const { id, keyBinding } = await request.json() as { id: number, keyBinding: string | null };
 
     const pad = await prisma.pad.update({
       where: {
-        id: id,
-        projectId: parseInt(projectId)
+        id,
+        projectUuid
       },
       data: {
         keyBinding
@@ -23,4 +23,4 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       { status: 500 }
     );
   }
-} 
+}

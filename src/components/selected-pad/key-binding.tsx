@@ -1,22 +1,22 @@
 "use client"
 
 import { useSelectedPad } from "@/contexts/selected-pad";
-import { Button, buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button/button";
 import { Label } from "../ui/label";
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { updatePadKeyBinding } from "@/lib/pad";
 import { getPadsFromProject } from "@/lib/project";
 
-export default function KeyBinding({ projectId }: { projectId: number }) {
+export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
   const queryClient = useQueryClient();
   const { selectedPad, selectPad } = useSelectedPad();
   const [listeningForKey, setListeningForKey] = useState(false);
   const keyBindingRef = useRef<HTMLDivElement>(null);
 
   const { data: pads } = useQuery({
-    queryKey: ['project-pads', projectId],
-    queryFn: () => getPadsFromProject(projectId),
+    queryKey: ['project-pads', projectUuid],
+    queryFn: () => getPadsFromProject(projectUuid),
   });
 
   useEffect(() => {
@@ -27,10 +27,10 @@ export default function KeyBinding({ projectId }: { projectId: number }) {
 
   const updateKeyBindingMutation = useMutation({
     mutationFn: async ({ pad, keyBinding }: { pad: Pad, keyBinding: string | null }) => {
-      await updatePadKeyBinding(pad, keyBinding, projectId);
+      await updatePadKeyBinding(pad, keyBinding, projectUuid);
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['project-pads', projectId] }).then(() => {
+      queryClient.invalidateQueries({ queryKey: ['project-pads', projectUuid] }).then(() => {
         selectPad({
           ...selectedPad!,
           keyBinding: variables.keyBinding
