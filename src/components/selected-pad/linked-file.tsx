@@ -70,7 +70,7 @@ export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
             <Button size="sm" variant="secondary" className="w-fit ml-auto">{selectedPad.fileName ? "change" : "add"}</Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogTitle>my library</DialogTitle>
+            <DialogTitle>change linked file</DialogTitle>
             <Library onSelect={handleSelect} />
           </DialogContent>
         </Dialog>

@@ -11,11 +11,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "",
-        destructive: "",
+        destructive: style.destructive,
         outline: style.outline,
         secondary: style.secondary,
         ghost: "",
-        link: "",
+        link: style.link,
       },
       size: {
         sm: style.sm,

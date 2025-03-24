@@ -1,5 +1,6 @@
 import { ListBlobResultBlob } from '@vercel/blob';
 import axiosClient from './axios';
+import axios from 'axios';
 
 export async function uploadFileToLibrary(files: FileList) {
   const formData = new FormData();
@@ -25,4 +26,16 @@ export async function deleteFileFromLibrary(url: string) {
 export async function getLibrary(): Promise<{ files: ListBlobResultBlob[] }> {
   const response = await axiosClient.get(`/api/library`);
   return response.data;
+}
+
+export async function deleteLibraryFiles(files: ListBlobResultBlob[]) {
+  const formData = new FormData();
+  files.forEach(file => {
+    formData.append('url', file.url);
+  });
+
+  const { data } = await axios.delete('/api/library', {
+    data: formData,
+  });
+  return data;
 }

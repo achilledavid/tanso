@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { uploadFileToLibrary } from "@/lib/library";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
+import { Label } from "../ui/label";
 
 export default function FileImport() {
   const queryClient = useQueryClient();
@@ -33,13 +34,16 @@ export default function FileImport() {
   return uploadMutation.isPending ? (
     <p>uploading...</p>
   ) : (
-    <Input
-      multiple
-      type="file"
-      onChange={handleFileChange}
-      accept="audio/*"
-      disabled={uploadMutation.isPending}
-      ref={fileInputRef}
-    />
+    <div className="flex flex-col gap-2">
+      <Label>upload new file</Label>
+      <Input
+        multiple
+        type="file"
+        onChange={handleFileChange}
+        accept="audio/*"
+        disabled={uploadMutation.isPending}
+        ref={fileInputRef}
+      />
+    </div>
   );
 }
