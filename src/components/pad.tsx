@@ -1,7 +1,7 @@
 "use client"
 
 import { Volume2 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "./ui/button/button";
 import { Howl } from 'howler';
 import { useSelectedPad } from "@/contexts/selected-pad";
 import { useEffect, useState } from "react";

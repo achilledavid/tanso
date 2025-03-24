@@ -1,7 +1,7 @@
 "use client"
 
 import { useSelectedPad } from "@/contexts/selected-pad";
-import { Button, buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button/button";
 import { Label } from "../ui/label";
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

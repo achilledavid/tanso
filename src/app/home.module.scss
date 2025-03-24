@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 9rem 0;
+
+  h1 {
+    font-family: var(--font-deezer);
+    font-weight: 800;
+    font-size: 10rem;
+    font-weight: 800;
+    line-height: .9;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  p {
+    font-family: var(--font-deezer);
+    font-size: var(--subtitle-fontsize);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+}

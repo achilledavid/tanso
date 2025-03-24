@@ -1,36 +1,36 @@
-"use client"
-
 import { MyProjects } from "@/components/my-projects";
-import { Button } from "@/components/ui/button";
-import { useUser } from "@/hooks/user";
-import { signOut, useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button/button";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
+import style from "./account.module.scss";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { Fragment } from "react";
+import Header from "@/components/header/header";
+import SignOutButton from "@/components/sign-out-button";
 
-export default function Account() {
-  const session = useSession();
-  const user = session?.data?.user;
+export default async function Account() {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
 
-  if (session.status === "unauthenticated") redirect("/sign-in");
-
-  const { data: extendedUser, isLoading } = useUser(user?.id);
-
-  if (isLoading || !user) return <div>loading...</div>;
-  if (!extendedUser) notFound();
+  if (!user) notFound();
 
   return (
     <Fragment>
-      <p>you are signed in as {extendedUser.name || extendedUser.username}</p>
-      <div className="flex gap-2">
-        <Button size="sm" asChild>
-          <Link href="/">go to home</Link>
-        </Button>
-        <Button size="sm" onClick={() => signOut({ callbackUrl: "/" })}>
-          sign out
-        </Button>
-      </div>
-      <MyProjects userId={user.id} />
+      <Header>
+        <SignOutButton variants={{ size: "sm", variant: "outline" }}>
+          Sign out
+        </SignOutButton>
+      </Header>
+      <main className={style.container}>
+        <p>you are signed in as {user.name || user.username}</p>
+        <div className="flex gap-2">
+          <Button size="sm" asChild>
+            <Link href="/">go to home</Link>
+          </Button>
+        </div>
+        <MyProjects userId={user.id} />
+      </main>
     </Fragment>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useSelectedPad } from "@/contexts/selected-pad";
-import { Button } from "../ui/button";
+import { Button } from "../ui/button/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog";

@@ -6,7 +6,7 @@ import { deleteProject, getPadsFromProject, getProject } from "@/lib/project";
 import { isEmpty } from "lodash";
 import Pad from "@/components/pad";
 import SelectedPad from "@/components/selected-pad/selected-pad";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/button";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
