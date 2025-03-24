@@ -60,5 +60,8 @@
     }
   }
 
-  &.destructive {}
+  &.destructive {
+    color: hsl(var(--destructive-foreground));
+    background-color: hsl(var(--destructive));
+  }
 }

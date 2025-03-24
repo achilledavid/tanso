@@ -25,19 +25,19 @@ model Project {
   name      String
   createdAt DateTime @default(now())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   Pads      Pad[]
 
   @@map("projects")
 }
 
 model Pad {
-  id         Int     @id @default(autoincrement())
-  url        String?
-  fileName   String?
-  keyBinding String?
-  projectUuid  String
-  project    Project @relation(fields: [projectUuid], references: [uuid], onDelete: Cascade)
+  id          Int     @id @default(autoincrement())
+  url         String?
+  fileName    String?
+  keyBinding  String?
+  projectUuid String
+  project     Project @relation(fields: [projectUuid], references: [uuid], onDelete: Cascade)
 
   @@map("pads")
 }

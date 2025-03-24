@@ -50,3 +50,7 @@ export async function getUser(id: number): Promise<User> {
   const response = await axiosClient.get(`/api/users/${id}`)
   return response.data;
 }
+
+export async function deleteUser(id: number): Promise<void> {
+  await axiosClient.delete(`/api/users/${id}`);
+}
