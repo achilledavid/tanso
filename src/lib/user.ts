@@ -45,3 +45,8 @@ export async function getProjectsByUserId(id: number): Promise<Project[]> {
   const response = await axiosClient.get(`/api/users/${id}/projects`);
   return response.data;
 }
+
+export async function getUser(id: number): Promise<User> {
+  const response = await axiosClient.get(`/api/users/${id}`)
+  return response.data;
+}

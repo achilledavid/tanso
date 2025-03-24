@@ -1,28 +1,36 @@
 import "./globals.css";
 import Providers from "./providers";
 import { PropsWithChildren } from "react";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import localFont from 'next/font/local'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const deezer = localFont({
+  src: [
+    {
+      path: './fonts/deezer-bold.woff2',
+      weight: '700',
+    },
+    {
+      path: './fonts/deezer-extrabold.woff2',
+      weight: '800',
+    },
+  ],
+  variable: "--font-deezer",
+})
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${inter.className} ${deezer.variable} antialiased`}>
         <Providers>
           <ReactQueryDevtools initialIsOpen={false} />
-          <div className="p-4 flex flex-col gap-2">
-            {children}
-          </div>
+          {children}
         </Providers>
       </body>
     </html>

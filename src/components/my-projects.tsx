@@ -3,7 +3,7 @@
 import { getProjectsByUserId } from "@/lib/user";
 import { useQuery } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/button";
 import Link from "next/link";
 import NewProject from "./new-project";
 import { Fragment } from "react";
