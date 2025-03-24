@@ -43,7 +43,19 @@ export default function Library({ onSelect }: { onSelect?: (file: ListBlobResult
 
   return (
     <Fragment>
-      <h2>my library</h2>
+      <div className="flex justify-between items-center">
+        <h2>my library</h2>
+        {data && (
+          <Button
+            onClick={handleDeleteSelected}
+            variant="destructive"
+            size="sm"
+            disabled={Object.keys(rowSelection).length === 0 || deleteFilesMutation.isPending}
+          >
+            {deleteFilesMutation.isPending ? 'deleting...' : 'delete selection'}
+          </Button>
+        )}
+      </div>
       <div className="space-y-4">
         {isLoading ? (
           <p>loading...</p>
@@ -52,13 +64,6 @@ export default function Library({ onSelect }: { onSelect?: (file: ListBlobResult
             <p className="text-gray-500">no files found in your library</p>
           ) : (
             <>
-              <Button
-                onClick={handleDeleteSelected}
-                variant="destructive"
-                disabled={Object.keys(rowSelection).length === 0 || deleteFilesMutation.isPending}
-              >
-                {deleteFilesMutation.isPending ? 'Suppression...' : 'Supprimer les fichiers sélectionnés'}
-              </Button>
               <DataTable
                 data={data.files}
                 columns={columns}
