@@ -60,7 +60,7 @@ export default function Library({ onSelect }: { onSelect?: (file: ListBlobResult
         <p>loading...</p>
       ) : (
         !data?.files || isEmpty(data.files) ? (
-          <p className="text-gray-500">no files found in your library</p>
+          <p>no files found in your library</p>
         ) : (
           <>
             <DataTable
