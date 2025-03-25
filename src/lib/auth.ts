@@ -16,10 +16,11 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async signIn({ user }) {
       if (user.email) {
-        const profile = {
+        const profile: UpsertUserPayload = {
           email: user.email,
-          name: user.name,
-          image: user.image,
+          firstname: user.name?.split(" ")[0],
+          lastname: user.name?.split(" ")[1],
+          avatarUrl: user.image || undefined,
         };
 
         await upsertUser(profile);
@@ -29,23 +30,9 @@ export const authOptions: AuthOptions = {
     async session({ session }) {
       if (session.user?.email) {
         try {
-          const dbUser = await prisma.user.findUnique({
+          session.user = await prisma.user.findUnique({
             where: { email: session.user.email },
-            select: {
-              id: true,
-              name: true,
-              username: true,
-              email: true,
-              avatarUrl: true
-            }
-          });
-
-          if (dbUser) {
-            session.user.id = dbUser.id;
-            session.user.username = dbUser.username;
-            session.user.name = dbUser.name || undefined;
-            session.user.avatarUrl = dbUser.avatarUrl || undefined;
-          }
+          }) as User;
         } catch (error) {
           console.error("Session callback error:", error);
         }

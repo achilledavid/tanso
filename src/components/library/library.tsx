@@ -56,26 +56,24 @@ export default function Library({ onSelect }: { onSelect?: (file: ListBlobResult
           </Button>
         )}
       </div>
-      <div className="space-y-4">
-        {isLoading ? (
-          <p>loading...</p>
+      {isLoading ? (
+        <p>loading...</p>
+      ) : (
+        !data?.files || isEmpty(data.files) ? (
+          <p>no files found in your library</p>
         ) : (
-          !data?.files || isEmpty(data.files) ? (
-            <p className="text-gray-500">no files found in your library</p>
-          ) : (
-            <>
-              <DataTable
-                data={data.files}
-                columns={columns}
-                onSelect={onSelect}
-                rowSelection={rowSelection}
-                setRowSelection={setRowSelection}
-              />
-            </>
-          )
-        )}
-        <FileImport />
-      </div>
+          <>
+            <DataTable
+              data={data.files}
+              columns={columns}
+              onSelect={onSelect}
+              rowSelection={rowSelection}
+              setRowSelection={setRowSelection}
+            />
+          </>
+        )
+      )}
+      <FileImport />
     </Fragment>
   );
 }

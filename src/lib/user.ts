@@ -1,16 +1,17 @@
 import axiosClient from "./axios";
 import prisma from "@/lib/prisma";
 
-export async function upsertUser(profile: { email: string; name?: string | null; image?: string | null; }): Promise<User | null> {
-  if (!profile.email) return null;
+export async function upsertUser(user: UpsertUserPayload): Promise<User | null> {
+  if (!user.email) return null;
   try {
     const existingUser = await prisma.user.findUnique({
-      where: { email: profile.email },
+      where: { email: user.email },
     });
 
     if (existingUser) return existingUser as User;
+
     else {
-      let username = profile.name?.replace(/\s+/g, "").toLowerCase() || profile.email.split("@")[0];
+      let username = user.email.split("@")[0];
 
       let usernameExists = await prisma.user.findUnique({
         where: { username },
@@ -28,10 +29,8 @@ export async function upsertUser(profile: { email: string; name?: string | null;
 
       return await prisma.user.create({
         data: {
-          email: profile.email,
-          name: profile.name,
+          ...user,
           username,
-          avatarUrl: profile.image,
         },
       }) as User;
     }
@@ -48,5 +47,14 @@ export async function getProjectsByUserId(id: number): Promise<Project[]> {
 
 export async function getUser(id: number): Promise<User> {
   const response = await axiosClient.get(`/api/users/${id}`)
+  return response.data;
+}
+
+export async function deleteUser(id: number): Promise<void> {
+  await axiosClient.delete(`/api/users/${id}`);
+}
+
+export async function updateUser(id: number, data: UpdateUserPayload): Promise<User> {
+  const response = await axiosClient.put(`/api/users/${id}`, data);
   return response.data;
 }

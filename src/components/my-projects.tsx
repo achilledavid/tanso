@@ -20,27 +20,23 @@ export function MyProjects({ userId }: { userId: number }) {
       {isLoading ? (
         <p>loading...</p>
       ) : (
-        <Fragment>
-          {projects && !isEmpty(projects) ? (
-            <ul className="flex flex-col gap-2">
-              {projects.map((project) => (
-                <li key={`project-${project.id}`}>
-                  <Button variant="link" size="sm" asChild>
-                    <Link href={`/projects/${project.uuid}`}>
-                      {project.name}
-                    </Link>
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>no projects found</p>
-          )}
-          <div className="mt-1 mb-2">
-            <NewProject userId={userId} />
-          </div>
-        </Fragment>
+        projects && !isEmpty(projects) ? (
+          <ul className="flex flex-col gap-2">
+            {projects.map((project) => (
+              <li key={`project-${project.id}`}>
+                <Button variant="link" size="sm" asChild>
+                  <Link href={`/projects/${project.uuid}`}>
+                    {project.name}
+                  </Link>
+                </Button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>no projects found</p>
+        )
       )}
+      <NewProject userId={userId} />
     </Fragment>
   );
 }
