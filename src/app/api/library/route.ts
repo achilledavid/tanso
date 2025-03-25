@@ -1,35 +1,8 @@
 import { authOptions } from '@/lib/auth';
-import { del, list, put } from '@vercel/blob';
+import { del, put } from '@vercel/blob';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-
-export async function GET(): Promise<NextResponse> {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
-  }
-
-  const username = session.user.username;
-
-  const files = await list({
-    prefix: `${username}/`
-  });
-
-  files.blobs = files.blobs.sort((a, b) => {
-    return new Date(a.uploadedAt).getTime() - new Date(b.uploadedAt).getTime();
-  });
-
-  return NextResponse.json({
-    files: files.blobs.map((file) => {
-      return {
-        ...file,
-        pathname: file.pathname.replace(`${username}/`, '')
-      };
-    }),
-  });
-}
 
 export async function POST(request: Request): Promise<NextResponse> {
   const session = await getServerSession(authOptions);

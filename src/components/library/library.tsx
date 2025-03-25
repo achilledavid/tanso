@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ListBlobResultBlob } from "@vercel/blob";
 import FileImport from "./file-import";
-import { getLibrary, deleteLibraryFiles } from "@/lib/library";
+import { getLibraryByFolderName, deleteLibraryFiles } from "@/lib/library";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { Fragment, useState } from "react";
@@ -11,13 +11,13 @@ import { isEmpty } from "lodash";
 import { RowSelectionState } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button/button";
 
-export default function Library({ onSelect }: { onSelect?: (file: ListBlobResultBlob) => void }) {
+export default function Library({ folder, onSelect }: { folder: string, onSelect?: (file: ListBlobResultBlob) => void }) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
     queryKey: ['library'],
-    queryFn: () => getLibrary(),
+    queryFn: () => getLibraryByFolderName(folder),
   });
 
   const deleteFilesMutation = useMutation({
@@ -43,19 +43,17 @@ export default function Library({ onSelect }: { onSelect?: (file: ListBlobResult
 
   return (
     <Fragment>
-      <div className="flex justify-between items-center">
-        <h2>my library</h2>
-        {data && (
-          <Button
-            onClick={handleDeleteSelected}
-            variant="destructive"
-            size="sm"
-            disabled={Object.keys(rowSelection).length === 0 || deleteFilesMutation.isPending}
-          >
-            {deleteFilesMutation.isPending ? 'deleting...' : 'delete selection'}
-          </Button>
-        )}
-      </div>
+      {data && (
+        <Button
+          onClick={handleDeleteSelected}
+          variant="destructive"
+          size="sm"
+          className="w-fit"
+          disabled={Object.keys(rowSelection).length === 0 || deleteFilesMutation.isPending}
+        >
+          {deleteFilesMutation.isPending ? 'deleting...' : 'delete selection'}
+        </Button>
+      )}
       {isLoading ? (
         <p>loading...</p>
       ) : (

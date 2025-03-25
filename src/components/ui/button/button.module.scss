@@ -46,14 +46,18 @@
   }
 
   &.secondary {
-    color: var(--secondary-foreground);
-    background-color: var(--secondary-background);
+    color: hsl(var(--secondary-foreground));
+    background-color: hsl(var(--secondary));
   }
 
   &.outline {
-    color: var(--secondary-foreground);
-    background-color: var(--secondary-background);
-    border: 1px solid #555257;
+    color: currentColor;
+    background-color: transparent;
+    border: 1px solid currentColor;
+
+    svg {
+      stroke: currentColor;
+    }
   }
 
   &.link {

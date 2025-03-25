@@ -5,9 +5,7 @@ export async function getPadsFromProject(uuid: string): Promise<Array<Pad>> {
   return response.data;
 }
 
-export async function createProject(
-  project: Omit<Project, "id" | "userId" | "uuid">
-): Promise<Project> {
+export async function createProject(project: Omit<Project, "id" | "userId" | "uuid">): Promise<Project> {
   const response = await axiosClient.post("/api/projects", project);
   return response.data;
 }

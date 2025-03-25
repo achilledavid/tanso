@@ -23,8 +23,8 @@ export async function deleteFileFromLibrary(url: string) {
   return response.data;
 }
 
-export async function getLibrary(): Promise<{ files: ListBlobResultBlob[] }> {
-  const response = await axiosClient.get(`/api/library`);
+export async function getLibraryByFolderName(name: string): Promise<{ files: ListBlobResultBlob[] }> {
+  const response = await axiosClient.get(`/api/library/${name}`);
   return response.data;
 }
 
