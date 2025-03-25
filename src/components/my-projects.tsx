@@ -16,7 +16,6 @@ export function MyProjects({ userId }: { userId: number }) {
 
   return (
     <Fragment>
-      <p>my projects</p>
       {isLoading ? (
         <p>loading...</p>
       ) : (
