@@ -82,7 +82,7 @@ export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
     <div className="flex flex-col gap-2">
       <Label>keyboard shortcut</Label>
       <div className="flex gap-2">
-        {selectedPad.keyBinding && <span className={buttonVariants({ variant: "outline", size: "icon", className: "!w-fit !px-2 min-w-8 !h-8" })}>{selectedPad.keyBinding}</span>}
+        {selectedPad.keyBinding && <span className={buttonVariants({ variant: "secondary", size: "icon", className: "!w-fit !px-2 min-w-8 !h-8" })}>{selectedPad.keyBinding}</span>}
         <div className="flex gap-2 ml-auto">
           {selectedPad.keyBinding && <Button size="sm" variant="destructive" onClick={handleKeyBindingRemove}>remove</Button>}
           {!listeningForKey ? (

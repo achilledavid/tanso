@@ -38,6 +38,7 @@ model Pad {
   fileName    String?
   keyBinding  String?
   projectUuid String
+  isLooped    Boolean @default(false)
   project     Project @relation(fields: [projectUuid], references: [uuid], onDelete: Cascade)
 
   @@map("pads")
