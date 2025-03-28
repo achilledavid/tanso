@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button/button";
 import { createProject } from "@/lib/project";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,15 +9,15 @@ import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "./ui/input";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   projectName: z.string().min(2, "name must be at least 2 characters longs").max(50, "name must be at most 50 characters long"),
 })
 
 export default function NewProject({ userId }: { userId: number }) {
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,10 +27,10 @@ export default function NewProject({ userId }: { userId: number }) {
 
   const createMutation = useMutation({
     mutationFn: createProject,
-    onSuccess: () => {
+    onSuccess: (project) => {
       queryClient.invalidateQueries({ queryKey: ["my-projects", userId] });
       form.reset();
-      setOpen(false);
+      router.push(`/projects/${project.uuid}`);
     },
   })
 
@@ -41,7 +41,7 @@ export default function NewProject({ userId }: { userId: number }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog>
       <DialogTrigger asChild>
         <Button size="sm" className="w-fit">create a new project</Button>
       </DialogTrigger>
@@ -56,7 +56,7 @@ export default function NewProject({ userId }: { userId: number }) {
                 <FormItem>
                   <FormLabel>project name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} autoComplete="off" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,0 +1,35 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/ruby-rails-postgres
+{
+  "dockerComposeFile": "docker-compose.yml",
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "installZsh": true,
+      "upgradePackages": true,
+      "username": "vscode"
+    },
+    "ghcr.io/devcontainers/features/git:1": {
+      "ppa": "false",
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "v22.11.0"
+    },
+    "ghcr.io/eitsupi/devcontainer-features/go-task:1": {}
+  },
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // This can be used to network with other containers or the host.
+  "forwardPorts": [],
+  "name": "Tanso",
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "yarn install",
+  // Configure tool-specific properties.
+  // "customizations": {},
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+  "service": "app",
+  "workspaceFolder": "/workspaces/tanso"
+}

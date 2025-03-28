@@ -1,31 +1,77 @@
 "use client"
 
-import File from "./file";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ListBlobResultBlob } from "@vercel/blob";
 import FileImport from "./file-import";
-import { getLibrary } from "@/lib/library";
+import { getLibraryByFolderName, deleteLibraryFiles } from "@/lib/library";
+import { DataTable } from "./data-table";
+import { columns } from "./columns";
+import { Fragment, useState } from "react";
+import { isEmpty } from "lodash";
+import { RowSelectionState } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button/button";
 
-export default function Library({ onSelect }: { onSelect?: (file: ListBlobResultBlob) => void }) {
+export default function Library({ folder, onSelect }: { folder: string, onSelect?: (file: ListBlobResultBlob) => void }) {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const queryClient = useQueryClient();
+
   const { data, isLoading } = useQuery({
     queryKey: ['library'],
-    queryFn: () => getLibrary(),
+    queryFn: () => getLibraryByFolderName(folder),
   });
 
-  if (isLoading || !data) {
-    return <p>loading...</p>;
-  }
+  const deleteFilesMutation = useMutation({
+    mutationFn: deleteLibraryFiles,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['library'] });
+      setRowSelection({});
+    },
+    onError: (error) => {
+      console.error('Erreur lors de la suppression des fichiers:', error);
+    }
+  });
+
+  const handleDeleteSelected = () => {
+    const selectedFiles = Object.keys(rowSelection).map(
+      index => data?.files[parseInt(index)]
+    ).filter((file): file is ListBlobResultBlob => file !== undefined);
+
+    if (selectedFiles.length > 0) {
+      deleteFilesMutation.mutate(selectedFiles);
+    }
+  };
 
   return (
-    <div>
-      <ul className="flex flex-col gap-2 mb-2">
-        {data.files.map((file) => (
-          <li key={JSON.stringify(file)}>
-            <File file={file} onSelect={onSelect} />
-          </li>
-        ))}
-      </ul>
+    <Fragment>
+      {data && (
+        <Button
+          onClick={handleDeleteSelected}
+          variant="destructive"
+          size="sm"
+          className="w-fit"
+          disabled={Object.keys(rowSelection).length === 0 || deleteFilesMutation.isPending}
+        >
+          {deleteFilesMutation.isPending ? 'deleting...' : 'delete selection'}
+        </Button>
+      )}
+      {isLoading ? (
+        <p>loading...</p>
+      ) : (
+        !data?.files || isEmpty(data.files) ? (
+          <p>no files found in your library</p>
+        ) : (
+          <>
+            <DataTable
+              data={data.files}
+              columns={columns}
+              onSelect={onSelect}
+              rowSelection={rowSelection}
+              setRowSelection={setRowSelection}
+            />
+          </>
+        )
+      )}
       <FileImport />
-    </div>
+    </Fragment>
   );
 }

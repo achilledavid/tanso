@@ -32,35 +32,3 @@ export async function GET(
     );
   }
 }
-
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ uuid: string }> }
-) {
-  try {
-    const { uuid } = await params;
-    const { url, id, path } = (await request.json()) as {
-      url: string;
-      id: number;
-      path: string;
-    };
-
-    const pad = await prisma.pad.update({
-      where: {
-        id: id,
-        projectUuid: uuid,
-      },
-      data: {
-        url,
-        fileName: path.split("/").pop(),
-      },
-    });
-
-    return NextResponse.json(pad);
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to update pad : " + error },
-      { status: 500 }
-    );
-  }
-}
