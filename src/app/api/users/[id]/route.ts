@@ -1,98 +1,100 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+import { withAuth } from "@/lib/middleware";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await params;
-    const user = await prisma.user.findUnique({
-      where: { id: parseInt(id) }
-    });
+export function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  return withAuth(request, async () => {
+    try {
+      const { id } = await params;
+      const requestedUser = await prisma.user.findUnique({
+        where: { id: parseInt(id) },
+      });
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      if (!requestedUser) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+
+      return NextResponse.json(requestedUser);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to fetch user : " + error },
+        { status: 500 }
+      );
     }
-
-    return NextResponse.json(user);
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to fetch user : " + error },
-      { status: 500 }
-    );
-  }
+  });
 }
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await params;
-    const data = (await request.json()) as UpdateUserPayload;
+export function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  return withAuth(request, async (req, authUser) => {
+    try {
+      const { id } = await params;
+      const data = (await req.json()) as UpdateUserPayload;
 
-    const session = await getServerSession(authOptions);
+      const userToUpdate = await prisma.user.findUnique({
+        where: { id: parseInt(id) },
+      });
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      if (!userToUpdate) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+
+      // Check if the authenticated user is the same as the one being updated
+      if (authUser.id !== parseInt(id)) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      await prisma.user.update({
+        where: { id: parseInt(id) },
+        data,
+      });
+
+      return NextResponse.json({ message: "User updated successfully" });
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update user: " + error },
+        { status: 500 }
+      );
     }
-
-    const user = await prisma.user.findUnique({
-      where: { id: parseInt(id) }
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    if (session.user.email !== user.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    await prisma.user.update({
-      where: { id: parseInt(id) },
-      data
-    });
-
-    return NextResponse.json({ message: "User updated successfully" });
-
-  }
-  catch (error) {
-    return NextResponse.json(
-      { error: "Failed to update user: " + error },
-      { status: 500 }
-    );
-  }
+  });
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await params;
-    const session = await getServerSession(authOptions);
+export function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  return withAuth(request, async (req, authUser) => {
+    try {
+      const { id } = await params;
 
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      const userToDelete = await prisma.user.findUnique({
+        where: { id: parseInt(id) },
+      });
+
+      if (!userToDelete) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+
+      // Check if the authenticated user is the same as the one being deleted
+      if (authUser.id !== parseInt(id)) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      await prisma.user.delete({
+        where: { id: parseInt(id) },
+      });
+
+      return NextResponse.json({ message: "User deleted successfully" });
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to delete user: " + error },
+        { status: 500 }
+      );
     }
-
-    const user = await prisma.user.findUnique({
-      where: { id: parseInt(id) }
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    if (session.user.email !== user.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    await prisma.user.delete({
-      where: { id: parseInt(id) }
-    });
-
-    return NextResponse.json({ message: "User deleted successfully" });
-
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to delete user: " + error },
-      { status: 500 }
-    );
-  }
+  });
 }
