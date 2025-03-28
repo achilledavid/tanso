@@ -5,13 +5,9 @@ import Header from "@/components/header/header";
 import styles from "./login.module.scss";
 import { Button } from "@/components/ui/button/button";
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { AuthButton } from "@/components/auth-button";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const handleGoogleSignIn = async () => {
     await signIn("google", { callbackUrl: "/account" });
   };
@@ -39,13 +35,13 @@ export default function LoginPage() {
               variant="outline"
               onClick={handleGoogleSignIn}
             >
-              {/* <Image
-                src="/google-logo.svg"
+              <Image
+                src="/google.png"
                 alt="Google logo"
                 width={20}
                 height={20}
                 className={styles.providerIcon}
-              /> */}
+              />
               Continue with Google
             </Button>
 
