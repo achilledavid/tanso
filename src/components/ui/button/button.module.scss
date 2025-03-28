@@ -5,6 +5,13 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  transition: all 0.2s ease-in-out;
+
+  @media(hover: hover) and (pointer: fine) {
+    &:hover:not([disabled]) {
+      background-color: var(--primary-accent);
+    }
+  }
 
   &:focus-visible {
     outline: 2px solid var(--foreground);
@@ -45,18 +52,42 @@
     border-radius: 0.5rem;
   }
 
+  &.pad {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 0.5rem;
+
+    & svg {
+      width: 3rem;
+      height: 3rem;
+      stroke-width: 1.75;
+    }
+  }
+
   &.secondary {
     color: hsl(var(--secondary-foreground));
     background-color: hsl(var(--secondary));
+
+    @media(hover: hover) and (pointer: fine) {
+      &:hover:not([disabled]) {
+        background-color: #474646;
+      }
+    }
   }
 
   &.outline {
     color: currentColor;
     background-color: transparent;
-    border: 1px solid currentColor;
+    border: 1px solid #7d7d7d;
 
     svg {
       stroke: currentColor;
+    }
+
+    @media(hover: hover) and (pointer: fine) {
+      &:hover:not([disabled]) {
+        background-color: #eaeaea;
+      }
     }
   }
 
@@ -72,5 +103,20 @@
   &.destructive {
     color: hsl(var(--destructive-foreground));
     background-color: hsl(var(--destructive));
+  }
+
+  &.ghost {
+    color: #202020;
+    background-color: transparent;
+
+    @media(hover: hover) and (pointer: fine) {
+      &:hover:not([disabled]) {
+        background-color: #e8e8e8;
+      }
+    }
+
+    & svg {
+      stroke: #202020;
+    }
   }
 }
