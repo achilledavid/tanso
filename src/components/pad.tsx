@@ -20,7 +20,10 @@ export default function Pad({ pad }: { pad: Pad }) {
             size="icon"
             variant={pad.url ? "default" : "outline"}
             onClick={handleClick}
-            className={cn("relative", isSelected(pad.id) && "ring-2 ring-ring ring-offset-2")}
+            className={cn(
+                "relative w-full aspect-square max-w-[120px] max-h-[120px] flex items-center justify-center text-xl", 
+                isSelected(pad.id) && "ring-2 ring-ring ring-offset-2"
+            )}
         >
             <Volume2 />
             {pad.keyBinding && (

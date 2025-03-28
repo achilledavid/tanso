@@ -38,6 +38,7 @@ export async function GET(
     );
   }
 }
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ uuid: string }> }
@@ -62,6 +63,40 @@ export async function DELETE(
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch project : " + error },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ uuid: string }> }
+) {
+  try {
+    const { uuid } = await params;
+    const session = await getServerSession(authOptions);
+    const user = session?.user;
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+
+    const updatedProject = await prisma.project.update({
+      where: {
+        uuid: uuid,
+        userId: user.id,
+      },
+      data: {
+        name: body.name,
+      },
+    });
+
+    return NextResponse.json(updatedProject);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to update project: " + error },
       { status: 500 }
     );
   }

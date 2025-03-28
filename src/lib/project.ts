@@ -19,3 +19,8 @@ export async function deleteProject(uuid: string): Promise<void> {
   const response = await axiosClient.delete(`/api/projects/${uuid}`);
   return response.data;
 }
+
+export async function updateProject(uuid: string, data: Partial<Project>): Promise<Project> {
+  const response = await axiosClient.put(`/api/projects/${uuid}`, data);
+  return response.data;
+}
