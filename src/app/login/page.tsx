@@ -15,9 +15,7 @@ export default function LoginPage() {
   return (
     <>
       <Header>
-        <Button variant="ghost" size="sm" asChild>
-          <AuthButton variants={{ size: "sm" }} />
-        </Button>
+        <AuthButton variants={{ size: "sm" }} />
       </Header>
 
       <main className={styles.container}>
