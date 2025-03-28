@@ -6,6 +6,7 @@ import styles from "./login.module.scss";
 import { Button } from "@/components/ui/button/button";
 import Image from "next/image";
 import { AuthButton } from "@/components/auth-button";
+import { Fragment } from "react";
 
 export default function LoginPage() {
   const handleGoogleSignIn = async () => {
@@ -13,7 +14,7 @@ export default function LoginPage() {
   };
 
   return (
-    <>
+    <Fragment>
       <Header>
         <AuthButton variants={{ size: "sm" }} />
       </Header>
@@ -34,7 +35,7 @@ export default function LoginPage() {
               onClick={handleGoogleSignIn}
             >
               <Image
-                src="/google.png"
+                src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
                 alt="Google logo"
                 width={20}
                 height={20}
@@ -53,6 +54,6 @@ export default function LoginPage() {
           </div>
         </div>
       </main>
-    </>
+    </Fragment>
   );
 }
