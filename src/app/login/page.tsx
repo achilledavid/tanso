@@ -44,17 +44,6 @@ export default function LoginPage() {
               />
               Continue with Google
             </Button>
-
-            <div className={styles.divider}>
-              <span>or</span>
-            </div>
-
-            <div className={styles.createAccountSection}>
-              <p>Don&apos;t have an account?</p>
-              <Button variant="ghost" onClick={handleGoogleSignIn}>
-                Sign up now
-              </Button>
-            </div>
           </div>
 
           <div className={styles.footer}>
