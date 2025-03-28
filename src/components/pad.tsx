@@ -17,14 +17,14 @@ export default function Pad({ pad }: { pad: Pad }) {
 
     return (
         <Button
-            size="icon"
+            size="pad"
             variant={pad.url ? "default" : "outline"}
             onClick={handleClick}
             className={cn("relative", isSelected(pad.id) && "ring-2 ring-ring ring-offset-2")}
         >
-            <Volume2 />
+            <Volume2 size={64} />
             {pad.keyBinding && (
-                <span className="absolute top-0 right-0 bg-secondary text-secondary-foreground text-xs rounded px-1 flex items-center justify-center transform translate-x-1/4 -translate-y-1/4">
+                <span className="absolute top-1 right-1 bg-secondary text-secondary-foreground text-xs rounded py-1 px-2 flex items-center justify-center">
                     {pad.keyBinding.toUpperCase()}
                 </span>
             )}

@@ -133,6 +133,7 @@ export function DataTable<TData extends ListBlobResultBlob>({
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           size="sm"
+          variant={'secondary'}
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
@@ -140,6 +141,7 @@ export function DataTable<TData extends ListBlobResultBlob>({
         </Button>
         <Button
           size="sm"
+          variant={'secondary'}
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >

@@ -52,7 +52,7 @@ export default function Project({ params }: { params: Promise<{ uuid: string }> 
         ) : (
           <>
             <div className="flex flex-col gap-2 min-w-[320px]">
-              <p>{project?.name}</p>
+              <p className="text-xl font-bold">{project?.name}</p>
               <Button
                 size="sm"
                 className="w-fit mb-2"

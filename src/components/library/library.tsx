@@ -54,6 +54,7 @@ export default function Library({ folder, onSelect }: { folder: string, onSelect
           {deleteFilesMutation.isPending ? 'deleting...' : 'delete selection'}
         </Button>
       )}
+      <FileImport />
       {isLoading ? (
         <p>loading...</p>
       ) : (
@@ -71,7 +72,6 @@ export default function Library({ folder, onSelect }: { folder: string, onSelect
           </>
         )
       )}
-      <FileImport />
     </Fragment>
   );
 }

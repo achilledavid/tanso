@@ -39,6 +39,10 @@ body {
 
     --primary: #a238ff;
     --primary-foreground: #fff;
+
+    --primary-weak : #C17AFF;
+    --primary-accent : #9333E8;
+    --primary-light: #D09AFF;
   }
 }
 
