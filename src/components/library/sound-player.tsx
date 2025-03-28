@@ -18,7 +18,7 @@ export function SoundPlayer({ file }: { file: ListBlobResultBlob }) {
   };
 
   return (
-    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleClick}>
+    <Button variant="secondary" size="icon" className="h-8 w-8" onClick={handleClick}>
       <Volume2 stroke="black" />
     </Button>
   )
