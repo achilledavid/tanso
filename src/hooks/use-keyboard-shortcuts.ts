@@ -1,19 +1,18 @@
 import { useEffect } from 'react';
-import { Howl } from 'howler';
+import { useSound } from '@/contexts/sound-context';
 
 export function useKeyboardShortcuts(pads: Pad[] | undefined) {
+  const { playPad } = useSound();
+
   useEffect(() => {
     if (!pads || pads.length === 0) return;
 
-    const soundMap = new Map<string, Howl>();
     const keyPressTracker = new Map<string, boolean>();
+    const padMap = new Map<string, Pad>();
 
     pads.forEach(pad => {
-      if (pad.keyBinding && pad.url) {
-        soundMap.set(pad.keyBinding.toUpperCase(), new Howl({
-          src: pad.url,
-          volume: 1,
-        }));
+      if (pad.keyBinding) {
+        padMap.set(pad.keyBinding.toUpperCase(), pad);
       }
     });
 
@@ -27,12 +26,11 @@ export function useKeyboardShortcuts(pads: Pad[] | undefined) {
       }
 
       const key = e.key.toUpperCase();
-      const sound = soundMap.get(key);
+      const pad = padMap.get(key);
 
-      if (sound && !keyPressTracker.get(key)) {
+      if (pad && !keyPressTracker.get(key)) {
         keyPressTracker.set(key, true);
-        sound.stop();
-        sound.play();
+        playPad(pad);
       }
     };
 
@@ -48,5 +46,5 @@ export function useKeyboardShortcuts(pads: Pad[] | undefined) {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [pads]);
-} 
+  }, [pads, playPad]);
+}

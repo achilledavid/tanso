@@ -2,33 +2,18 @@
 
 import { Volume2 } from "lucide-react";
 import { Button } from "./ui/button/button";
-import { Howl } from 'howler';
 import { useSelectedPad } from "@/contexts/selected-pad";
-import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useSound } from "@/contexts/sound-context";
 
 export default function Pad({ pad }: { pad: Pad }) {
     const { selectPad, isSelected } = useSelectedPad();
-    const [sound, setSound] = useState<Howl | null>(null);
-
-    useEffect(() => {
-        if (!pad.url) setSound(null);
-        else setSound(new Howl({
-            src: pad.url,
-            volume: 1,
-        }));
-    }, [pad.url]);
+    const { playPad } = useSound();
 
     const handleClick = () => {
         if (!isSelected(pad.id)) selectPad(pad);
-        handleSoundPlay();
+        playPad(pad);
     }
-
-    const handleSoundPlay = () => {
-        if (!sound) return;
-        sound.stop();
-        sound.play();
-    };
 
     return (
         <Button

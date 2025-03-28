@@ -9,7 +9,7 @@ import Library from "../library/library";
 import { ListBlobResultBlob } from "@vercel/blob";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { deletePadFile, updatePad } from "@/lib/pad";
+import { deletePadFile, updatePadFile } from "@/lib/pad";
 import { useSession } from "next-auth/react";
 
 export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
@@ -20,7 +20,7 @@ export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
 
   const updatePadMutation = useMutation({
     mutationFn: async ({ pad, url, path }: { pad: Pad, url: string, path: string }) => {
-      await updatePad(pad, url, projectUuid, path);
+      await updatePadFile(pad, url, projectUuid, path);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['project-pads', projectUuid] }).then(() => {
