@@ -47,6 +47,24 @@ export async function updatePadIsLooped(
   return response.data;
 }
 
+export async function updatePadSprite(
+  pad: Pad,
+  startAt: number,
+  duration: number,
+  projectUuid: string
+): Promise<Pad> {
+  const response = await axiosClient.put(
+    `/api/projects/${projectUuid}/pads/sprite`,
+    {
+      id: pad.id,
+      startAt,
+      duration
+    }
+  );
+
+  return response.data;
+}
+
 export async function deletePadFile(
   pad: Pad,
   projectUuid: string
@@ -61,11 +79,11 @@ export async function deletePadFile(
   return response.data;
 }
 
-export function playSound(sound: Howl) {
+export function playSound(sound: Howl, asSprite: boolean) {
   if (sound.playing() && sound.loop()) {
     sound.stop();
   } else {
     sound.stop();
-    sound.play();
+    sound.play(asSprite ? "sprite" : undefined);
   }
 }

@@ -4,13 +4,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { updatePadIsLooped } from "@/lib/pad";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { isUndefined } from "lodash";
 import { useSound } from "@/contexts/sound-context";
 
-export default function Loop({ projectUuid }: { projectUuid: string }) {
+export default function Loop({ pad, projectUuid }: { pad: Pad, projectUuid: string }) {
   const queryClient = useQueryClient();
-  const { selectedPad, selectPad } = useSelectedPad();
+  const { selectPad } = useSelectedPad();
   const [isChecked, setIsChecked] = useState<boolean>();
   const { updatePadLoop } = useSound();
 
@@ -21,7 +21,7 @@ export default function Loop({ projectUuid }: { projectUuid: string }) {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['project-pads', projectUuid] }).then(() => {
         const updatedPad = {
-          ...selectedPad!,
+          ...pad!,
           ...variables,
         };
         selectPad(updatedPad);
@@ -29,23 +29,27 @@ export default function Loop({ projectUuid }: { projectUuid: string }) {
       });
     },
     onError: () => {
-      setIsChecked(selectedPad?.isLooped || false);
+      setIsChecked(pad?.isLooped || false);
     }
   });
 
+  useEffect(() => {
+    setIsChecked(pad?.isLooped);
+  }, [pad]);
+
   function handleCheckChange(checked: boolean) {
-    if (!selectedPad) return;
+    if (!pad) return;
     setIsChecked(checked);
-    updatePadMutation.mutate({ pad: selectedPad, isLooped: checked });
+    updatePadMutation.mutate({ pad: pad, isLooped: checked });
   }
 
-  if (!selectedPad) return;
+  if (!pad) return;
 
   return (
     <div className="flex items-center space-x-2 my-2">
       <Switch
         id="is-looped"
-        checked={isUndefined(isChecked) ? selectedPad.isLooped : isChecked}
+        checked={isUndefined(isChecked) ? pad.isLooped : isChecked}
         onCheckedChange={handleCheckChange}
         disabled={updatePadMutation.isPending}
       />

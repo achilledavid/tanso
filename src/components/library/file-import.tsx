@@ -6,12 +6,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { Label } from "../ui/label";
 
-export default function FileImport() {
+export default function FileImport({ folder }: { folder: string }) {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadMutation = useMutation({
-    mutationFn: uploadFileToLibrary,
+    mutationFn: (files: FileList) => uploadFileToLibrary(files, folder),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['library'] });
       if (fileInputRef.current) {

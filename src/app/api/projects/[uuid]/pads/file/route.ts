@@ -23,7 +23,10 @@ export async function DELETE(
       },
       data: {
         url: null,
-        fileName: null
+        fileName: null,
+        isLooped: false,
+        startAt: 0,
+        duration: 0
       }
     });
 

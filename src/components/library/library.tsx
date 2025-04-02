@@ -21,7 +21,7 @@ export default function Library({ folder, onSelect }: { folder: string, onSelect
   });
 
   const deleteFilesMutation = useMutation({
-    mutationFn: deleteLibraryFiles,
+    mutationFn: (files: ListBlobResultBlob[]) => deleteLibraryFiles(files, folder),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['library'] });
       setRowSelection({});
@@ -71,7 +71,7 @@ export default function Library({ folder, onSelect }: { folder: string, onSelect
           </>
         )
       )}
-      <FileImport />
+      <FileImport folder={folder} />
     </Fragment>
   );
 }

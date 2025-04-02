@@ -8,9 +8,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { updatePadKeyBinding } from "@/lib/pad";
 import { getPadsFromProject } from "@/lib/project";
 
-export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
+export default function KeyBinding({ pad, projectUuid }: { pad: Pad, projectUuid: string }) {
   const queryClient = useQueryClient();
-  const { selectedPad, selectPad } = useSelectedPad();
+  const { selectPad } = useSelectedPad();
   const [listeningForKey, setListeningForKey] = useState(false);
   const keyBindingRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +32,7 @@ export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['project-pads', projectUuid] }).then(() => {
         selectPad({
-          ...selectedPad!,
+          ...pad!,
           keyBinding: variables.keyBinding
         });
       });
@@ -44,7 +44,6 @@ export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
   }
 
   function handleKeyBindingChange(e: React.KeyboardEvent) {
-    if (!selectedPad) return;
     e.preventDefault();
 
     const key = e.key.toUpperCase();
@@ -54,39 +53,36 @@ export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
     }
 
     const keyAlreadyUsed = pads?.some(pad =>
-      pad.id !== selectedPad.id &&
+      pad.id !== pad.id &&
       pad.keyBinding?.toUpperCase() === key
     );
 
     if (keyAlreadyUsed) return;
 
     updateKeyBindingMutation.mutate({
-      pad: selectedPad,
+      pad: pad,
       keyBinding: key
     });
     setListeningForKey(false);
   }
 
   function handleKeyBindingRemove() {
-    if (!selectedPad) return;
     setListeningForKey(false);
     updateKeyBindingMutation.mutate({
-      pad: selectedPad,
+      pad: pad,
       keyBinding: null
     });
   }
-
-  if (!selectedPad) return null;
 
   return (
     <div className="flex flex-col gap-2">
       <Label>keyboard shortcut</Label>
       <div className="flex gap-2">
-        {selectedPad.keyBinding && <span className={buttonVariants({ variant: "secondary", size: "icon", className: "!w-fit !px-2 min-w-8 !h-8" })}>{selectedPad.keyBinding}</span>}
+        {pad.keyBinding && <span className={buttonVariants({ variant: "secondary", size: "icon", className: "!w-fit !px-2 min-w-8 !h-8" })}>{pad.keyBinding}</span>}
         <div className="flex gap-2 ml-auto">
-          {selectedPad.keyBinding && <Button size="sm" variant="destructive" onClick={handleKeyBindingRemove}>remove</Button>}
+          {pad.keyBinding && <Button size="sm" variant="destructive" onClick={handleKeyBindingRemove}>remove</Button>}
           {!listeningForKey ? (
-            <Button size="sm" variant="secondary" onClick={handleStartKeyBinding}>{selectedPad.keyBinding ? "edit" : "add"}</Button>
+            <Button size="sm" variant="secondary" onClick={handleStartKeyBinding}>{pad.keyBinding ? "edit" : "add"}</Button>
           ) : (
             <div className={buttonVariants({ size: "sm", variant: "secondary", className: "w-fit ml-auto" })} onKeyDown={handleKeyBindingChange} tabIndex={0} ref={keyBindingRef}>press key...</div>
           )}

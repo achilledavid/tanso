@@ -5,5 +5,7 @@ type Pad = {
   projectUuid: string;
   fileName: string;
   isLooped: boolean;
+  startAt: number;
+  duration: number;
   keyBinding?: string | null;
 }

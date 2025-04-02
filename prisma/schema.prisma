@@ -39,6 +39,8 @@ model Pad {
   keyBinding  String?
   projectUuid String
   isLooped    Boolean @default(false)
+  startAt     Int     @default(0)
+  duration    Int     @default(0)
   project     Project @relation(fields: [projectUuid], references: [uuid], onDelete: Cascade)
 
   @@map("pads")

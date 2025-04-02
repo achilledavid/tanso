@@ -12,9 +12,8 @@ export function SoundPlayer({ file }: { file: ListBlobResultBlob }) {
   });
 
   const handleClick = () => {
-    if (!sound) return;
-    sound.stop();
-    sound.play();
+    if (sound.playing()) sound.stop();
+    else sound.play();
   };
 
   return (

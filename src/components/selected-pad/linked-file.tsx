@@ -12,11 +12,11 @@ import { useState } from "react";
 import { deletePadFile, updatePadFile } from "@/lib/pad";
 import { useSession } from "next-auth/react";
 
-export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
+export default function LinkedFile({ pad, projectUuid }: { pad: Pad, projectUuid: string }) {
   const session = useSession();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const { selectedPad, selectPad } = useSelectedPad();
+  const { selectPad } = useSelectedPad();
 
   const updatePadMutation = useMutation({
     mutationFn: async ({ pad, url, path }: { pad: Pad, url: string, path: string }) => {
@@ -25,7 +25,7 @@ export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['project-pads', projectUuid] }).then(() => {
         selectPad({
-          ...selectedPad!,
+          ...pad!,
           fileName: variables.path.split('/').pop() || '',
           url: variables.url
         });
@@ -41,36 +41,35 @@ export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['project-pads', projectUuid] }).then(() => {
         selectPad({
-          ...selectedPad!,
+          ...pad!,
           fileName: '',
-          url: ''
+          url: '',
+          isLooped: false,
+          startAt: 0,
+          duration: 0
         });
       });
     }
   });
 
   function handleFileRemove() {
-    if (!selectedPad) return;
-    deletePadFileMutation.mutate({ pad: selectedPad });
+    deletePadFileMutation.mutate({ pad: pad });
   }
 
   function handleSelect(file: ListBlobResultBlob) {
-    if (!selectedPad) return;
-    updatePadMutation.mutate({ pad: selectedPad, url: file.url, path: file.pathname });
+    updatePadMutation.mutate({ pad: pad, url: file.url, path: file.pathname });
   }
-
-  if (!selectedPad) return;
 
   return (
     <div className="flex flex-col gap-2">
       <Label>linked file</Label>
-      {selectedPad.fileName && <Input value={selectedPad.fileName} readOnly />}
+      {pad.fileName && <Input value={pad.fileName} readOnly />}
       {session.data?.user.username && (
         <div className="flex gap-2 ml-auto">
-          {selectedPad.fileName && <Button size="sm" variant="destructive" onClick={handleFileRemove}>remove</Button>}
+          {pad.fileName && <Button size="sm" variant="destructive" onClick={handleFileRemove}>remove</Button>}
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" variant="secondary" className="w-fit ml-auto">{selectedPad.fileName ? "change" : "add"}</Button>
+              <Button size="sm" variant="secondary" className="w-fit ml-auto">{pad.fileName ? "change" : "add"}</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogTitle>change linked file</DialogTitle>

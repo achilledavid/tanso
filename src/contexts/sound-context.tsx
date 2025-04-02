@@ -37,14 +37,15 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         sound = new Howl({
           src: pad.url,
           volume: 1,
-          loop: pad.isLooped
+          loop: pad.isLooped,
+          sprite: (pad.startAt && pad.duration !== 0) ? { sprite: [pad.startAt, pad.duration] } : undefined,
         });
         soundMap.set(pad.url, sound);
       }
       soundRefs.current.set(pad.url, sound);
     }
 
-    playSound(sound);
+    playSound(sound, (pad.startAt && pad.duration !== 0) ? true : false);
   };
 
   const updatePadLoop = (pad: Pad) => {
