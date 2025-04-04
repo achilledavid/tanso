@@ -46,3 +46,8 @@ export async function removeProjectAccess(uuid: string, userEmail: string): Prom
   });
   return response.data;
 }
+
+export async function getSharedProjects(): Promise<Array<Project & { user: User }>> {
+  const response = await axiosClient.get("/api/projects/shared");
+  return response.data;
+}

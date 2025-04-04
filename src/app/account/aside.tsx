@@ -10,6 +10,7 @@ export function AccountAside() {
   const links = [
     { href: "/account", label: "my informations" },
     { href: "/account/projects", label: "my projects" },
+    { href: "/account/shared", label: "shared with me" },
     { href: "/account/library", label: "my library" },
   ] as Array<{ href: string, label: string }>
 
