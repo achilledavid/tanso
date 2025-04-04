@@ -12,6 +12,7 @@ import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import Header from "@/components/header/header";
 import { AuthButton } from "@/components/auth-button";
 import { UpdateProjectDialog } from "./update-project-dialog";
+import { ShareProjectDialog } from "./share-project-dialog";
 
 export default function Project({ params }: { params: Promise<{ uuid: string }> }) {
   const uuid = use(params).uuid;
@@ -54,25 +55,42 @@ export default function Project({ params }: { params: Promise<{ uuid: string }> 
           <Fragment>
             <div className="flex gap-4 flex-col-reverse md:flex-row">
               <div className="flex flex-col gap-2 min-w-[320px]">
-                  <h1 className="text-2xl font-medium">{project?.name}</h1>
-                <div className="flex items-center mb-2 gap-2">
-                  <UpdateProjectDialog 
-                      variants={{ size: "sm" }} 
-                      project={project as Project}
-                      projectUuid={uuid}
-                    >
-                      Rename
-                    </UpdateProjectDialog>
-                  <Button
-                    size="sm"
-                    className="w-fit"
-                    variant="destructive"
-                    onClick={handleDelete}
-                  >
-                    delete project
-                  </Button>
-                </div>
-                <SelectedPad projectUuid={uuid} />
+                <h1 className="text-2xl font-medium">{project?.name}</h1>
+                {project?.permissions?.canEdit && (
+                  <Fragment>
+                    <div className="flex items-center mb-2 gap-2">
+                      {project?.permissions?.canRename && (
+                        <UpdateProjectDialog 
+                          variants={{ size: "sm" }} 
+                          project={project as Project}
+                          projectUuid={uuid}
+                        >
+                          Rename
+                        </UpdateProjectDialog>
+                      )}
+                      {project?.permissions?.isOwner && (
+                        <ShareProjectDialog
+                          variants={{ size: "sm" }}
+                          project={project as Project}
+                          projectUuid={uuid}
+                        >
+                          Share
+                        </ShareProjectDialog>
+                      )}
+                      {project?.permissions?.canDelete && (
+                        <Button
+                          size="sm"
+                          className="w-fit"
+                          variant="destructive"
+                          onClick={handleDelete}
+                        >
+                          delete project
+                        </Button>
+                      )}
+                      </div>
+                      <SelectedPad projectUuid={uuid} />
+                    </Fragment>
+                  )}
               </div>
               {isLoadingPads ? (
                 <p>loading...</p>
