@@ -10,6 +10,12 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_SERVER_USER || 'tanso.noreply@gmail.com',
     pass: process.env.EMAIL_SERVER_PASSWORD || '',
   },
+  tls: {
+    rejectUnauthorized: true,
+  },
+  pool: true,
+  maxConnections: 3,
+  maxMessages: 100,
 });
 
 /**
@@ -23,7 +29,6 @@ function loadHtmlTemplate(
     // Chemin du template HTML
     const templatePath = path.join(process.cwd(), 'src', 'templates', `${templateName}.html`);
     
-    // Lire le contenu du fichier
     let htmlContent = fs.readFileSync(templatePath, 'utf8');
     
     // Remplacer les variables dans le template
@@ -34,13 +39,7 @@ function loadHtmlTemplate(
     return htmlContent;
   } catch (error) {
     console.error('Error loading HTML template:', error);
-    return `
-      <div style="font-family: Arial, sans-serif; padding: 20px;">
-        <h2>Un projet a été partagé avec vous!</h2>
-        <p>${variables.fromUserName} vous a invité à collaborer sur le projet "${variables.projectName}".</p>
-        <p><a href="${variables.projectUrl}">Accéder au projet</a></p>
-      </div>
-    `;
+    throw error;
   }
 }
 
@@ -55,18 +54,27 @@ export async function sendProjectSharedEmail({
   projectUrl: string;
   fromUserName: string;
 }) {
-  const html = loadHtmlTemplate('project-shared', {
-    fromUserName,
-    projectName,
-    projectUrl
-  });
-
   try {
+    const messageId = `<project-${Date.now()}-${Math.random().toString(36).substring(2, 15)}@tanso.deezer.com>`;
+    
+    const html = loadHtmlTemplate('project-shared', {
+      fromUserName,
+      projectName,
+      projectUrl
+    });
+
     const mailOptions = {
-      from: `"Tanso" <${process.env.EMAIL_FROM || process.env.EMAIL_SERVER_USER || 'tanso.noreply@gmail.com'}>`,
+      from: `"Tanso" <${process.env.EMAIL_FROM }>`,
       to: toEmail,
-      subject: `${fromUserName} vous a invité sur un projet Tanso : ${projectName}`,
+      subject: `Invitation à collaborer sur "${projectName}" de ${fromUserName}`,
       html,
+      headers: {
+        'X-Priority': '3',
+        'Message-ID': messageId,
+        'X-Mailer': 'Tanso App Mailer',
+        'List-Unsubscribe': `<mailto:unsubscribe@tanso.deezer.com?subject=unsubscribe:${toEmail}>`,
+      },
+      priority: "normal" as const,
     };
 
     const info = await transporter.sendMail(mailOptions);
