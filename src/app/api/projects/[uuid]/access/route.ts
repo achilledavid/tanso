@@ -30,10 +30,7 @@ export async function GET(
     }
 
     const access = await prisma.accessAuthorized.findMany({
-      where: { projectUuid: uuid },
-      include: {
-        user: true,
-      },
+      where: { projectUuid: uuid }
     });
 
     return NextResponse.json(access);
@@ -119,14 +116,12 @@ export async function POST(
 
         if (projectDetails) {
           const projectUrl = `${request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/projects/${uuid}`;
-          const isNewUser = !userToAdd;
 
           sendProjectSharedEmail({
             toEmail: normalizedEmail,
             projectName: projectDetails.name,
             projectUrl,
             fromUserName: user.username || user.firstname || user.email,
-            isNewUser,
           }).catch(err => console.error('Failed to send sharing email:', err));
         }
       }
