@@ -59,6 +59,7 @@ export async function POST(
     }
 
     const { email } = await request.json();
+    const normalizedEmail = email.toLowerCase();
 
     const project = await prisma.project.findUnique({
       where: { uuid },
@@ -73,7 +74,7 @@ export async function POST(
     }
 
     const userToAdd = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (userToAdd && userToAdd.id === project.userId) {
@@ -83,11 +84,8 @@ export async function POST(
     try {
       const existingAccess = await prisma.accessAuthorized.findFirst({
         where: {
-          userEmail: email.toLowerCase(),
+          userEmail: normalizedEmail,
           projectUuid: uuid,
-        },
-        include: {
-          user: true,
         },
       });
       
@@ -100,32 +98,40 @@ export async function POST(
         isNewAccess = true;
         access = await prisma.accessAuthorized.create({
           data: {
-            userEmail: email.toLowerCase(),
+            userEmail: normalizedEmail,
             projectUuid: uuid,
-          },
-          include: {
-            user: true,
           },
         });
       }
 
-      const projectDetails = await prisma.project.findUnique({
-        where: { uuid },
-        select: { name: true }
-      });
-
-      if (isNewAccess && projectDetails) {
-        const projectUrl = `${request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/projects/${uuid}`;
-
-        sendProjectSharedEmail({
-          toEmail: email.toLowerCase(),
-          projectName: projectDetails.name,
-          projectUrl,
-          fromUserName: user.username || user.firstname || user.email,
-        }).catch(err => console.error('Failed to send sharing email:', err));
+      let response = access;
+      if (userToAdd) {
+        response = {
+          ...access
+        };
       }
 
-      return NextResponse.json(access);
+      if (isNewAccess) {
+        const projectDetails = await prisma.project.findUnique({
+          where: { uuid },
+          select: { name: true }
+        });
+
+        if (projectDetails) {
+          const projectUrl = `${request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/projects/${uuid}`;
+          const isNewUser = !userToAdd;
+
+          sendProjectSharedEmail({
+            toEmail: normalizedEmail,
+            projectName: projectDetails.name,
+            projectUrl,
+            fromUserName: user.username || user.firstname || user.email,
+            isNewUser,
+          }).catch(err => console.error('Failed to send sharing email:', err));
+        }
+      }
+
+      return NextResponse.json(response);
     } catch (error) {
       console.error("Prisma error adding access:", error);
       return NextResponse.json(

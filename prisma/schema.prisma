@@ -15,7 +15,6 @@ model User {
   lastname     String             @default("")
   avatarUrl    String?
   createdAt    DateTime           @default(now())
-  AccessRights AccessAuthorized[]
   Projects     Project[]
 
   @@map("users")
@@ -53,7 +52,7 @@ model AccessAuthorized {
   projectUuid String
   createdAt   DateTime @default(now())
   project     Project  @relation(fields: [projectUuid], references: [uuid], onDelete: Cascade)
-  user        User     @relation(fields: [userEmail], references: [email], onDelete: Cascade)
 
+  @@unique([userEmail, projectUuid])
   @@map("access_authorized")
 }
