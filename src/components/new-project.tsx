@@ -38,7 +38,6 @@ export default function NewProject({ userId }: { userId: number }) {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     createMutation.mutate({
       name: values.projectName,
       isPublic: values.isPublic,
