@@ -2,6 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { sendProjectSharedEmail } from "@/lib/email";
 
 export async function GET(
   request: NextRequest,
@@ -91,10 +92,12 @@ export async function POST(
       });
       
       let access;
+      let isNewAccess = false;
       
       if (existingAccess) {
         access = existingAccess;
       } else {
+        isNewAccess = true;
         access = await prisma.accessAuthorized.create({
           data: {
             userEmail: email.toLowerCase(),
@@ -104,6 +107,22 @@ export async function POST(
             user: true,
           },
         });
+      }
+
+      const projectDetails = await prisma.project.findUnique({
+        where: { uuid },
+        select: { name: true }
+      });
+
+      if (isNewAccess && projectDetails) {
+        const projectUrl = `${request.headers.get('origin') || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/projects/${uuid}`;
+
+        sendProjectSharedEmail({
+          toEmail: email.toLowerCase(),
+          projectName: projectDetails.name,
+          projectUrl,
+          fromUserName: user.username || user.firstname || user.email,
+        }).catch(err => console.error('Failed to send sharing email:', err));
       }
 
       return NextResponse.json(access);
