@@ -10,20 +10,22 @@ import { Fragment, useState } from "react";
 import { isEmpty } from "lodash";
 import { RowSelectionState } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button/button";
+import LibrarySelector from '@/components/library/library-selector';
 
 export default function Library({ folder, onSelect }: { folder: string, onSelect?: (file: ListBlobResultBlob) => void }) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [selectedLibrary, setSelectedLibrary] = useState<string>(folder);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['library'],
-    queryFn: () => getLibraryByFolderName(folder),
+    queryKey: ['library', selectedLibrary],
+    queryFn: () => getLibraryByFolderName(selectedLibrary),
   });
 
   const deleteFilesMutation = useMutation({
     mutationFn: deleteLibraryFiles,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['library'] });
+      queryClient.invalidateQueries({ queryKey: ['library', selectedLibrary] });
       setRowSelection({});
     },
     onError: (error) => {
@@ -41,8 +43,26 @@ export default function Library({ folder, onSelect }: { folder: string, onSelect
     }
   };
 
+  // Pour démo, ajouter les librairies par défaut dans la bdd
+  const libraries = [
+    { id: folder, name: "Ma bibliothèque" },
+    { id: "default-sounds", name: "Sons par défaut" },
+    { id: "effects", name: "Effets sonores" },
+  ];
+
+  const handleLibraryChange = (value: string) => {
+    setSelectedLibrary(value);
+    setRowSelection({});
+  };
+
   return (
     <Fragment>
+
+      <LibrarySelector
+        selectedLibrary={selectedLibrary}
+        onLibraryChange={handleLibraryChange}
+        libraries={libraries}
+      />
       {data && (
         <Button
           onClick={handleDeleteSelected}
