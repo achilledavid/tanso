@@ -35,8 +35,8 @@ export default function Account() {
         <Avatar>
           <AvatarImage src={user.avatarUrl} alt={user.username} />
           <AvatarFallback>
-            {user.firstname[0].toUpperCase()}
-            {user.lastname[0].toUpperCase()}
+            {user.firstname[0]?.toUpperCase()}
+            {user.lastname[0]?.toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <p>
