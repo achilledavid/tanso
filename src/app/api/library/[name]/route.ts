@@ -13,7 +13,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   });
 
   return NextResponse.json({
-    files: files.blobs.map((file) => {
+    files: files.blobs.filter((item) => item.size != 0).map((file) => {
       return {
         ...file,
         pathname: file.pathname.replace(`${name}/`, '')

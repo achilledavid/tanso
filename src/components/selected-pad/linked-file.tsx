@@ -74,7 +74,7 @@ export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
             </DialogTrigger>
             <DialogContent>
               <DialogTitle>change linked file</DialogTitle>
-              <Library folder={session.data?.user.username} onSelect={handleSelect} />
+              <Library username={session.data?.user.username} onSelect={handleSelect} />
             </DialogContent>
           </Dialog>
         </div>
