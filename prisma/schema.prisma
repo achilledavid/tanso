@@ -8,26 +8,28 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  username  String    @unique
-  email     String    @unique
-  firstname String    @default("")
-  lastname  String    @default("")
-  avatarUrl String?
-  createdAt DateTime  @default(now())
-  Projects  Project[]
+  id           Int                @id @default(autoincrement())
+  username     String             @unique
+  email        String             @unique
+  firstname    String             @default("")
+  lastname     String             @default("")
+  avatarUrl    String?
+  createdAt    DateTime           @default(now())
+  Projects     Project[]
 
   @@map("users")
 }
 
 model Project {
-  id        Int      @id @default(autoincrement())
-  uuid      String   @unique @default(uuid())
-  name      String
-  createdAt DateTime @default(now())
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Pads      Pad[]
+  id               Int                @id @default(autoincrement())
+  uuid             String             @unique @default(uuid())
+  name             String
+  createdAt        DateTime           @default(now())
+  userId           Int
+  isPublic         Boolean            @default(false)
+  AccessAuthorized AccessAuthorized[]
+  Pads             Pad[]
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("projects")
 }
@@ -42,4 +44,15 @@ model Pad {
   project     Project @relation(fields: [projectUuid], references: [uuid], onDelete: Cascade)
 
   @@map("pads")
+}
+
+model AccessAuthorized {
+  id          Int      @id @default(autoincrement())
+  userEmail   String
+  projectUuid String
+  createdAt   DateTime @default(now())
+  project     Project  @relation(fields: [projectUuid], references: [uuid], onDelete: Cascade)
+
+  @@unique([userEmail, projectUuid])
+  @@map("access_authorized")
 }

@@ -25,6 +25,8 @@ export function useKeyboardShortcuts(pads: Pad[] | undefined) {
         return;
       }
 
+      if (!e.key) return;
+
       const key = e.key.toUpperCase();
       const pad = padMap.get(key);
 
@@ -35,6 +37,7 @@ export function useKeyboardShortcuts(pads: Pad[] | undefined) {
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
+      if (!e.key) return;
       const key = e.key.toUpperCase();
       keyPressTracker.set(key, false);
     };

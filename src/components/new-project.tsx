@@ -10,9 +10,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "./ui/input";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { useRouter } from "next/navigation";
+import { Switch } from "./ui/switch";
 
 const formSchema = z.object({
   projectName: z.string().min(2, "name must be at least 2 characters longs").max(50, "name must be at most 50 characters long"),
+  isPublic: z.boolean().default(false),
 })
 
 export default function NewProject({ userId }: { userId: number }) {
@@ -22,6 +24,7 @@ export default function NewProject({ userId }: { userId: number }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       projectName: "",
+      isPublic: false,
     },
   })
 
@@ -36,7 +39,8 @@ export default function NewProject({ userId }: { userId: number }) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     createMutation.mutate({
-      name: values.projectName
+      name: values.projectName,
+      isPublic: values.isPublic,
     });
   }
 
@@ -62,6 +66,28 @@ export default function NewProject({ userId }: { userId: number }) {
                 </FormItem>
               )}
             />
+            
+            <FormField
+              control={form.control}
+              name="isPublic"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel>Make project public</FormLabel>
+                    <div className="text-sm text-muted-foreground">
+                      Anyone with the link can access this project
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            
             <Button type="submit">create</Button>
           </form>
         </Form>
