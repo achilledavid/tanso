@@ -32,10 +32,10 @@ export async function GET(
     const isPublic = typeof project.isPublic === 'boolean' ? project.isPublic : false;
 
     const isOwner = user?.id === project.userId;
-    const isEditor = user ? project.AccessAuthorized.some(access => 
+    const isEditor = user ? project.AccessAuthorized.some(access =>
       access.userEmail.toLowerCase() === user.email.toLowerCase()
     ) : false;
-    
+
     if (!isPublic && !isOwner && !isEditor && user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -57,11 +57,7 @@ export async function GET(
 
     if (isPublic && !isOwner && !isEditor) {
       return NextResponse.json({
-        id: project.id,
-        uuid: project.uuid,
-        name: project.name,
-        isPublic: project.isPublic,
-        Pads: project.Pads,
+        ...project,
         permissions: {
           isOwner: false,
           isEditor: false,
@@ -136,7 +132,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    
+
     const project = await prisma.project.findUnique({
       where: { uuid },
       include: { AccessAuthorized: true }
@@ -147,7 +143,7 @@ export async function PUT(
     }
 
     const isOwner = project.userId === user.id;
-    const isEditor = project.AccessAuthorized.some(access => 
+    const isEditor = project.AccessAuthorized.some(access =>
       access.userEmail.toLowerCase() === user.email.toLowerCase()
     );
 
