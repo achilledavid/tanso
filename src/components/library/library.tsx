@@ -6,15 +6,17 @@ import FileImport from "./file-import";
 import { getLibraryByFolderName, deleteLibraryFiles } from "@/lib/library";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { isEmpty } from "lodash";
 import { RowSelectionState } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button/button";
 import LibrarySelector from '@/components/library/library-selector';
 
-export default function Library({ folder, onSelect }: { folder: string, onSelect?: (file: ListBlobResultBlob) => void }) {
+export default function Library({ username, onSelect }: { username: string, onSelect?: (file: ListBlobResultBlob) => void }) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [selectedLibrary, setSelectedLibrary] = useState<string>(folder);
+  const [selectedLibrary, setSelectedLibrary] = useState<string>(username);
+  const [isEditable, setIsEditable] = useState(false);
+  const [showedColumns, setShowedColumns] = useState(columns);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -27,9 +29,6 @@ export default function Library({ folder, onSelect }: { folder: string, onSelect
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['library', selectedLibrary] });
       setRowSelection({});
-    },
-    onError: (error) => {
-      console.error('Erreur lors de la suppression des fichiers:', error);
     }
   });
 
@@ -43,11 +42,10 @@ export default function Library({ folder, onSelect }: { folder: string, onSelect
     }
   };
 
-  // Pour démo, ajouter les librairies par défaut dans la bdd
+  // TODO : add default libraries to blob store
   const libraries = [
-    { id: folder, name: "Ma bibliothèque" },
-    { id: "default-sounds", name: "Sons par défaut" },
-    { id: "effects", name: "Effets sonores" },
+    { id: username, name: "my library" },
+    { id: "tanso-default-library-drums", name: "drums" },
   ];
 
   const handleLibraryChange = (value: string) => {
@@ -55,15 +53,27 @@ export default function Library({ folder, onSelect }: { folder: string, onSelect
     setRowSelection({});
   };
 
+  useEffect(() => {
+    setIsEditable(username === selectedLibrary);
+  }, [username, selectedLibrary])
+
+  useEffect(() => {
+    if (!isEditable) setShowedColumns(columns.filter(column => column.id !== "select"));
+    else setShowedColumns(columns)
+  }, [isEditable])
+
+  useEffect(() => {
+    console.log(data)
+  }, [data])
+
   return (
     <Fragment>
-
       <LibrarySelector
         selectedLibrary={selectedLibrary}
         onLibraryChange={handleLibraryChange}
         libraries={libraries}
       />
-      {data && (
+      {(data && isEditable) && (
         <Button
           onClick={handleDeleteSelected}
           variant="destructive"
@@ -78,20 +88,18 @@ export default function Library({ folder, onSelect }: { folder: string, onSelect
         <p>loading...</p>
       ) : (
         !data?.files || isEmpty(data.files) ? (
-          <p>no files found in your library</p>
+          <p>no files found in this library</p>
         ) : (
-          <>
-            <DataTable
-              data={data.files}
-              columns={columns}
-              onSelect={onSelect}
-              rowSelection={rowSelection}
-              setRowSelection={setRowSelection}
-            />
-          </>
+          <DataTable
+            data={data.files}
+            columns={showedColumns}
+            onSelect={onSelect}
+            rowSelection={rowSelection}
+            setRowSelection={setRowSelection}
+          />
         )
       )}
-      <FileImport />
+      {isEditable && <FileImport />}
     </Fragment>
   );
 }

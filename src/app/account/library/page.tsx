@@ -10,6 +10,6 @@ export default async function AccountLibrary() {
   if (!username) notFound();
 
   return (
-    <Library folder={username} />
+    <Library username={username} />
   )
 }
