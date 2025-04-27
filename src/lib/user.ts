@@ -27,12 +27,30 @@ export async function upsertUser(user: UpsertUserPayload): Promise<User | null> 
         suffix++;
       }
 
-      return await prisma.user.create({
+      const userSaved =  await prisma.user.create({
         data: {
           ...user,
           username,
         },
       }) as User;
+
+
+      if (userSaved) {
+        const keys = ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Q', 'S', 'D', 'F', 'G', 'H'];
+        for(let i = 0; i < 16; i++) {
+          await prisma.userKeyBinding.create({
+            data: {
+              userId: userSaved.id,
+              padPosition: i,
+              keyBinding: keys[i],
+              createdAt: new Date(),
+            },
+          }) as UserKeyBinding;
+        }
+      }
+
+
+      return userSaved;
     }
   } catch (error) {
     console.error("Error managing user:", error);
