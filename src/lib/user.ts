@@ -37,7 +37,7 @@ export async function upsertUser(user: UpsertUserPayload): Promise<User | null> 
 
       if (userSaved) {
         const keys = ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Q', 'S', 'D', 'F', 'G', 'H'];
-        for(let i = 0; i < 16; i++) {
+        for(let i = 0; i < keys.length; i++) {
           await prisma.userKeyBinding.create({
             data: {
               userId: userSaved.id,
