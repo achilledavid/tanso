@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
 import { Button } from "@/components/ui/button/button";
 import Link from "next/link";
-import NewProject from "./new-project";
 import { Fragment } from "react";
 
 export function MyProjects({ userId }: { userId: number }) {
@@ -35,7 +34,15 @@ export function MyProjects({ userId }: { userId: number }) {
           <p>no projects found</p>
         )
       )}
-      <NewProject userId={userId} />
+      <Button
+        asChild
+        variant={"default"}
+        size="sm" className="w-fit"
+      >
+        <Link href="/account/projects/new">
+          Create a new project
+        </Link>
+      </Button>
     </Fragment>
   );
 }
