@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
-  const { name, isPublic } = (await req.json()) as { name: string, isPublic?: boolean };
+  const { name, description, isPublic } = (await req.json()) as { name: string, description: string, isPublic?: boolean };
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
     const project = await tx.project.create({
       data: {
         name,
+        description,
         userId: user.id,
         uuid: uuidv4(),
         isPublic: isPublic ?? false, 

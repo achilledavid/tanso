@@ -24,6 +24,7 @@ model Project {
   id               Int                @id @default(autoincrement())
   uuid             String             @unique @default(uuid())
   name             String
+  description      String             @default("")
   createdAt        DateTime           @default(now())
   userId           Int
   isPublic         Boolean            @default(false)

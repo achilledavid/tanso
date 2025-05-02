@@ -1,6 +1,7 @@
 type Project = {
   id: number;
   name: string;
+  description: string;
   userId: User["id"];
   uuid: string;
   isPublic: boolean;
