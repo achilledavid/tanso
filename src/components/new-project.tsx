@@ -11,25 +11,30 @@ import { Input } from "./ui/input";
 import { Switch } from "./ui/switch";
 import { useRouter } from "next/navigation";
 import { Textarea } from "./ui/textarea"; 
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 
 const formSchema = z.object({
   projectName: z.string().min(2, "name must be at least 2 characters long").max(50, "name must be at most 50 characters long"),
   description: z.string().optional(),
   isPublic: z.boolean().default(false),
+  collaborators: z.array(z.string()).optional(),
 })
 
 export default function NewProject({ userId }: { userId: number }) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [collaborators, setCollaborators] = useState<string[]>([]);
+  const [email, setEmail] = useState("");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       projectName: "",
       description: "",
       isPublic: false,
+      collaborators: [],
     },
-  })
+  });
 
   const createMutation = useMutation({
     mutationFn: createProject,
@@ -38,13 +43,25 @@ export default function NewProject({ userId }: { userId: number }) {
       form.reset();
       router.push(`/projects/${project.uuid}`);
     },
-  })
+  });
+
+  const addCollaborator = () => {
+    if (email && !collaborators.includes(email)) {
+      setCollaborators([...collaborators, email]);
+      setEmail("");
+    }
+  };
+
+  const removeCollaborator = (emailToRemove: string) => {
+    setCollaborators(collaborators.filter((collaborator) => collaborator !== emailToRemove));
+  };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     createMutation.mutate({
       name: values.projectName,
       description: values.description ?? "",
       isPublic: values.isPublic,
+      collaborators,
     });
   }
 
@@ -80,7 +97,7 @@ export default function NewProject({ userId }: { userId: number }) {
               </FormItem>
             )}
           />
-
+          
           <FormField
             control={form.control}
             name="isPublic"
@@ -101,10 +118,42 @@ export default function NewProject({ userId }: { userId: number }) {
               </FormItem>
             )}
           />
+
+          {/* Collaborators Section */}
+          <div className="flex flex-col gap-2">
+            <FormLabel>Add Collaborators</FormLabel>
+            <div className="flex items-center gap-2">
+              <Input
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1"
+              />
+              <Button type="button" size="sm" onClick={addCollaborator}>
+                Add
+              </Button>
+            </div>
+            {collaborators.length > 0 && (
+              <ul className="space-y-2">
+                {collaborators.map((collaborator) => (
+                  <li key={collaborator} className="flex justify-between items-center">
+                    <span>{collaborator}</span>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => removeCollaborator(collaborator)}
+                    >
+                      Remove
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           
           <Button type="submit">Create</Button>
         </form>
       </Form>
     </Fragment>
-  )
+  );
 }

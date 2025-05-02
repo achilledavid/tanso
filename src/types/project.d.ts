@@ -12,6 +12,7 @@ type Project = {
     canDelete: boolean;
     canRename: boolean;
   };
+  collaborators?: string[]
 };
 
 type AccessAuthorized = {
