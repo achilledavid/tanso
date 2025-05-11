@@ -21,9 +21,10 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button/button"
 import { useMemo, memo } from "react"
-import { Upload } from "lucide-react"
+import { Upload, Edit } from "lucide-react"
 import { SoundPlayer } from "./sound-player"
 import { ListBlobResultBlob } from "@vercel/blob"
+import SoundEditModal from "@/components/library/sound-edit-modal"
 
 const PAGE_SIZE = 5;
 
@@ -48,6 +49,18 @@ const ActionCell = memo(({ file, onSelect }: { file: ListBlobResultBlob, onSelec
         <Upload />
       </Button>
     )}
+
+    <SoundEditModal
+      file={file}
+      trigger={
+        <Button variant="secondary" size="icon" className="h-8 w-8">
+          <Edit />
+        </Button>
+      }
+      onSave={(processedBlob) => {
+        console.log("Blob édité :", processedBlob);
+      }}
+    />
   </div>
 ));
 ActionCell.displayName = 'ActionCell';
