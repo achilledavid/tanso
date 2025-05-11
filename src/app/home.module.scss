@@ -16,6 +16,10 @@
     line-height: .9;
     text-transform: uppercase;
     text-wrap: balance;
+
+    * {
+      font: inherit;
+    }
   }
 
   p {

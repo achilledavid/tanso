@@ -123,7 +123,7 @@ export function DataTable<TData extends ListBlobResultBlob>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  no results.
+                  No results
                 </TableCell>
               </TableRow>
             )}
@@ -133,17 +133,19 @@ export function DataTable<TData extends ListBlobResultBlob>({
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           size="sm"
+          variant="ghost"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          previous
+          Previous
         </Button>
         <Button
           size="sm"
+          variant="ghost"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          next
+          Next
         </Button>
       </div>
     </div>

@@ -1,16 +1,16 @@
 "use client"
 
 import { useSelectedPad } from "@/contexts/selected-pad";
-import { Button } from "../ui/button/button";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog";
-import Library from "../library/library";
 import { ListBlobResultBlob } from "@vercel/blob";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { deletePadFile, updatePadFile } from "@/lib/pad";
 import { useSession } from "next-auth/react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import Library from "@/components/library/library";
+import { Button } from "@/components/ui/button/button";
 
 export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
   const session = useSession();
@@ -63,17 +63,23 @@ export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <Label>linked file</Label>
-      {selectedPad.fileName && <Input value={selectedPad.fileName} readOnly />}
+      <Label>Linked file</Label>
+      {selectedPad.fileName && (
+        <Input
+          className="bg-[#00000040] border-none pointer-events-none"
+          value={selectedPad.fileName}
+          readOnly
+        />
+      )}
       {session.data?.user.username && (
         <div className="flex gap-2 ml-auto">
-          {selectedPad.fileName && <Button size="sm" variant="destructive" onClick={handleFileRemove}>remove</Button>}
+          {selectedPad.fileName && <Button size="sm" variant="destructive" onClick={handleFileRemove}>Remove</Button>}
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" variant="secondary" className="w-fit ml-auto">{selectedPad.fileName ? "change" : "add"}</Button>
+              <Button size="sm" variant="secondary" className="w-fit ml-auto">{selectedPad.fileName ? "Change" : "Add"}</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogTitle>change linked file</DialogTitle>
+              <DialogTitle>{selectedPad.fileName ? "Change" : "Add"} linked file</DialogTitle>
               <Library username={session.data?.user.username} onSelect={handleSelect} />
             </DialogContent>
           </Dialog>
