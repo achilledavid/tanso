@@ -13,6 +13,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const keyBindings = await prisma.userKeyBinding.findMany({
+    where: {
+      userId: user.id
+    }
+  });
+
+  keyBindings.sort((a, b) => a.padPosition - b.padPosition);
+
   return prisma.$transaction(async (tx) => {
     const project = await tx.project.create({
       data: {
@@ -28,6 +36,7 @@ export async function POST(req: NextRequest) {
       pads.push(
         tx.pad.create({
           data: {
+            keyBinding: keyBindings[i]?.keyBinding ?? null,
             projectUuid: project.uuid,
           },
         })
