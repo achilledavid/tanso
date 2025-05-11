@@ -29,7 +29,7 @@ export const columns: ColumnDef<ListBlobResultBlob>[] = [
   },
   {
     accessorKey: "pathname",
-    header: "name",
+    header: "Name",
     cell: ({ row }) => {
       return <span>{row.original.pathname}</span>
     }

@@ -32,10 +32,10 @@ export default function FileImport() {
   };
 
   return uploadMutation.isPending ? (
-    <p>uploading...</p>
+    <p>Uploading...</p>
   ) : (
     <div className="flex flex-col gap-2">
-      <Label>upload new file</Label>
+      <Label>Upload new file</Label>
       <Input
         multiple
         type="file"

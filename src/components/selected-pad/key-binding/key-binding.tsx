@@ -1,17 +1,19 @@
 "use client"
 
 import { useSelectedPad } from "@/contexts/selected-pad";
-import { Button, buttonVariants } from "../ui/button/button";
-import { Label } from "../ui/label";
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { updatePadKeyBinding } from "@/lib/pad";
 import { getPadsFromProject } from "@/lib/project";
+import { AlertCircle, Keyboard, Trash2, Edit3 } from "lucide-react";
+import style from './key-binding.module.scss';
+import { Button } from "@/components/ui/button/button";
 
 export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
   const queryClient = useQueryClient();
   const { selectedPad, selectPad } = useSelectedPad();
   const [listeningForKey, setListeningForKey] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const keyBindingRef = useRef<HTMLDivElement>(null);
 
   const { data: pads } = useQuery({
@@ -41,6 +43,7 @@ export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
 
   function handleStartKeyBinding() {
     setListeningForKey(true);
+    setError(null);
   }
 
   function handleKeyBindingChange(e: React.KeyboardEvent) {
@@ -50,6 +53,7 @@ export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
     const key = e.key.toUpperCase();
     if (key === 'ESCAPE') {
       setListeningForKey(false);
+      setError(null);
       return;
     }
 
@@ -58,18 +62,23 @@ export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
       pad.keyBinding?.toUpperCase() === key
     );
 
-    if (keyAlreadyUsed) return;
+    if (keyAlreadyUsed) {
+      setError(`Key "${key}" is already in use`);
+      return;
+    }
 
     updateKeyBindingMutation.mutate({
       pad: selectedPad,
       keyBinding: key
     });
     setListeningForKey(false);
+    setError(null);
   }
 
   function handleKeyBindingRemove() {
     if (!selectedPad) return;
     setListeningForKey(false);
+    setError(null);
     updateKeyBindingMutation.mutate({
       pad: selectedPad,
       keyBinding: null
@@ -79,19 +88,54 @@ export default function KeyBinding({ projectUuid }: { projectUuid: string }) {
   if (!selectedPad) return null;
 
   return (
-    <div className="flex flex-col gap-2">
-      <Label>keyboard shortcut</Label>
-      <div className="flex gap-2">
-        {selectedPad.keyBinding && <span className={buttonVariants({ variant: "secondary", size: "icon", className: "!w-fit !px-2 min-w-8 !h-8" })}>{selectedPad.keyBinding}</span>}
-        <div className="flex gap-2 ml-auto">
-          {selectedPad.keyBinding && <Button size="sm" variant="destructive" onClick={handleKeyBindingRemove}>remove</Button>}
-          {!listeningForKey ? (
-            <Button size="sm" variant="secondary" onClick={handleStartKeyBinding}>{selectedPad.keyBinding ? "edit" : "add"}</Button>
-          ) : (
-            <div className={buttonVariants({ size: "sm", variant: "secondary", className: "w-fit ml-auto" })} onKeyDown={handleKeyBindingChange} tabIndex={0} ref={keyBindingRef}>press key...</div>
-          )}
-        </div>
+    <div className={style.container}>
+      <div className={style.label}>Keyboard shortcut</div>
+      <div className={style.content}>
+        {listeningForKey ? (
+          <div
+            onKeyDown={handleKeyBindingChange}
+            tabIndex={0}
+            ref={keyBindingRef}
+            className={style.input}
+          >
+            <Keyboard size={16} />
+            <span>Press any key...</span>
+          </div>
+        ) : (
+          <div className={style.shortcut}>
+            <div className={style.key}>
+              {selectedPad.keyBinding || "No shortcut assigned"}
+            </div>
+            <div className={style.actions}>
+              <Button
+                variant="ghost"
+                size='icon'
+                onClick={handleStartKeyBinding}
+                disabled={updateKeyBindingMutation.isPending}
+              >
+                <Edit3 size={16} />
+              </Button>
+              {selectedPad.keyBinding && (
+                <Button
+                  size='icon'
+                  variant="ghost"
+                  className={style.delete}
+                  onClick={handleKeyBindingRemove}
+                  disabled={updateKeyBindingMutation.isPending}
+                >
+                  <Trash2 size={16} />
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
+      {error && (
+        <div className={style.error}>
+          <AlertCircle size={12} />
+          {error}
+        </div>
+      )}
     </div>
-  )
+  );
 }
