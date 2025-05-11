@@ -27,7 +27,7 @@ const deezer = localFont({
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${deezer.variable} antialiased`}>
+      <body className={`${inter.className} ${deezer.variable} antialiased min-h-screen flex flex-col`}>
         <Providers>
           <ReactQueryDevtools initialIsOpen={false} />
           {children}
