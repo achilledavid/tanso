@@ -1,17 +1,21 @@
 "use client"
 
+import Library from "@/components/library/library";
 import { Button } from "@/components/ui/button/button";
-import { createProject } from "@/lib/project";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { z } from "zod"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { createProject } from "@/lib/project";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ListBlobResultBlob } from "@vercel/blob";
+import { useRouter } from "next/navigation";
+import { Fragment, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Input } from "./ui/input";
 import { Switch } from "./ui/switch";
-import { useRouter } from "next/navigation";
-import { Textarea } from "./ui/textarea"; 
-import { Fragment, useState } from "react";
+import { Textarea } from "./ui/textarea";
+import { useSession } from "next-auth/react";
 
 const formSchema = z.object({
   projectName: z.string().min(2, "name must be at least 2 characters long").max(50, "name must be at most 50 characters long"),
@@ -21,10 +25,13 @@ const formSchema = z.object({
 })
 
 export default function NewProject({ userId }: { userId: number }) {
-  const router = useRouter();
+  const router = useRouter();  
+  const session = useSession();
   const queryClient = useQueryClient();
   const [collaborators, setCollaborators] = useState<string[]>([]);
   const [email, setEmail] = useState("");
+  const [selectedSounds, setSelectedSounds] = useState<ListBlobResultBlob[]>([]);
+  const [soundDialogOpen, setSoundDialogOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,12 +63,26 @@ export default function NewProject({ userId }: { userId: number }) {
     setCollaborators(collaborators.filter((collaborator) => collaborator !== emailToRemove));
   };
 
+  function handleAddSound(file: ListBlobResultBlob) {
+    if (selectedSounds.length >= 16) return;
+    if (!selectedSounds.find(s => s.url === file.url)) {
+      setSelectedSounds([...selectedSounds, file]);
+    }
+    setSoundDialogOpen(false);
+  }
+
+  function handleRemoveSound(url: string) {
+    setSelectedSounds(selectedSounds.filter(s => s.url !== url));
+  }
+
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const sounds = selectedSounds.map(sound => sound.url);
     createMutation.mutate({
       name: values.projectName,
       description: values.description ?? "",
       isPublic: values.isPublic,
       collaborators,
+      sounds,
     });
   }
 
@@ -98,6 +119,43 @@ export default function NewProject({ userId }: { userId: number }) {
             )}
           />
           
+          <div className="flex flex-col gap-2">
+            <FormLabel>Sélectionner jusqu&apos;à 16 sons</FormLabel>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setSoundDialogOpen(true)}
+              disabled={selectedSounds.length >= 16}
+            >
+              Ajouter un son
+            </Button>
+            {selectedSounds.length > 0 && (
+              <ul className="space-y-2 mt-2">
+                {selectedSounds.map((sound) => (
+                  <li key={sound.url} className="flex items-center justify-between">
+                    <span className="truncate">{sound.pathname || sound.url}</span>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleRemoveSound(sound.url)}
+                    >
+                      Supprimer
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <Dialog open={soundDialogOpen} onOpenChange={setSoundDialogOpen}>
+            <DialogContent>
+              <DialogTitle>Choisir un son</DialogTitle>
+              <Library
+                username={session.data?.user.username ?? ""}
+                onSelect={handleAddSound}
+              />
+            </DialogContent>
+          </Dialog>
+
           <FormField
             control={form.control}
             name="isPublic"
@@ -119,7 +177,6 @@ export default function NewProject({ userId }: { userId: number }) {
             )}
           />
 
-          {/* Collaborators Section */}
           <div className="flex flex-col gap-2">
             <FormLabel>Add Collaborators</FormLabel>
             <div className="flex items-center gap-2">

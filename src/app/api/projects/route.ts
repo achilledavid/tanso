@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { sendProjectSharedEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
-  const { name, description, collaborators, isPublic } = (await req.json()) as { name: string, description: string, collaborators: string[], isPublic?: boolean };
+  const { name, description, collaborators, sounds, isPublic  } = (await req.json()) as { name: string, description: string, collaborators: string[], sounds: string[], isPublic?: boolean };
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
         tx.pad.create({
           data: {
             projectUuid: project.uuid,
+            url: sounds[i] || null,
           },
         })
       );
