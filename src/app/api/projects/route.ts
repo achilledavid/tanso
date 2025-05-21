@@ -6,13 +6,22 @@ import { v4 as uuidv4 } from "uuid";
 import { sendProjectSharedEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
-  const { name, description, collaborators, sounds, isPublic  } = (await req.json()) as { name: string, description: string, collaborators: string[], sounds: string[], isPublic?: boolean };
+  const { name, description, collaborators, sounds, isPublic  } = (await req.json()) as { name: string, description: string, collaborators: string[], sounds: {url: string, fileName: string}[], isPublic?: boolean };
   const session = await getServerSession(authOptions);
   const user = session?.user;
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const keyBindings = await prisma.userKeyBinding.findMany({
+    where: {
+      userId: user.id
+    }
+  });
+
+
+  keyBindings.sort((a, b) => a.padPosition - b.padPosition);
 
   return prisma.$transaction(async (tx) => {
     const project = await tx.project.create({
@@ -30,8 +39,10 @@ export async function POST(req: NextRequest) {
       pads.push(
         tx.pad.create({
           data: {
+            keyBinding: keyBindings[i]?.keyBinding ?? null,
             projectUuid: project.uuid,
-            url: sounds[i] || null,
+            url: sounds[i]?.url || null,
+            fileName: sounds[i]?.fileName || null,
           },
         })
       );

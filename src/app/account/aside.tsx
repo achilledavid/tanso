@@ -12,6 +12,7 @@ export function AccountAside() {
     { href: "/account/projects", label: "my projects", subPath: "/account/projects/new" },
     { href: "/account/shared", label: "shared with me" },
     { href: "/account/library", label: "my library" },
+    { href: "/account/preferences", label: "preferences" },
   ] as Array<{ href: string, label: string, subPath?: string }>;
 
   return (

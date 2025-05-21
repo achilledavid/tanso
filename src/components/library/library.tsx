@@ -11,6 +11,7 @@ import { isEmpty } from "lodash";
 import { RowSelectionState } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button/button";
 import LibrarySelector from '@/components/library/library-selector';
+import { Loader2 } from "lucide-react";
 
 export default function Library({ username, onSelect }: { username: string, onSelect?: (file: ListBlobResultBlob) => void }) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -44,8 +45,8 @@ export default function Library({ username, onSelect }: { username: string, onSe
 
   // TODO : add default libraries to blob store
   const libraries = [
-    { id: username, name: "my library" },
-    { id: "tanso-default-library-drums", name: "drums" },
+    { id: username, name: "My library" },
+    { id: "tanso-default-library-drums", name: "Drums" },
   ];
 
   const handleLibraryChange = (value: string) => {
@@ -81,14 +82,16 @@ export default function Library({ username, onSelect }: { username: string, onSe
           className="w-fit"
           disabled={Object.keys(rowSelection).length === 0 || deleteFilesMutation.isPending}
         >
-          {deleteFilesMutation.isPending ? 'deleting...' : 'delete selection'}
+          {deleteFilesMutation.isPending ? 'Deleting...' : 'Delete selection'}
         </Button>
       )}
       {isLoading ? (
-        <p>loading...</p>
+        <div className="min-h-[10rem] flex items-center justify-center">
+          <Loader2 className="animate-spin" stroke="hsl(var(--muted-foreground))" />
+        </div>
       ) : (
         !data?.files || isEmpty(data.files) ? (
-          <p>no files found in this library</p>
+          <p>No files found in this library</p>
         ) : (
           <DataTable
             data={data.files}

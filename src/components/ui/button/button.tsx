@@ -14,13 +14,14 @@ const buttonVariants = cva(
         destructive: style.destructive,
         outline: style.outline,
         secondary: style.secondary,
-        ghost: "",
+        ghost: style.ghost,
         link: style.link,
       },
       size: {
         sm: style.sm,
         md: style.md,
         icon: style.icon,
+        iconMd: style.iconMd
       },
     },
     defaultVariants: {

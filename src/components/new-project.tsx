@@ -76,7 +76,11 @@ export default function NewProject({ userId }: { userId: number }) {
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const sounds = selectedSounds.map(sound => sound.url);
+    const sounds: {url: string, fileName: string}[] = selectedSounds.map(sound => ({
+      url: sound.url,
+      fileName: sound.pathname || sound.url,
+    }));
+    
     createMutation.mutate({
       name: values.projectName,
       description: values.description ?? "",

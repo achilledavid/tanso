@@ -5,6 +5,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  white-space: nowrap;
 
   &:focus-visible {
     outline: 2px solid var(--foreground);
@@ -17,7 +18,7 @@
   }
 
   svg {
-    stroke: var(--primary-foreground);
+    stroke: currentColor;
     width: 1rem;
     height: 1em;
     stroke-width: 2.25px;
@@ -43,6 +44,17 @@
     min-height: 2.125rem;
     min-width: 2.125rem;
     border-radius: 0.5rem;
+  }
+
+  &.iconMd {
+    min-height: 2.5rem;
+    min-width: 2.5rem;
+    border-radius: 0.5rem;
+
+    svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
   }
 
   &.secondary {
@@ -72,5 +84,14 @@
   &.destructive {
     color: hsl(var(--destructive-foreground));
     background-color: hsl(var(--destructive));
+  }
+
+  &.ghost {
+    background-color: transparent;
+    color: currentColor;
+
+    &:hover {
+      background-color: rgb(0, 0, 0, 0.05);
+    }
   }
 }

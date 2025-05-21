@@ -1,22 +1,26 @@
 "use client";
 
 import { Fragment, use } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { deleteProject, getPadsFromProject, getProject } from "@/lib/project";
+import { useQuery } from "@tanstack/react-query";
+import { getPadsFromProject, getProject } from "@/lib/project";
 import { isEmpty } from "lodash";
-import Pad from "@/components/pad";
+import Pad from "@/components/pad/pad";
 import SelectedPad from "@/components/selected-pad/selected-pad";
-import { Button } from "@/components/ui/button/button";
-import { notFound, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import Header from "@/components/header/header";
 import { AuthButton } from "@/components/auth-button";
-import { UpdateProjectDialog } from "./update-project-dialog";
-import { ShareProjectDialog } from "./share-project-dialog";
+import { ShareProjectDialog } from "./components/share-dialog";
+import PopStagger from "@/components/pop-stagger";
+import style from "./project.module.scss";
+import { Link, Loader2 } from "lucide-react";
+import SettingsDialog from "./components/settings-dialog";
+import { useSelectedPad } from "@/contexts/selected-pad";
+import { useUser } from "@/hooks/user";
 
 export default function Project({ params }: { params: Promise<{ uuid: string }> }) {
   const uuid = use(params).uuid;
-  const router = useRouter();
+  const { selectedPad } = useSelectedPad();
 
   const { data: project, isLoading: isLoadingProject } = useQuery({
     queryKey: ["project", uuid],
@@ -30,81 +34,57 @@ export default function Project({ params }: { params: Promise<{ uuid: string }> 
 
   useKeyboardShortcuts(pads);
 
-  const deleteMutation = useMutation({
-    mutationFn: () => deleteProject(uuid),
-    onSuccess: () => {
-      router.push("/account");
-    },
-  });
+  const { data: creator } = useUser(project?.userId);
 
-  function handleDelete() {
-    deleteMutation.mutate();
-  }
+  const isLoading = isLoadingPads || isLoadingProject;
 
-  if (!isLoadingProject && !project) notFound();
+  if (!isLoading && !project) notFound();
 
   return (
-    <Fragment>
+    <div className={style.wrapper}>
       <Header>
         <AuthButton variants={{ size: "sm" }} />
       </Header>
-      <main className="flex flex-col gap-4 p-4">
-        {isLoadingProject ? (
-          <p>loading...</p>
+      <main className={style.container}>
+        {isLoading || !creator ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <Loader2 className="animate-spin" stroke="hsl(var(--muted-foreground))" />
+          </div>
         ) : (
           <Fragment>
-            <div className="flex gap-4 flex-col-reverse md:flex-row">
-              <div className="flex flex-col gap-2 min-w-[320px]">
-                <h1 className="text-2xl font-medium">{project?.name}</h1>
-                {project?.permissions?.canEdit && (
-                  <Fragment>
-                    <div className="flex items-center mb-2 gap-2">
-                      {project?.permissions?.canRename && (
-                        <UpdateProjectDialog 
-                          variants={{ size: "sm" }} 
-                          project={project as Project}
-                          projectUuid={uuid}
-                        >
-                          Rename
-                        </UpdateProjectDialog>
-                      )}
-                      {project?.permissions?.isOwner && (
-                        <ShareProjectDialog
-                          variants={{ size: "sm" }}
-                          project={project as Project}
-                          projectUuid={uuid}
-                        >
-                          Share
-                        </ShareProjectDialog>
-                      )}
-                      {project?.permissions?.canDelete && (
-                        <Button
-                          size="sm"
-                          className="w-fit"
-                          variant="destructive"
-                          onClick={handleDelete}
-                        >
-                          delete project
-                        </Button>
-                      )}
-                      </div>
-                      <SelectedPad projectUuid={uuid} />
-                    </Fragment>
+            <div className={style.grid}>
+              <aside>
+                <div className={style.project}>
+                  <div>
+                    <h1 className={style.title}>{project?.name}</h1>
+                    <p>Created by {creator.username}</p>
+                  </div>
+                  {project?.permissions?.isOwner && (
+                    <div className="mt-auto flex gap-3 items-center">
+                      <SettingsDialog project={project} />
+                      <ShareProjectDialog variants={{ size: "sm" }} project={project}>
+                        <Link />
+                        Share
+                      </ShareProjectDialog>
+                    </div>
                   )}
-              </div>
-              {isLoadingPads ? (
-                <p>loading...</p>
-              ) : (
-                <div className="grid grid-cols-4 gap-4 w-full max-w-[550px]">
-                  {pads &&
-                    !isEmpty(pads) &&
-                    pads.map((pad) => <Pad key={`pad-${pad.id}`} pad={pad} />)}
                 </div>
-              )}
+                {(project?.permissions?.isOwner && selectedPad) && (
+                  <div className={style.pad}>
+                    <p className={style.title}>Selected pad</p>
+                    <SelectedPad projectUuid={uuid} />
+                  </div>
+                )}
+              </aside>
+              <PopStagger className={style.pads}>
+                {pads &&
+                  !isEmpty(pads) &&
+                  pads.map((pad) => <Pad key={`pad-${pad.id}`} pad={pad} />)}
+              </PopStagger>
             </div>
           </Fragment>
         )}
       </main>
-    </Fragment>
+    </div>
   );
 }

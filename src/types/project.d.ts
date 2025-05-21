@@ -13,7 +13,7 @@ type Project = {
     canRename: boolean;
   };
   collaborators?: string[]
-  sounds?: string[];
+  sounds?: {url: string, fileName: string}[];
 };
 
 type AccessAuthorized = {
