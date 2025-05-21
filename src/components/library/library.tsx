@@ -10,7 +10,7 @@ import { Fragment, useEffect, useState } from "react";
 import { isEmpty } from "lodash";
 import { RowSelectionState } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button/button";
-import LibrarySelector from '@/components/library/library-selector';
+import LibrarySelector from '@/components/library/library-selector/library-selector';
 import { Loader2 } from "lucide-react";
 
 export default function Library({ username, onSelect }: { username: string, onSelect?: (file: ListBlobResultBlob) => void }) {
@@ -74,35 +74,39 @@ export default function Library({ username, onSelect }: { username: string, onSe
         onLibraryChange={handleLibraryChange}
         libraries={libraries}
       />
-      {(data && isEditable) && (
-        <Button
-          onClick={handleDeleteSelected}
-          variant="destructive"
-          size="sm"
-          className="w-fit"
-          disabled={Object.keys(rowSelection).length === 0 || deleteFilesMutation.isPending}
-        >
-          {deleteFilesMutation.isPending ? 'Deleting...' : 'Delete selection'}
-        </Button>
-      )}
       {isLoading ? (
         <div className="min-h-[10rem] flex items-center justify-center">
           <Loader2 className="animate-spin" stroke="hsl(var(--muted-foreground))" />
         </div>
       ) : (
         !data?.files || isEmpty(data.files) ? (
-          <p>No files found in this library</p>
+          <p className="text-white">No files found in this library</p>
         ) : (
-          <DataTable
-            data={data.files}
-            columns={showedColumns}
-            onSelect={onSelect}
-            rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
-          />
+          <div className="bg-white p-2 rounded-md">
+            <DataTable
+              data={data.files}
+              columns={showedColumns}
+              onSelect={onSelect}
+              rowSelection={rowSelection}
+              setRowSelection={setRowSelection}
+            />
+          </div>
         )
       )}
-      {isEditable && <FileImport />}
+      <div className="flex items-center justify-between space-x-2 py-4">
+        {isEditable && <FileImport />}
+        {(data && isEditable) && (
+          <Button
+            onClick={handleDeleteSelected}
+            variant="destructive"
+            size="sm"
+            className="w-fit"
+            disabled={Object.keys(rowSelection).length === 0 || deleteFilesMutation.isPending}
+          >
+            {deleteFilesMutation.isPending ? 'Deleting...' : 'Delete selection'}
+          </Button>
+        )}
+      </div>
     </Fragment>
   );
 }
