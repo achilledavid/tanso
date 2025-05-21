@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
 import { Button } from "@/components/ui/button/button";
 import Link from "next/link";
-import NewProject from "@/components/project/new-project/new-project";
 import { Fragment } from "react";
 import { ArrowRight } from "lucide-react";
 import style from "./my-projects.module.scss";
@@ -51,7 +50,12 @@ export function MyProjects({ userId }: { userId: number }) {
             <p>no projects found</p>
           )
         )}
-        <NewProject userId={userId} />
+
+        <Button variant={"primary"} size="lg" className="w-fit">
+          <Link href="/account/projects/new">
+            create a new project
+          </Link>
+        </Button>
       </div>
     </Fragment>
   );
