@@ -13,7 +13,7 @@ export default function DeleteDialog({ project }: { project: Project }) {
     const deleteMutation = useMutation({
         mutationFn: () => deleteProject(project.uuid),
         onSuccess: () => {
-            router.push("/account");
+            router.push("/account/projects");
         },
     });
 

@@ -7,10 +7,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "./ui/input";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
-import { Switch } from "./ui/switch";
+import { Switch } from "@/components/ui/switch";
+// import style from "./new-project.module.css";
 
 const formSchema = z.object({
   projectName: z.string().min(2, "name must be at least 2 characters longs").max(50, "name must be at most 50 characters long"),
@@ -47,7 +48,7 @@ export default function NewProject({ userId }: { userId: number }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" className="w-fit">create a new project</Button>
+        <Button variant={"primary"} size="lg" className="w-fit">create a new project</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>create a new project</DialogTitle>
