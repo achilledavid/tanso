@@ -1,4 +1,4 @@
-import { SharedProjects } from "@/components/shared-projects";
+import { SharedProjects } from "@/components/project/shared-projects/shared-projects";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
