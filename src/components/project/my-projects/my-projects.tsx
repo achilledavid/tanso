@@ -37,7 +37,7 @@ export function MyProjects({ userId }: { userId: number }) {
                       </span>
                     )}
                     <p className={style["c-my-projects__title"]}>{project.name}</p>
-                    <p>{project.description}</p>
+                    <p className={style["c-my-project__desc"]}>{project.description}</p>
                   </div>
                   <Button variant="secondary" size="sm" asChild>
                     <Link href={`/projects/${project.uuid}`}>

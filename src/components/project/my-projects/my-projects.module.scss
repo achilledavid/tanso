@@ -51,6 +51,17 @@
     width: 100%;
 }
 
+.c-my-project__desc {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    width: 100%;
+    font-size: 0.75rem;
+    color: hsl(var(--muted));
+}
+
 .c-my-projects__public,
 .c-my-projects__private {
     display: inline-flex;
