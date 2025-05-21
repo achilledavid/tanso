@@ -23,7 +23,7 @@ export function AccountAside() {
     { href: "/account/shared", label: "Project shared", icon: <Share2 /> },
     { href: "/account/library", label: "Library", icon: <LibraryBig /> },
     { href: "/account/preferences", label: "Preferences", icon: <Cog /> },
-  ] as Array<{ href: string, label: string, icon?: React.ReactNode }>;
+  ] as Array<{ href: string, label: string, icon?: React.ReactNode, subPath?: string }>;
 
   if (session.status === "unauthenticated") redirect("/login");
 
@@ -74,11 +74,11 @@ export function AccountAside() {
         </div>
       </div>
       <div className={style["c-aside__linksList"]}>
-        {links.map(({ href, label, icon }) => (
+        {links.map(({ href, label, icon, subPath }) => (
           <Button
             key={href}
             asChild
-            variant={pathname === href ? "secondary" : "aside"}
+            variant={pathname === href || subPath === pathname ? "secondary" : "aside"}
             size="asideSize"
           >
             <Link href={href}>
