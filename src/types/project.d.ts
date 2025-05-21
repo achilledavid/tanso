@@ -1,6 +1,7 @@
 type Project = {
   id: number;
   name: string;
+  description: string;
   userId: User["id"];
   uuid: string;
   isPublic: boolean;
@@ -11,6 +12,8 @@ type Project = {
     canDelete: boolean;
     canRename: boolean;
   };
+  collaborators?: string[]
+  sounds?: {url: string, fileName: string}[];
 };
 
 type AccessAuthorized = {
