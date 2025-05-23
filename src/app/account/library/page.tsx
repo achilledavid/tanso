@@ -2,6 +2,7 @@ import Library from "@/components/library/library";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
+import style from "./library.module.scss"
 
 export default async function AccountLibrary() {
   const session = await getServerSession(authOptions);
@@ -10,6 +11,8 @@ export default async function AccountLibrary() {
   if (!username) notFound();
 
   return (
-    <Library username={username} />
+    <div className={style.container}>
+      <Library username={username} />
+    </div>
   )
 }

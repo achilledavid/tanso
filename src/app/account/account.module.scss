@@ -14,5 +14,27 @@
     display: grid;
     grid-template: "left main" 1fr / 22rem;
     gap: 1rem;
+
+    &>div {
+      padding: 1rem;
+    }
+  }
+}
+
+@media screen and (max-width: 850px) {
+  .wrapper {
+    .container {
+      display: flex;
+      flex-direction: column;
+
+      aside {
+        height: fit-content;
+        min-width: 22rem;
+      }
+
+      &>div {
+        flex: 1;
+      }
+    }
   }
 }

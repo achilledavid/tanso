@@ -51,63 +51,15 @@ export function Aside({ user }: { user: User }) {
   ]
 
   return (
-    // <aside className={style["c-aside"]}>
-    //   <div className={style["c-aside__header"]}>
-    //     <div className={style["c-aside__headerUser"]}>
-    //       <Avatar>
-    //         <AvatarImage src={user?.avatarUrl} alt={user?.username} />
-    //         <AvatarFallback>
-    //           {user?.firstname[0]?.toUpperCase()}
-    //           {user?.lastname[0]?.toUpperCase()}
-    //         </AvatarFallback>
-    //       </Avatar>
-    //       <p>
-    //         {user?.firstname && user?.lastname
-    //           ? `${user?.firstname} ${user?.lastname}`
-    //           : user?.username}
-    //       </p>
-    //     </div>
-    //     <div className={style["c-aside__headerActions"]}>
-    //       {user && (
-    //         <>
-    //           <UpdateInformationsDialog variants={{ size: "icon" }} user={user}>
-    //             <Edit />
-    //           </UpdateInformationsDialog>
-    //           <DeleteAccountButton
-    //             variants={{ size: "icon", variant: "destructive" }}
-    //             userId={user?.id !== undefined ? user.id : 0}
-    //           >
-    //             <Trash2 />
-    //           </DeleteAccountButton>
-    //         </>
-    //       )}
-    //     </div>
-    //   </div>
-    //   <div className={style["c-aside__linksList"]}>
-    //     {links.map(({ href, label, icon, subPath }) => (
-    //       <Button
-    //         key={href}
-    //         asChild
-    //         variant={pathname === href || subPath === pathname ? "secondary" : "aside"}
-    //         size="asideSize"
-    //       >
-    //         <Link href={href}>
-    //           {icon}
-    //           {label}
-    //         </Link>
-    //       </Button>
-    //     ))}
-    //   </div>
-    //   <SignOutButton variants={{ variant: "destructive", size: "asideSize" }}>
-    //     Sign out
-    //   </SignOutButton>
-    // </aside>
     <aside className={style.container}>
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Avatar>
             <AvatarImage src={user.avatarUrl} alt={user.username} />
-            <AvatarFallback>
+            <AvatarFallback
+              style={{
+                backgroundColor: `hsl(${((user.email.charCodeAt(0) * 100 + user.email.charCodeAt(1) * 37) % 360)}, 60%, 60%)`
+              }}>
               {user.firstname[0]?.toUpperCase()}
               {user.lastname[0]?.toUpperCase()}
             </AvatarFallback>
@@ -126,7 +78,7 @@ export function Aside({ user }: { user: User }) {
         {links.map((link) => (
           <Button
             key={link.href}
-            variant={pathname === link.href ? "primary" : "link"}
+            variant={pathname.includes(link.href) ? "primary" : "link"}
             asChild
           >
             <Link href={link.href}>
