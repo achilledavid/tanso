@@ -6,6 +6,8 @@ import { isEmpty } from "lodash";
 import { Button } from "@/components/ui/button/button";
 import Link from "next/link";
 import { Fragment } from "react";
+import { ArrowRight } from "lucide-react";
+import style from "./shared-projects.module.scss";
 
 export function SharedProjects() {
   const { data: projects, isLoading } = useQuery({
@@ -19,12 +21,16 @@ export function SharedProjects() {
         <p>loading...</p>
       ) : (
         projects && !isEmpty(projects) ? (
-          <ul className="flex flex-col gap-2">
+          <ul className={style["c-shared-projects__list"]}>
             {projects.map((project) => (
-              <li key={`project-${project.id}`}>
-                <Button variant="link" size="sm" asChild>
+              <li key={`project-${project.id}`} className={style["c-shared-projects__listItem"]}>
+                <div className={style["c-shared-projects__wrapper"]}>
+                  <p>From user : {project.user.username}</p>
+                  <p className={style["c-shared-projects__title"]}>{project.name}</p>
+                </div>
+                <Button variant="secondary" size="sm" asChild>
                   <Link href={`/projects/${project.uuid}`}>
-                    {project.name} <span className="text-xs text-muted-foreground ml-2">({project.user.username})</span>
+                    Open <ArrowRight size={16} />
                   </Link>
                 </Button>
               </li>

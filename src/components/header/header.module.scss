@@ -2,6 +2,7 @@
   background-color: hsl(var(--secondary));
   color: hsl(var(--secondary-foreground));
   padding: 0 4rem;
+  border-bottom: 1px solid hsl(var(--secondary-foreground), 0.1);
 
   .content {
     display: flex;

@@ -10,7 +10,7 @@ import { Fragment } from "react";
 
 export default function LoginPage() {
   const handleGoogleSignIn = async () => {
-    await signIn("google", { callbackUrl: "/account" });
+    await signIn("google", { callbackUrl: "/account/projects" });
   };
 
   return (

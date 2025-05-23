@@ -13,24 +13,22 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
-  name: z.string().min(2, "Project name must be at least 2 characters long").max(50, "Project name must be at most 50 characters long"),
   description: z.string().min(2, "Project description must be at least 2 characters long").max(200, "Project description must be at most 200 characters long"),
 })
 
-export function UpdateName({ project }: PropsWithChildren<{
+export function UpdateDescription({ project }: PropsWithChildren<{
   variants?: VariantProps<typeof buttonVariants>, project: Project
 }>) {
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: project.name,
       description: project.description,
     },
   })
 
   const updateMutation = useMutation({
-    mutationFn: (values: { name: string, description: string }) => updateProject(project.uuid, values),
+    mutationFn: (values: { description: string }) => updateProject(project.uuid, values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['project', project.uuid] });
     },
@@ -43,19 +41,6 @@ export function UpdateName({ project }: PropsWithChildren<{
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-2">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="description"

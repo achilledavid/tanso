@@ -10,22 +10,29 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "",
-        destructive: style.destructive,
-        outline: style.outline,
+        primary: "",
         secondary: style.secondary,
+        tertiary: style.tertiary,
+        outline: style.outline,
         ghost: style.ghost,
+        destructive: style.destructive,
         link: style.link,
+        aside: style.aside,
       },
       size: {
         sm: style.sm,
         md: style.md,
+        lg: style.lg,
+        xl: style.xl,
         icon: style.icon,
-        iconMd: style.iconMd
+        iconMd: style.iconMd,
+        iconLg: style.iconLg,
+        iconXl: style.iconXl,
+        asideSize: style.asideSize,
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "primary",
       size: "md",
     },
   }

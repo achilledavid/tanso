@@ -1,4 +1,4 @@
-import { MyProjects } from "@/components/my-projects";
+import { MyProjects } from "@/components/project/my-projects/my-projects";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";

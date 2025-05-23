@@ -13,7 +13,7 @@ export default function SignInButton({
     <Button
       {...variants}
       className="w-fit"
-      onClick={() => signIn("google", { callbackUrl: "/account" })}
+      onClick={() => signIn("google", { callbackUrl: "/account/projects" })}
     >
       {children}
     </Button>

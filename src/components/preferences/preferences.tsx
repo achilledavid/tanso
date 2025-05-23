@@ -73,7 +73,7 @@ export default function Preferences({ userId }: { userId: number }) {
 
   return (
     <Fragment>
-      <div className="grid grid-cols-4 gap-4 w-full max-w-[550px]">
+      <div className="grid grid-cols-4 gap-4 w-full max-w-[550px] bg-white">
         {pads &&
           !isEmpty(pads) &&
           [...pads]

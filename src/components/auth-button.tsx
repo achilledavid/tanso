@@ -21,7 +21,7 @@ export function AuthButton({
   } else {
     return (
       <Button {...variants} asChild>
-        <Link href="/account">My account</Link>
+        <Link href="/account/projects">My account</Link>
       </Button>
     );
   }

@@ -40,7 +40,7 @@ export function UpdateInformationsDialog({ variants, children, user }: PropsWith
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button {...variants} className="w-fit">
+        <Button {...variants} className="w-fit justify-center items-center">
           {children}
         </Button>
       </DialogTrigger>
