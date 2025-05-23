@@ -6,5 +6,5 @@ type Library = {
 type LibrarySelectorProps = {
   selectedLibrary: string;
   onLibraryChange: (value: string) => void;
-  libraries: Library[];
+  username: string;
 };

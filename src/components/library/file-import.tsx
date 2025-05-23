@@ -5,6 +5,7 @@ import { uploadFileToLibrary } from "@/lib/library";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { Label } from "../ui/label";
+import { Loader2 } from "lucide-react";
 
 export default function FileImport() {
   const queryClient = useQueryClient();
@@ -31,11 +32,18 @@ export default function FileImport() {
     uploadMutation.mutate(files);
   };
 
-  return uploadMutation.isPending ? (
-    <p>Uploading...</p>
-  ) : (
+  return (
     <div className="flex flex-col gap-2">
-      <Label>Upload new file</Label>
+      <Label>
+        {uploadMutation.isPending ? (
+          <div className="text-muted-foreground flex items-center gap-1">
+            <Loader2 className="animate-spin w-4 h-4" />
+            Uploading
+          </div>
+        ) : (
+          <>Upload new file</>
+        )}
+      </Label>
       <Input
         multiple
         type="file"

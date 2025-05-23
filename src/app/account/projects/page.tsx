@@ -68,7 +68,7 @@ export default function AccountProjects() {
                         ))}
                       </div>
                     )}
-                    <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 ml-auto" />
+                    <ArrowRight className="w-4 h-4 translate-y-3 opacity-0 group-hover:opacity-100 duration-100 ease-in group-hover:translate-y-2 ml-auto" />
                   </div>
                 </div>
               </Link>

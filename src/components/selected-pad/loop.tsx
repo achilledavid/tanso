@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import { updatePadIsLooped } from "@/lib/pad";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { isUndefined } from "lodash";
 import { useSound } from "@/contexts/sound-context";
 import { Loader2, Repeat } from "lucide-react";
@@ -39,6 +39,10 @@ export default function Loop({ projectUuid }: { projectUuid: string }) {
     setIsChecked(checked);
     updatePadMutation.mutate({ pad: selectedPad, isLooped: checked });
   }
+
+  useEffect(() => {
+    setIsChecked(selectedPad?.isLooped)
+  }, [selectedPad])
 
   if (!selectedPad) return;
 
