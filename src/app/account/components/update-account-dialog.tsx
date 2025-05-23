@@ -11,10 +11,11 @@ import { VariantProps } from "class-variance-authority";
 import { PropsWithChildren, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { DeleteAccountButton } from "./delete-account-button";
 
 const formSchema = z.object({
-  firstname: z.string().min(2, "firstname must be at least 2 characters longs").max(50, "firstname must be at most 50 characters long"),
-  lastname: z.string().min(2, "lastname must be at least 2 characters longs").max(50, "lastname must be at most 50 characters long"),
+  firstname: z.string().min(2, "Firstname must be at least 2 characters longs").max(50, "Firstname must be at most 50 characters long"),
+  lastname: z.string().min(2, "Lastname must be at least 2 characters longs").max(50, "Lastname must be at most 50 characters long"),
 })
 
 export function UpdateInformationsDialog({ variants, children, user }: PropsWithChildren<{ variants?: VariantProps<typeof buttonVariants>, user: User }>) {
@@ -45,7 +46,7 @@ export function UpdateInformationsDialog({ variants, children, user }: PropsWith
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>update your informations</DialogTitle>
+        <DialogTitle>Update your informations</DialogTitle>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <FormField
@@ -53,7 +54,7 @@ export function UpdateInformationsDialog({ variants, children, user }: PropsWith
               name="firstname"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>firstname</FormLabel>
+                  <FormLabel>Firstname</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -66,7 +67,7 @@ export function UpdateInformationsDialog({ variants, children, user }: PropsWith
               name="lastname"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>lastname</FormLabel>
+                  <FormLabel>Lastname</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -74,7 +75,15 @@ export function UpdateInformationsDialog({ variants, children, user }: PropsWith
                 </FormItem>
               )}
             />
-            <Button type="submit">save</Button>
+            <div className="ml-auto items-end flex flex-col gap-2">
+              <Button type="submit" size="sm" className="w-fit">Update</Button>
+              <DeleteAccountButton
+                variants={{ size: "sm", variant: "destructive" }}
+                userId={user?.id !== undefined ? user.id : 0}
+              >
+                Delete account
+              </DeleteAccountButton>
+            </div>
           </form>
         </Form>
       </DialogContent>
