@@ -8,14 +8,14 @@ datasource db {
 }
 
 model User {
-  id           Int                @id @default(autoincrement())
-  username     String             @unique
-  email        String             @unique
-  firstname    String             @default("")
-  lastname     String             @default("")
-  avatarUrl    String?
-  createdAt    DateTime           @default(now())
-  Projects     Project[]
+  id             Int              @id @default(autoincrement())
+  username       String           @unique
+  email          String           @unique
+  firstname      String           @default("")
+  lastname       String           @default("")
+  avatarUrl      String?
+  createdAt      DateTime         @default(now())
+  Projects       Project[]
   UserKeyBinding UserKeyBinding[]
 
   @@map("users")
@@ -39,6 +39,7 @@ model Project {
 model Pad {
   id          Int     @id @default(autoincrement())
   url         String?
+  volume      Float   @default(1)
   fileName    String?
   keyBinding  String?
   projectUuid String

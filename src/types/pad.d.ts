@@ -5,5 +5,6 @@ type Pad = {
   projectUuid: string;
   fileName: string;
   isLooped: boolean;
+  volume: number;
   keyBinding?: string | null;
 }

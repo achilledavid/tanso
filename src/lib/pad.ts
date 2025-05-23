@@ -47,6 +47,22 @@ export async function updatePadIsLooped(
   return response.data;
 }
 
+export async function updatePadVolume(
+  pad: Pad,
+  volume: number,
+  projectUuid: string
+): Promise<Pad> {
+  const response = await axiosClient.put(
+    `/api/projects/${projectUuid}/pads/volume`,
+    {
+      id: pad.id,
+      volume,
+    }
+  );
+
+  return response.data;
+}
+
 export async function deletePadFile(
   pad: Pad,
   projectUuid: string

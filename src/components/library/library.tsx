@@ -46,7 +46,14 @@ export default function Library({ username, onSelect }: { username: string, onSe
   // TODO : add default libraries to blob store
   const libraries = [
     { id: username, name: "My library" },
-    { id: "tanso-default-library-drums", name: "Drums" },
+    { id: "tanso-default-library-bass", name: "Bass" },
+    { id: "tanso-default-library-claps", name: "Claps" },
+    { id: "tanso-default-library-hats", name: "Hats" },
+    { id: "tanso-default-library-kicks", name: "Kicks" },
+    { id: "tanso-default-library-one-shots", name: "One shots" },
+    { id: "tanso-default-library-rims", name: "Rims" },
+    { id: "tanso-default-library-snares", name: "Snares" },
+    { id: "tanso-default-library-textures", name: "Textures" },
   ];
 
   const handleLibraryChange = (value: string) => {

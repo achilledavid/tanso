@@ -5,6 +5,7 @@ import { playSound } from '@/lib/pad';
 type SoundContextType = {
   playPad: (pad: Pad) => void;
   updatePadLoop: (pad: Pad) => void;
+  updatePadVolume: (pad: Pad) => void;
 };
 
 const SoundContext = createContext<SoundContextType | null>(null);
@@ -36,7 +37,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
       } else {
         sound = new Howl({
           src: pad.url,
-          volume: 1,
+          volume: pad.volume,
           loop: pad.isLooped
         });
         soundMap.set(pad.url, sound);
@@ -56,8 +57,17 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updatePadVolume = (pad: Pad) => {
+    if (!pad.url) return;
+
+    const sound = soundRefs.current.get(pad.url);
+    if (sound) {
+      sound.volume(pad.volume);
+    }
+  };
+
   return (
-    <SoundContext.Provider value={{ playPad, updatePadLoop }}>
+    <SoundContext.Provider value={{ playPad, updatePadLoop, updatePadVolume }}>
       {children}
     </SoundContext.Provider>
   );
