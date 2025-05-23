@@ -1,28 +1,40 @@
-.container {
-  padding: 2.5rem;
-  display: grid;
-  grid-template-columns: 360px 1fr;
-  grid-template-rows: 1fr;
-  gap: 4rem;
+.wrapper {
+  max-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background-color: hsl(var(--secondary));
-  height: calc(100dvh - 80px);
+  color: hsl(var(--secondary-foreground));
 
-  aside {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+  .container {
+    padding: 1rem;
+    flex: 1;
+    overflow: auto;
+    display: grid;
+    grid-template: "left main" 1fr / 22rem;
+    gap: 1rem;
 
-    a,
-    button {
-      justify-content: flex-start;
-      width: 100%;
+    &>div {
+      padding: 1rem;
     }
   }
+}
 
-  &>div {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+@media screen and (max-width: 850px) {
+  .wrapper {
+    .container {
+      display: flex;
+      flex-direction: column;
+
+      aside {
+        height: fit-content;
+        min-width: 22rem;
+      }
+
+      &>div {
+        flex: 1;
+      }
+    }
   }
 }

@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button/button"
 import { useMemo, memo } from "react"
-import { Upload } from "lucide-react"
+import { ArrowLeft, ArrowRight, Upload } from "lucide-react"
 import { SoundPlayer } from "./sound-player"
 import { ListBlobResultBlob } from "@vercel/blob"
 
@@ -57,8 +57,9 @@ export function DataTable<TData extends ListBlobResultBlob>({
   data,
   onSelect,
   rowSelection,
-  setRowSelection
-}: DataTableProps<TData>) {
+  setRowSelection,
+  isDark = false
+}: DataTableProps<TData> & { isDark?: boolean }) {
   const enhancedColumns = useMemo(() =>
     columns.map(column => ({
       ...column,
@@ -133,19 +134,21 @@ export function DataTable<TData extends ListBlobResultBlob>({
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           size="sm"
-          variant="ghost"
+          variant={isDark ? "secondary" : "ghost"}
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
+          <ArrowLeft />
           Previous
         </Button>
         <Button
           size="sm"
-          variant="ghost"
+          variant={isDark ? "secondary" : "ghost"}
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
           Next
+          <ArrowRight />
         </Button>
       </div>
     </div>

@@ -10,6 +10,11 @@ export default async function AccountLibrary() {
   if (!username) notFound();
 
   return (
-    <Library username={username} />
+    <div className="flex flex-col gap-4 max-w-[40rem] w-full">
+      <div className="flex items-center justify-between">
+        <h1 className='text-2xl font-semibold text-gray-100 font-["Deezer"] uppercase'>Libraries</h1>
+      </div>
+      <Library username={username} isDark />
+    </div>
   )
 }

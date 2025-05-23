@@ -58,6 +58,7 @@ export default function Project({ params }: { params: Promise<{ uuid: string }> 
                   <div>
                     <h1 className={style.title}>{project?.name}</h1>
                     <p>Created by {creator.username}</p>
+                    <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{project?.description}</p>
                   </div>
                   {project?.permissions?.isOwner && (
                     <div className="mt-auto flex gap-3 items-center">

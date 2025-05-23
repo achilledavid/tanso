@@ -21,7 +21,7 @@ export function DeleteAccountButton({ variants, children, userId }: PropsWithChi
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button {...variants} className="w-fit">
+        <Button {...variants} type="button" className="w-fit">
           {children}
         </Button>
       </DialogTrigger>

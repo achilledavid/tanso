@@ -4,6 +4,7 @@ import { VariantProps } from "class-variance-authority";
 import { Button, buttonVariants } from "./ui/button/button";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import SignInButton from "./sign-in-button";
 
 export function AuthButton({
   variants,
@@ -14,9 +15,9 @@ export function AuthButton({
 
   if (session.status != "authenticated") {
     return (
-      <Button {...variants} asChild>
-        <Link href="/login">Sign in</Link>
-      </Button>
+      <SignInButton variants={variants}>
+        Sign in
+      </SignInButton>
     );
   } else {
     return (
