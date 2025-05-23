@@ -1,15 +1,13 @@
 "use client"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DeleteAccountButton } from "./delete-account-button";
 import { UpdateInformationsDialog } from "./update-account-dialog";
 import SignOutButton from "@/components/sign-out-button";
 import { Button } from "@/components/ui/button/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FolderOpen, Share2, Edit, Trash2, Settings, AudioLines, LogOut, Users, Settings2 } from "lucide-react";
+import { FolderOpen, Edit, AudioLines, LogOut, Users, Settings2 } from "lucide-react";
 import style from "./aside.module.scss";
-import { linkSync } from "fs";
 import { Fragment, ReactNode } from "react";
 
 export function Aside({ user }: { user: User }) {

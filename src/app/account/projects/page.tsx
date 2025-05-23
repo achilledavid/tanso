@@ -41,7 +41,7 @@ export default function AccountProjects() {
         </div>
         <PopStagger className={style.grid}>
           {projects?.map((project) => (
-            <li className="h-full group">
+            <li className="h-full group" key={project.uuid}>
               <Link className={style.project} href={`/projects/${project.uuid}`}>
                 <div className="flex items-center justify-between gap-2 pr-2">
                   <strong className="font-semibold text-gray-100">
@@ -54,7 +54,7 @@ export default function AccountProjects() {
                   <div className="flex items-center justify-between mt-4 min-h-8 w-full gap-2">
                     {project.AccessAuthorized && !isEmpty(project.AccessAuthorized) && (
                       <div className="flex gap-2">
-                        {project.AccessAuthorized.map((user, index) => (
+                        {project.AccessAuthorized.map((user) => (
                           <Avatar key={user.userEmail}>
                             <AvatarFallback
                               className="uppercase"
@@ -83,7 +83,7 @@ export default function AccountProjects() {
           <h2 className='text-2xl font-semibold text-gray-100 font-["Deezer"] uppercase'>No project found</h2>
         </div>
         <p className="text-muted-foreground">
-          You haven't created any projects yet.
+          You haven&apos;t created any projects yet.
         </p>
         <p className="text-muted-foreground">
           Get started and create your first project now!

@@ -1,16 +1,14 @@
 "use client"
 
 import PopStagger from "@/components/pop-stagger";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getSharedProjects } from "@/lib/project";
 import { useQuery } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
-import { ArrowRight, FolderX, LinkIcon, Loader2, Plus } from "lucide-react";
+import { ArrowRight, FolderX, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import style from "./shared.module.scss"
 import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button/button";
 
 export default function AccountSharedProjectsPage() {
   const session = useSession();
@@ -33,7 +31,7 @@ export default function AccountSharedProjectsPage() {
         <h1 className='text-2xl font-semibold text-gray-100 font-["Deezer"] uppercase'>Shared with me</h1>
         <PopStagger className={style.grid}>
           {projects?.map((project) => (
-            <li className="h-full group">
+            <li className="h-full group" key={project.uuid}>
               <Link className={style.project} href={`/projects/${project.uuid}`}>
                 <strong className="font-semibold text-gray-100">
                   {project.name}

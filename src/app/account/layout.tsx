@@ -9,7 +9,6 @@ import { notFound, redirect } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/lib/user";
 import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export default function AccountLayout({ children }: PropsWithChildren) {
   const session = useSession();
