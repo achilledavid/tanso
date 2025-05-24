@@ -18,7 +18,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json(pad);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to update pad speed: An unexpected error occurred." },
+      { error: "Failed to update pad speed: An unexpected error occurred." + error },
       { status: 500 }
     );
   }
