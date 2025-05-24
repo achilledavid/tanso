@@ -3,31 +3,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
   text-align: center;
-  padding: 9rem 0;
+  padding: 9rem 1rem;
+  gap: 8rem;
+}
 
-  h1 {
-    font-family: var(--font-deezer);
-    font-weight: 800;
-    font-size: 10rem;
-    font-weight: 800;
-    line-height: .9;
-    text-transform: uppercase;
-    text-wrap: balance;
-
-    * {
-      font: inherit;
-    }
-  }
-
-  p {
-    font-family: var(--font-deezer);
-    font-size: var(--subtitle-fontsize);
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 0.75rem;
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 4rem 1rem;
+    gap: 4rem;
   }
 }
