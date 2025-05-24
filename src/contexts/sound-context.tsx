@@ -7,6 +7,7 @@ type SoundContextType = {
   updatePadLoop: (pad: Pad) => void;
   updatePadVolume: (pad: Pad) => void;
   updatePadReverb: (pad: Pad) => void;
+  updatePasSpeed: (pad: Pad) => void;
 };
 
 const SoundContext = createContext<SoundContextType | null>(null);
@@ -99,6 +100,8 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
     setupReverb(pad, sound);
 
+    sound.rate(pad.speed );
+
     playSound(sound);
   };
 
@@ -131,8 +134,16 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updatePasSpeed = (pad: Pad) => {
+    if (!pad.url) return;
+    const sound = soundRefs.current.get(pad.url);
+    if (sound) {
+      sound.rate(pad.speed);
+    }
+  };
+
   return (
-    <SoundContext.Provider value={{ playPad, updatePadLoop, updatePadVolume, updatePadReverb }}>
+    <SoundContext.Provider value={{ playPad, updatePadLoop, updatePadVolume, updatePadReverb, updatePasSpeed }}>
       {children}
     </SoundContext.Provider>
   );

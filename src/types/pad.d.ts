@@ -7,5 +7,6 @@ type Pad = {
   isLooped: boolean;
   volume: number;
   reverb: number;
+  speed: number;
   keyBinding?: string | null;
 }

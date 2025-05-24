@@ -41,6 +41,7 @@ model Pad {
   url         String?
   volume      Float   @default(1)
   reverb      Float   @default(0)
+  speed       Float   @default(1)
   fileName    String?
   keyBinding  String?
   projectUuid String
