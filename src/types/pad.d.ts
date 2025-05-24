@@ -6,5 +6,7 @@ type Pad = {
   fileName: string;
   isLooped: boolean;
   volume: number;
+  reverb: number;
+  speed: number;
   keyBinding?: string | null;
 }
