@@ -43,7 +43,6 @@ export default function Speed({ projectUuid }: { projectUuid: string }) {
   function handleSpeedCommit(value: number[]) {
     if (!selectedPad) return;
     const speed = value[0];
-    if (speed < -12 || speed > 12) return;
     updatePadMutation.mutate({ pad: selectedPad, speed });
   }
 
