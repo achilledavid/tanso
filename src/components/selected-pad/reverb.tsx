@@ -54,13 +54,14 @@ export default function Reverb({ projectUuid }: { projectUuid: string }) {
   return (
     <div className="flex flex-col gap-2 my-2">
       <div className="flex items-center gap-2">
-        <Label htmlFor="is-looped" className="text-sm font-medium">Reverb</Label>
+        <Label htmlFor="reverb-slider" className="text-sm font-medium">Reverb</Label>
       </div>
       <div className="flex items-center gap-2">
         {updatePadMutation.isPending && (
           <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
         )}
         <Slider
+          id="reverb-slider"
           disabled={updatePadMutation.isPending}
           value={sliderValue}
           min={0}
