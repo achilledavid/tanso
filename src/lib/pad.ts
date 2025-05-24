@@ -77,6 +77,21 @@ export async function deletePadFile(
   return response.data;
 }
 
+export async function updatePadReverb(
+  pad: Pad,
+  reverb: number,
+  projectUuid: string
+): Promise<Pad> {
+  const response = await axiosClient.put(
+    `/api/projects/${projectUuid}/pads/reverb`,
+    {
+      id: pad.id,
+      reverb,
+    }
+  );
+  return response.data;
+}
+
 export function playSound(sound: Howl) {
   if (sound.playing() && sound.loop()) {
     sound.stop();

@@ -3,6 +3,7 @@ import KeyBinding from "./key-binding/key-binding";
 import LinkedFile from "./linked-file/linked-file";
 import Loop from "./loop";
 import Volume from "./volume";
+import Reverb from "./reverb";
 
 export default function SelectedPad({ projectUuid }: { projectUuid: string }) {
 
@@ -12,6 +13,7 @@ export default function SelectedPad({ projectUuid }: { projectUuid: string }) {
       <KeyBinding projectUuid={projectUuid} />
       <Loop projectUuid={projectUuid} />
       <Volume projectUuid={projectUuid} />
+      <Reverb projectUuid={projectUuid} />
     </Fragment>
   );
 }
