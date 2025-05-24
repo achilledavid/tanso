@@ -17,8 +17,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     });
     return NextResponse.json(pad);
   } catch (error) {
+    console.error("Error updating pad reverb:", error);
     return NextResponse.json(
-      { error: "Failed to update pad reverb : " + error },
+      { error: "Failed to update pad reverb: An unexpected error occurred." },
       { status: 500 }
     );
   }
