@@ -7,19 +7,19 @@ export default function Informations() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div className="flex flex-col gap-4">
                     <h2 className="text-4xl md:text-5xl font-bold mb-6 text-center font-[Deezer]">
-                        La création musicale <span className=" text-[#a238ff] font-bold">sans les complications</span>
+                        Music creation <span className=" text-[#a238ff] font-bold">without the complication</span>
                     </h2>
                     <p className="text-secondary mb-6 text-left">
-                        La production musicale traditionnelle est complexe, coûteuse et demande des années d&apos;apprentissage.
-                        Tanso change la donne avec une approche intuitive basée sur des pads.
+                        Traditional music production is complex, expensive, and requires years of training.
+                        Tanso changes this with an intuitive, pad-based approach.
                     </p>
                     <ul className="space-y-4">
                         {[
-                            { icon: <Zap size={20} />, text: "Créez des morceaux en quelques minutes, pas en semaines" },
-                            { icon: <Volume2 size={20} />, text: "Accédez à des milliers de sons professionnels" },
+                            { icon: <Zap size={20} />, text: "Create tracks in minutes, not weeks" },
+                            { icon: <Volume2 size={20} />, text: "Access thousands of professional sounds" },
                             {
                                 icon: <Award size={20} />,
-                                text: "Obtenez des résultats de qualité studio sans expertise technique",
+                                text: "Get studio-quality results without technical expertise",
                             },
                         ].map((item, index) => (
                             <li key={index} className="flex items-center gap-3">

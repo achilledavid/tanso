@@ -1,4 +1,8 @@
 .herobanner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
     h1 {
         font-family: var(--font-deezer);
         font-weight: 800;
