@@ -27,7 +27,7 @@ export default function Header({ children, landing }: HeaderProps) {
             </Button>
           </nav>
         )}
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center ml-auto">
           {children}
         </div>
       </div>

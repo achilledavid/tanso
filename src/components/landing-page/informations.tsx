@@ -22,7 +22,7 @@ export default function Informations() {
     }, [])
 
     useGSAP(() => {
-        let mm = gsap.matchMedia();
+        const mm = gsap.matchMedia();
 
         if (!container.current || !ulRef.current) return;
 

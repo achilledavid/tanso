@@ -1,9 +1,10 @@
 "use client"
 
 import { CloudUpload, Grid3X3, Headphones, Music, Sparkles, Users } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,40 +12,44 @@ export default function Product() {
     const leftFeaturesRef = useRef<HTMLDivElement>(null);
     const rightFeaturesRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        gsap.from(
-            leftFeaturesRef.current?.children || [],
-            {
-                opacity: 0,
-                xPercent: -20,
-                yPercent: -25,
-                rotate: 7.5,
-                duration: 0.75,
-                stagger: 0.2,
-                ease: "power3.out",
-                scrollTrigger: {
-                    trigger: rightFeaturesRef.current,
-                    start: "top 65%",
-                }
-            }
-        );
+    useGSAP(() => {
+        const mm = gsap.matchMedia();
 
-        gsap.from(
-            rightFeaturesRef.current?.children || [],
-            {
-                opacity: 0,
-                xPercent: 20,
-                yPercent: -25,
-                rotate: -7.5,
-                duration: 0.75,
-                stagger: 0.2,
-                ease: "power3.out",
-                scrollTrigger: {
-                    trigger: rightFeaturesRef.current,
-                    start: "top 65%",
+        mm.add("(min-width: 850px)", () => {
+            gsap.from(
+                leftFeaturesRef.current?.children || [],
+                {
+                    opacity: 0,
+                    xPercent: -20,
+                    yPercent: -25,
+                    rotate: 7.5,
+                    duration: 0.75,
+                    stagger: 0.2,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: rightFeaturesRef.current,
+                        start: "top 65%",
+                    }
                 }
-            }
-        );
+            );
+
+            gsap.from(
+                rightFeaturesRef.current?.children || [],
+                {
+                    opacity: 0,
+                    xPercent: 20,
+                    yPercent: -25,
+                    rotate: -7.5,
+                    duration: 0.75,
+                    stagger: 0.2,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: rightFeaturesRef.current,
+                        start: "top 65%",
+                    }
+                }
+            );
+        })
     }, []);
 
     return (
@@ -99,9 +104,9 @@ export default function Product() {
 
 function Feature({ ...props }: { icon: React.ReactNode; title: string; description: string; }) {
     return (
-        <div className="flex flex-col p-4 rounded-[1rem] bg-[#f7f3ff]/75 h-fit">
+        <div className="flex flex-col p-4 rounded-[1rem] bg-purple-100/40 h-fit">
             <div className="flex gap-3 items-center">
-                <div className="bg-[#e1cfff] min-w-8 min-h-8 flex items-center justify-center rounded text-[#a238ff]">
+                <div className="bg-purple-400/30 min-h-8 min-w-8 flex items-center justify-center rounded text-purple-400">
                     {props.icon}
                 </div>
                 <h3 className="leading-none text-lg font-bold">{props.title}</h3>

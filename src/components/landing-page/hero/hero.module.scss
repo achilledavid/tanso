@@ -39,7 +39,8 @@
 @media screen and (max-width: 768px) {
     .container {
         min-height: auto;
-        padding: 2rem;
+        padding: 0 2rem;
+        padding-top: 8rem;
 
         h1 {
             font-size: 6rem;
