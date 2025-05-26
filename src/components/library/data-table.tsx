@@ -33,6 +33,8 @@ interface DataTableProps<TData extends ListBlobResultBlob> {
   onSelect?: (file: ListBlobResultBlob) => void
   rowSelection: RowSelectionState
   setRowSelection: OnChangeFn<RowSelectionState>
+  isDark?: boolean
+  withPagination?: boolean
 }
 
 const ActionCell = memo(({ file, onSelect }: { file: ListBlobResultBlob, onSelect?: (file: ListBlobResultBlob) => void }) => (
@@ -58,8 +60,9 @@ export function DataTable<TData extends ListBlobResultBlob>({
   onSelect,
   rowSelection,
   setRowSelection,
-  isDark = false
-}: DataTableProps<TData> & { isDark?: boolean }) {
+  isDark = false,
+  withPagination = true,
+}: DataTableProps<TData>) {
   const enhancedColumns = useMemo(() =>
     columns.map(column => ({
       ...column,
@@ -75,16 +78,22 @@ export function DataTable<TData extends ListBlobResultBlob>({
     data,
     columns: enhancedColumns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    ...(withPagination
+      ? { getPaginationRowModel: getPaginationRowModel() }
+      : {}),
     onRowSelectionChange: setRowSelection,
     state: {
       rowSelection,
     },
-    initialState: {
-      pagination: {
-        pageSize: PAGE_SIZE,
-      },
-    },
+    ...(withPagination
+      ? {
+          initialState: {
+            pagination: {
+              pageSize: PAGE_SIZE,
+            },
+          },
+        }
+      : {}),
   });
 
   return (
@@ -131,26 +140,28 @@ export function DataTable<TData extends ListBlobResultBlob>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          size="sm"
-          variant={isDark ? "secondary" : "ghost"}
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          <ArrowLeft />
-          Previous
-        </Button>
-        <Button
-          size="sm"
-          variant={isDark ? "secondary" : "ghost"}
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-          <ArrowRight />
-        </Button>
-      </div>
+      {withPagination && (
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Button
+            size="sm"
+            variant={isDark ? "secondary" : "ghost"}
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ArrowLeft />
+            Previous
+          </Button>
+          <Button
+            size="sm"
+            variant={isDark ? "secondary" : "ghost"}
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+            <ArrowRight />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
