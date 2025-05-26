@@ -14,7 +14,7 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="border-t border-muted-foreground mt-6 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <div className="border-t border-muted-foreground mt-6 pt-6 flex flex-col md:flex-row md:justify-between md:items-center">
                     <p className="text-sm">
                         © {new Date().getFullYear()} Tanso. All rights reserved.
                     </p>
