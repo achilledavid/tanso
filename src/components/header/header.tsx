@@ -1,3 +1,6 @@
+"use client"
+
+import { Button } from "../ui/button/button";
 import style from "./header.module.scss";
 import Link from "next/link";
 
@@ -12,23 +15,17 @@ export default function Header({ children, landing }: HeaderProps) {
       <div className={style.content}>
         <Link href="/" className={style.logo}>Tanso</Link>
         {landing && (
-          <ul className={style.nav}>
-            <li>
-              <a href="#" className={style.link}>
-                <span>Features</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" className={style.link}>
-                <span>Pricing</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" className={style.link}>
-                <span>Community</span>
-              </a>
-            </li>
-          </ul>
+          <nav>
+            <Button size="sm" variant="link" asChild>
+              <Link href="#product">Product</Link>
+            </Button>
+            <Button size="sm" variant="link" asChild>
+              <Link href="#pricing">Pricing</Link>
+            </Button>
+            <Button size="sm" variant="link" asChild>
+              <Link href="#community">Community</Link>
+            </Button>
+          </nav>
         )}
         <div className="flex gap-2 items-center">
           {children}

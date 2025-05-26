@@ -1,8 +1,11 @@
-.herobanner {
+.container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
     align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 5rem);
+    width: 100%;
+
     h1 {
         font-family: var(--font-deezer);
         font-weight: 800;
@@ -11,6 +14,7 @@
         line-height: .9;
         text-transform: uppercase;
         text-wrap: balance;
+        text-align: center;
 
         * {
             font: inherit;
@@ -26,12 +30,19 @@
         margin-bottom: 0.75rem;
     }
 
+    button,
+    a {
+        margin-top: 1rem;
+    }
 }
 
 @media screen and (max-width: 768px) {
-    .herobanner {
+    .container {
+        min-height: auto;
+        padding: 2rem;
+
         h1 {
-            font-size: 5rem;
+            font-size: 6rem;
         }
 
         p {
