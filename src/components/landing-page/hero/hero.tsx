@@ -1,21 +1,18 @@
-import { Fragment } from 'react';
-import style from './Herobanner.module.scss';
+import style from './hero.module.scss';
 import SignInButton from '@/components/sign-in-button';
 import TextReveal from '@/components/text-reveal/text-reveal';
+import { cn } from '@/lib/utils';
 
 export default function Herobanner() {
     return (
-        <div className={style.herobanner}>
+        <section className={cn(style.container, "hero")}>
             <TextReveal>
-                <Fragment>Bring</Fragment>
-                <Fragment>your</Fragment>
-                <Fragment>music</Fragment>
-                <Fragment>to life</Fragment>
+                Bring<br />your<br />music<br /><span>to life</span>
             </TextReveal>
             <p>Compose your music with Tanso</p>
             <SignInButton>
                 Sign up for free
             </SignInButton>
-        </div>
+        </section>
     )
 }

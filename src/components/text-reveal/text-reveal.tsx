@@ -3,35 +3,53 @@
 import React, { PropsWithChildren, ElementType } from "react";
 import { useGSAP } from '@gsap/react';
 import gsap from "gsap";
-import style from "./text-reveal.module.scss";
+import { SplitText } from "gsap/SplitText";
+
+if (typeof window !== "undefined") {
+    gsap.registerPlugin(SplitText);
+}
 
 type TextRevealProps = {
     className?: string;
-    reversed?: boolean;
     as?: ElementType;
+    onAnimationComplete?: () => void;
 }
 
-export default function TextReveal({ children, className, reversed = false, as: Component = 'h1' }: PropsWithChildren<TextRevealProps>) {
-    const sequencedChildren = React.Children.toArray(children);
-
+export default function TextReveal({
+    children,
+    className,
+    as: Component = 'h1',
+    onAnimationComplete
+}: PropsWithChildren<TextRevealProps>) {
     useGSAP(() => {
-        gsap.from(`.text-reveal-${reversed} div span`, {
-            y: reversed ? "-125%" : "125%",
-            stagger: 0.04,
-            duration: 1.25,
-            ease: "power3.inOut",
+        SplitText.create(".text-reveal", {
+            type: "chars, lines",
+            autoSplit: true,
+            mask: "lines",
+            onSplit: (self) => {
+                gsap.to(".text-reveal", {
+                    duration: 0,
+                    opacity: 1
+                });
+
+                gsap.from(self.chars, {
+                    yPercent: "random([175, 125])",
+                    rotation: "random([-20, 20])",
+                    stagger: {
+                        amount: 0.25,
+                        from: "random"
+                    },
+                    duration: 1,
+                    ease: "power3.inOut",
+                    onComplete: onAnimationComplete
+                });
+            }
         });
     });
 
     return (
-        <Component className={`text-reveal-${reversed} ${style.container} ${className}`}>
-            {sequencedChildren.map((child, index) => (
-                <div className={style.item} key={index}>
-                    <span>
-                        {child}
-                    </span>
-                </div>
-            ))}
+        <Component className={`text-reveal opacity-0 flex flex-col ${className}`}>
+            {children}
         </Component>
     )
 }
