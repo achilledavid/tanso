@@ -14,17 +14,17 @@ export default function Header({ children, landing }: HeaderProps) {
         {landing && (
           <ul className={style.nav}>
             <li>
-              <a href="" className={style.link}>
+              <a href="#" className={style.link}>
                 <span>Features</span>
               </a>
             </li>
             <li>
-              <a href="" className={style.link}>
+              <a href="#" className={style.link}>
                 <span>Pricing</span>
               </a>
             </li>
             <li>
-              <a href="" className={style.link}>
+              <a href="#" className={style.link}>
                 <span>Community</span>
               </a>
             </li>
