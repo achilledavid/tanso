@@ -11,9 +11,9 @@ import { isEmpty } from "lodash";
 import { RowSelectionState } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button/button";
 import LibrarySelector from '@/components/library/library-selector/library-selector';
-import { Loader2 } from "lucide-react";
+import { CircleX, Loader2 } from "lucide-react";
 
-export default function Library({ username, onSelect }: { username: string, onSelect?: (file: ListBlobResultBlob) => void }) {
+export default function Library({ username, onSelect, isDark = false }: { username: string, onSelect?: (file: ListBlobResultBlob) => void, isDark?: boolean }) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [selectedLibrary, setSelectedLibrary] = useState<string>(username);
   const [isEditable, setIsEditable] = useState(false);
@@ -43,19 +43,6 @@ export default function Library({ username, onSelect }: { username: string, onSe
     }
   };
 
-  // TODO : add default libraries to blob store
-  const libraries = [
-    { id: username, name: "My library" },
-    { id: "tanso-default-library-bass", name: "Bass" },
-    { id: "tanso-default-library-claps", name: "Claps" },
-    { id: "tanso-default-library-hats", name: "Hats" },
-    { id: "tanso-default-library-kicks", name: "Kicks" },
-    { id: "tanso-default-library-one-shots", name: "One shots" },
-    { id: "tanso-default-library-rims", name: "Rims" },
-    { id: "tanso-default-library-snares", name: "Snares" },
-    { id: "tanso-default-library-textures", name: "Textures" },
-  ];
-
   const handleLibraryChange = (value: string) => {
     setSelectedLibrary(value);
     setRowSelection({});
@@ -76,33 +63,45 @@ export default function Library({ username, onSelect }: { username: string, onSe
 
   return (
     <Fragment>
-      <LibrarySelector
-        selectedLibrary={selectedLibrary}
-        onLibraryChange={handleLibraryChange}
-        libraries={libraries}
-      />
-      {isLoading ? (
-        <div className="min-h-[10rem] flex items-center justify-center">
-          <Loader2 className="animate-spin" stroke="hsl(var(--muted-foreground))" />
-        </div>
-      ) : (
-        !data?.files || isEmpty(data.files) ? (
-          <p className="text-white">No files found in this library</p>
-        ) : (
-          <div className="bg-white p-2 rounded-md">
-            <DataTable
-              data={data.files}
-              columns={showedColumns}
-              onSelect={onSelect}
-              rowSelection={rowSelection}
-              setRowSelection={setRowSelection}
-            />
+      <div className={`${isDark && "dark"}`}>
+        <LibrarySelector
+          username={username}
+          selectedLibrary={selectedLibrary}
+          onLibraryChange={handleLibraryChange}
+        />
+      </div>
+      <div>
+        {isLoading ? (
+          <div className="min-h-[10rem] flex items-center justify-center">
+            <Loader2 className="animate-spin" stroke="hsl(var(--muted-foreground))" />
           </div>
-        )
-      )}
-      <div className="flex items-center justify-between space-x-2 py-4">
-        {isEditable && <FileImport />}
-        {(data && isEditable) && (
+        ) : (
+          !data?.files || isEmpty(data.files) ? (
+            <div className="min-h-[10rem] flex items-center justify-center">
+              <div className="flex gap-1 items-center text-muted-foreground">
+                <CircleX size={16} />
+                <p className="text-sm">No files found</p>
+              </div>
+            </div>
+          ) : (
+            <div className={`${isDark && "dark"}`}>
+              <DataTable
+                isDark={isDark}
+                data={data.files}
+                columns={showedColumns}
+                onSelect={onSelect}
+                rowSelection={rowSelection}
+                setRowSelection={setRowSelection}
+              />
+            </div>
+          )
+        )}
+      </div>
+      <div className="flex items-end justify-between gap-4">
+        <div className={`${isDark && "dark"}`}>
+          {isEditable && <FileImport />}
+        </div>
+        {(data && !isEmpty(data.files) && isEditable) && (
           <Button
             onClick={handleDeleteSelected}
             variant="destructive"
@@ -110,7 +109,8 @@ export default function Library({ username, onSelect }: { username: string, onSe
             className="w-fit"
             disabled={Object.keys(rowSelection).length === 0 || deleteFilesMutation.isPending}
           >
-            {deleteFilesMutation.isPending ? 'Deleting...' : 'Delete selection'}
+            {deleteFilesMutation.isPending && <Loader2 className="animate-spin" />}
+            Delete selection
           </Button>
         )}
       </div>

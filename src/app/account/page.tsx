@@ -22,4 +22,5 @@ export default function Account() {
 
   if (!session.data?.user) return null;
   if (!user && !isLoading) notFound();
+  else redirect("/account/projects")
 }

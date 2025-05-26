@@ -1,11 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button/button";
 import { getUserKeyBinding, updateUserKeyBinding } from "@/lib/preferences";
-import { cn } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isEmpty } from "lodash";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import style from "./grid.module.scss"
+import { Loader2 } from "lucide-react";
+import PopStagger from "@/components/pop-stagger";
 
 export default function Preferences({ userId }: { userId: number }) {
   const queryClient = useQueryClient();
@@ -13,7 +14,7 @@ export default function Preferences({ userId }: { userId: number }) {
   const [listeningForKey, setListeningForKey] = useState(false);
   const keyBindingRef = useRef<HTMLDivElement>(null);
 
-  const { data: pads } = useQuery({
+  const { data: pads, isLoading } = useQuery({
     queryKey: ["user-key-binding", userId],
     queryFn: () => getUserKeyBinding(userId),
   });
@@ -43,7 +44,7 @@ export default function Preferences({ userId }: { userId: number }) {
       queryClient
         .invalidateQueries({ queryKey: ["user-key-binding", userId] })
         .then(() => {
-            setSelectedPad(null);
+          setSelectedPad(null);
         });
     },
   });
@@ -71,31 +72,35 @@ export default function Preferences({ userId }: { userId: number }) {
     setListeningForKey(false);
   }
 
-  return (
-    <Fragment>
-      <div className="grid grid-cols-4 gap-4 w-full max-w-[550px] bg-white">
-        {pads &&
-          !isEmpty(pads) &&
-          [...pads]
-            .sort((a, b) => a.padPosition - b.padPosition)
-            .map((pad) => (
-              <div key={pad.id} className="flex flex-col gap-2">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => handleStartKeyBinding(pad)}
-                  onKeyDown={selectedPad?.id === pad.id ? handleKeyBindingChange : undefined}
-                  className={cn(
-                    "relative w-full aspect-square max-w-[120px] max-h-[120px] flex items-center justify-center text-xl"
-                  )}
-                >
-                  {selectedPad?.id === pad.id && listeningForKey
-                    ? "..."
-                    : pad.keyBinding?.toUpperCase() || ""}
-                </Button>
-              </div>
-            ))}
-      </div>
-    </Fragment>
-  );
+  return isLoading ? (
+    <div className="aspect-square w-full flex items-center justify-center" >
+      <Loader2 className="animate-spin" stroke="hsl(var(--muted-foreground))" />
+    </div>
+  ) : (pads && !isEmpty(pads)) && (
+    <div className="relative">
+      <PopStagger className="grid grid-cols-4 gap-4 w-full">
+        {[...pads]
+          .sort((a, b) => a.padPosition - b.padPosition)
+          .map((pad) => (
+            <div key={pad.id} className="flex flex-col gap-2">
+              <button
+                className={style.key}
+                onClick={() => handleStartKeyBinding(pad)}
+                onKeyDown={selectedPad?.id === pad.id ? handleKeyBindingChange : undefined}
+              >
+                {selectedPad?.id === pad.id && listeningForKey
+                  ? "..."
+                  : pad.keyBinding?.toUpperCase() || ""}
+              </button>
+            </div>
+          ))
+        }
+      </PopStagger>
+      {updateKeyBindingMutation.isPending && (
+        <div className="absolute aspect-square w-full flex items-center justify-center top-0 left-0 bg-black/50" >
+          <Loader2 className="animate-spin" stroke="hsl(var(--muted-foreground))" />
+        </div>
+      )}
+    </div>
+  )
 }
