@@ -129,6 +129,7 @@ export default function LibraryMultiSelect({
             size="icon"
             className="h-8 w-8"
             onClick={() => handlePlay(row.original)}
+            aria-label="Play sound"
           >
             <Volume2 />
           </Button>

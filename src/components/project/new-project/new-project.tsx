@@ -192,7 +192,7 @@ export default function NewProject({ userId }: { userId: number }) {
 
         <div className={styles.section}>
           <FormLabel className={styles.labelSection}>Collaborateurs</FormLabel>
-          <div className={"flex items-center gap-2 " + styles.mt2}>
+          <div className={"flex items-center gap-2 " + styles.marginTopSmall}>
             <Input
               placeholder="Adresse email"
               value={email}
