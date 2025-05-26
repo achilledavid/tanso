@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import style from "./home.module.scss"
 import Header from "@/components/header/header";
 import { AuthButton } from "@/components/auth-button";
@@ -8,11 +7,12 @@ import Product from "@/components/landing-page/product";
 import GetStarted from "@/components/landing-page/get-started";
 import Workflow from "@/components/landing-page/workflow";
 import Footer from "@/components/footer/footer";
+import SmoothScroll from "@/components/smooth-scroll";
 
 export default function Home() {
 
   return (
-    <Fragment>
+    <SmoothScroll>
       <Header>
         <AuthButton variants={{ size: "sm" }} />
       </Header>
@@ -26,6 +26,6 @@ export default function Home() {
         </div>
       </main>
       <Footer />
-    </Fragment>
+    </SmoothScroll>
   );
 }
