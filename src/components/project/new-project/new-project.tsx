@@ -1,6 +1,5 @@
 "use client"
 
-import Library from "@/components/library/library";
 import { Button } from "@/components/ui/button/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -16,6 +15,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
 import { useSession } from "next-auth/react";
+import styles from "./new-project.module.scss";
+import { Plus } from "lucide-react";
+import LibraryMultiSelect from "@/components/library/library-multiselect";
 
 const formSchema = z.object({
   projectName: z.string().min(2, "name must be at least 2 characters long").max(50, "name must be at most 50 characters long"),
@@ -63,11 +65,12 @@ export default function NewProject({ userId }: { userId: number }) {
     setCollaborators(collaborators.filter((collaborator) => collaborator !== emailToRemove));
   };
 
-  function handleAddSound(file: ListBlobResultBlob) {
-    if (selectedSounds.length >= 16) return;
-    if (!selectedSounds.find(s => s.url === file.url)) {
-      setSelectedSounds([...selectedSounds, file]);
-    }
+  function handleAddSounds(files: ListBlobResultBlob[]) {
+    const newSounds = files.filter(
+      file => !selectedSounds.find(s => s.url === file.url)
+    );
+    const merged = [...selectedSounds, ...newSounds].slice(0, 16);
+    setSelectedSounds(merged);
     setSoundDialogOpen(false);
   }
 
@@ -92,15 +95,15 @@ export default function NewProject({ userId }: { userId: number }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 text-white max-w-screen-sm">
+      <form onSubmit={form.handleSubmit(onSubmit)} className={styles.newProjectForm + " flex flex-col gap-6 text-white"}>
         <FormField
           control={form.control}
           name="projectName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Project Name</FormLabel>
+              <FormLabel className={styles.labelTitle}>Nom du projet</FormLabel>
               <FormControl>
-                <Input {...field} autoComplete="off" />
+                <Input {...field} autoComplete="off" className={styles.inputLight} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -112,29 +115,33 @@ export default function NewProject({ userId }: { userId: number }) {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel className={styles.labelTitle}>Description</FormLabel>
               <FormControl>
-                <Textarea {...field} autoComplete="off" />
+                <Textarea {...field} autoComplete="off" className={styles.textareaLight} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className="flex flex-col gap-2">
-          <FormLabel>Sélectionner jusqu&apos;à 16 sons</FormLabel>
-          <Button
-            type="button"
-            size="sm"
-            onClick={() => setSoundDialogOpen(true)}
-            disabled={selectedSounds.length >= 16}
-          >
-            Ajouter un son
-          </Button>
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <FormLabel className={styles.labelSection}>Sons du projet (jusqu&apos;à 16)</FormLabel>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setSoundDialogOpen(true)}
+              disabled={selectedSounds.length >= 16}
+              className={styles.addSoundBtn}
+            >
+              <Plus size={18} className="mr-1" />
+              Ajouter des sons
+            </Button>
+          </div>
           {selectedSounds.length > 0 && (
-            <ul className="space-y-2 mt-2">
+            <ul className={styles.soundList}>
               {selectedSounds.map((sound) => (
-                <li key={sound.url} className="flex items-center justify-between">
+                <li key={sound.url} className={styles.soundListItem}>
                   <span className="truncate">{sound.pathname || sound.url}</span>
                   <Button
                     size="sm"
@@ -150,50 +157,54 @@ export default function NewProject({ userId }: { userId: number }) {
         </div>
         <Dialog open={soundDialogOpen} onOpenChange={setSoundDialogOpen}>
           <DialogContent>
-            <DialogTitle>Choisir un son</DialogTitle>
-            <Library
+            <DialogTitle>Choisir des sons</DialogTitle>
+            <LibraryMultiSelect
               username={session.data?.user.username ?? ""}
-              onSelect={handleAddSound}
+              selected={selectedSounds}
+              onValidate={handleAddSounds}
+              maxSelect={16}
             />
           </DialogContent>
         </Dialog>
 
-        <FormField
-          control={form.control}
-          name="isPublic"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg p-3">
-              <div className="space-y-0.5">
-                <FormLabel>Make Project Public</FormLabel>
-                <div className="text-sm text-muted-foreground">
-                  Anyone with the link can access this project
+        <div className={styles.section}>
+          <FormField
+            control={form.control}
+            name="isPublic"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg bg-transparent">
+                <div className="space-y-0.5">
+                  <FormLabel className={styles.labelSection}>Projet public</FormLabel>
+                  <div className="text-sm text-muted-foreground">
+                    Toute personne ayant le lien pourra accéder à ce projet
+                  </div>
                 </div>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
 
-        <div className="flex flex-col gap-2">
-          <FormLabel>Add Collaborators</FormLabel>
-          <div className="flex items-center gap-2">
+        <div className={styles.section}>
+          <FormLabel className={styles.labelSection}>Collaborateurs</FormLabel>
+          <div className={"flex items-center gap-2 " + styles.mt2}>
             <Input
-              placeholder="Email address"
+              placeholder="Adresse email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="flex-1"
+              className={styles.inputLight + " flex-1"}
             />
             <Button type="button" size="sm" onClick={addCollaborator}>
-              Add
+              Ajouter
             </Button>
           </div>
           {collaborators.length > 0 && (
-            <ul className="space-y-2">
+            <ul className={styles.collaboratorList}>
               {collaborators.map((collaborator) => (
                 <li key={collaborator} className="flex justify-between items-center">
                   <span>{collaborator}</span>
@@ -202,7 +213,7 @@ export default function NewProject({ userId }: { userId: number }) {
                     variant="destructive"
                     onClick={() => removeCollaborator(collaborator)}
                   >
-                    Remove
+                    Supprimer
                   </Button>
                 </li>
               ))}
@@ -210,7 +221,9 @@ export default function NewProject({ userId }: { userId: number }) {
           )}
         </div>
 
-        <Button type="submit">Create</Button>
+        <Button type="submit" size="lg" className={styles.btnSubmit}>
+          Créer le projet
+        </Button>
       </form>
     </Form>
   );
