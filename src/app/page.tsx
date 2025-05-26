@@ -13,7 +13,7 @@ export default function Home() {
 
   return (
     <Fragment>
-      <Header landing>
+      <Header>
         <AuthButton variants={{ size: "sm" }} />
       </Header>
       <main className={style.container}>
