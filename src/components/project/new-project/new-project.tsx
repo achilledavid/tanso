@@ -18,6 +18,7 @@ import { useSession } from "next-auth/react";
 import styles from "./new-project.module.scss";
 import { Plus } from "lucide-react";
 import LibraryMultiSelect from "@/components/library/library-multiselect";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   projectName: z.string().min(2, "name must be at least 2 characters long").max(50, "name must be at most 50 characters long"),
@@ -95,7 +96,7 @@ export default function NewProject({ userId }: { userId: number }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className={styles.newProjectForm + " flex flex-col gap-6 text-white"}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className={cn(styles.newProjectForm, "flex flex-col gap-6")}>
         <FormField
           control={form.control}
           name="projectName"
@@ -117,7 +118,7 @@ export default function NewProject({ userId }: { userId: number }) {
             <FormItem>
               <FormLabel className={styles.labelTitle}>Description</FormLabel>
               <FormControl>
-                <Textarea {...field} autoComplete="off" className={styles.textareaLight} />
+                <Textarea {...field} rows={5} autoComplete="off" className={styles.textareaLight} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -38,7 +38,8 @@ export default function DeleteDialog({ project }: { project: Project }) {
                         <Button size="sm" variant="ghost">Cancel</Button></AlertDialogCancel>
                     <AlertDialogAction asChild>
                         <Button size="sm" variant="destructive" onClick={handleClick}>
-                            {deleteMutation.isPending ? <Loader2 className="animate-spin" /> : "continue"}
+                            {deleteMutation.isPending && <Loader2 className="animate-spin" />}
+                            Continue
                         </Button>
                     </AlertDialogAction>
                 </AlertDialogFooter>
