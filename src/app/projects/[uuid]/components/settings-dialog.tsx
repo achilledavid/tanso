@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Settings } from "lucide-react";
-import ProjectVisibility from "./visibility";
 import { UpdateName } from "./update-name";
 import DeleteDialog from "./delete-dialog";
 
@@ -18,7 +17,6 @@ export default function SettingsDialog({ project }: { project: Project }) {
                 <DialogHeader>
                     <DialogTitle>Project settings</DialogTitle>
                 </DialogHeader>
-                <ProjectVisibility project={project} />
                 <div className="flex flex-col gap-2">
                     <UpdateName project={project} />
                     <DeleteDialog project={project} />

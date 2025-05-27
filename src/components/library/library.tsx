@@ -57,10 +57,6 @@ export default function Library({ username, onSelect, isDark = false }: { userna
     else setShowedColumns(columns)
   }, [isEditable])
 
-  useEffect(() => {
-    console.log(data)
-  }, [data])
-
   return (
     <Fragment>
       <div className={`${isDark && "dark"}`}>
