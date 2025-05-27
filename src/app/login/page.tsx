@@ -20,38 +20,67 @@ export default function LoginPage() {
       </Header>
 
       <main className={styles.container}>
-        <div className={styles.loginCard}>
-          <div className={styles.logoSection}>
-            <h1>tanso</h1>
-            <p className={styles.tagline}>Your music creation platform</p>
-          </div>
+        <div className={styles.titleWrapper}>
+          <h1 className={styles.title}>Tanso</h1>
+          <p className={styles.description}>Log in to start creating music</p>
+        </div>
 
-          <div className={styles.formSection}>
-            <h2>Sign in to continue</h2>
-
-            <Button
-              className={styles.googleButton}
-              variant="outline"
-              onClick={handleGoogleSignIn}
-            >
-              <Image
-                src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
-                alt="Google logo"
-                width={20}
-                height={20}
-                className={styles.providerIcon}
-              />
-              Continue with Google
-            </Button>
+        <div className={styles.cardSection}>
+          <Button
+            className={styles.googleButton}
+            variant="outline"
+            onClick={handleGoogleSignIn}
+          >
+            <Image
+              src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
+              alt="Google logo"
+              width={20}
+              height={20}
+              className={styles.providerIcon}
+            />
+            Continue with Google
+          </Button>
+          <div className={styles.orSection}>
+            <hr />
+            <p className={styles.orText}>Why Google ?</p>
           </div>
+          <ul className={styles.featuresList}>
+            <li className={styles.featureItem}>
+              <div className={styles.featureStatus}>
+                <div className={styles.featureStatusContent}></div>
+              </div>
+              <div>
+                <p className={styles.featureText}>Secure connection</p>
+                <p className={styles.featureDesc}>Your data is protected by Google</p>
+              </div>
+            </li>
+            <li className={styles.featureItem}>
+              <div className={styles.featureStatus}>
+                <div className={styles.featureStatusContent}></div>
+              </div>
+              <div>
+                <p className={styles.featureText}>Instant access</p>
+                <p className={styles.featureDesc}>No need to create a new password</p>
+              </div>
+            </li>
+            <li className={styles.featureItem}>
+              <div className={styles.featureStatus}>
+                <div className={styles.featureStatusContent}></div>
+              </div>
+              <div>
+                <p className={styles.featureText}>Synchronization</p>
+                <p className={styles.featureDesc}>Your creations are saved automatically</p>
+              </div>
+            </li>
+          </ul>
+        </div>
 
-          <div className={styles.footer}>
-            <p>
-              By continuing, you agree to Tanso&apos;s&nbsp;
-              <a href="/terms">Terms of Service</a> and&nbsp;
-              <a href="/privacy">Privacy Policy</a>.
-            </p>
-          </div>
+        <div className={styles.footer}>
+          <p>
+            By continuing, you agree to Tanso&apos;s&nbsp;
+            <a href="/terms">Terms of Service</a> and&nbsp;
+            <a href="/privacy">Privacy Policy</a>.
+          </p>
         </div>
       </main>
     </Fragment>
