@@ -12,9 +12,11 @@ export default function SelectedPad({ projectUuid }: { projectUuid: string }) {
       <LinkedFile projectUuid={projectUuid} />
       <KeyBinding projectUuid={projectUuid} />
       <Loop projectUuid={projectUuid} />
-      <Volume projectUuid={projectUuid} />
-      <Reverb projectUuid={projectUuid} />
-      <Speed projectUuid={projectUuid} />
+      <div className="space-y-6">
+        <Volume projectUuid={projectUuid} />
+        <Speed projectUuid={projectUuid} />
+        <Reverb projectUuid={projectUuid} />
+      </div>
     </Fragment>
   );
 }
