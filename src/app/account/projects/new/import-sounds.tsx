@@ -17,7 +17,7 @@ const MAX_SELECTION = 16;
 export default function ImportSounds({ username, onSubmit }: { username: string, onSubmit: (files: ListBlobResultBlob[]) => void }) {
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     const [selectedLibrary, setSelectedLibrary] = useState<string>(username);
-    const [showedColumns, setShowedColumns] = useState(columns);
+    const [showedColumns] = useState(columns);
 
     const { data, isLoading } = useQuery({
         queryKey: ['library', selectedLibrary],

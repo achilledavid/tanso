@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,7 +10,7 @@ import { createProject } from "@/lib/project";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ListBlobResultBlob } from "@vercel/blob";
-import { ArrowLeft, ArrowRight, Eye, EyeClosed, FilePlus, FilePlus2, Loader2, Plus } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, EyeClosed, FilePlus2, Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
