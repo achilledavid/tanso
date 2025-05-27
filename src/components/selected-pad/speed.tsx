@@ -5,7 +5,7 @@ import { Label } from "../ui/label";
 import { updatePadSpeed as updateSpeed } from "@/lib/pad";
 import { useEffect, useState } from "react";
 import { useSound } from "@/contexts/sound-context";
-import { Loader2 } from "lucide-react";
+import { Gauge, Loader2 } from "lucide-react";
 import { Slider } from "../ui/slider";
 
 export default function Speed({ projectUuid }: { projectUuid: string }) {
@@ -49,24 +49,28 @@ export default function Speed({ projectUuid }: { projectUuid: string }) {
   if (!selectedPad) return null;
 
   return (
-    <div className="flex flex-col gap-2 my-2">
+    <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
-        <Label htmlFor="speed" className="text-sm font-medium">Vitesse</Label>
+        {updatePadMutation.isPending ? (
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+        ) : (
+          <Gauge className="h-4 w-4 text-muted-foreground" />
+        )}
+        <Label htmlFor="speed" className="text-sm font-medium">Speed</Label>
       </div>
       <div className="flex items-center gap-2">
-        {updatePadMutation.isPending && (
-          <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
-        )}
         <Slider
           disabled={updatePadMutation.isPending}
           value={sliderValue}
-          min={0.5}
-          max={4}
-          step={0.1}
+          min={0.25}
+          max={2}
+          step={0.05}
           onValueChange={handleSpeedChange}
           onValueCommit={handleSpeedCommit}
         />
-        <span className="text-xs w-8 text-right">{sliderValue[0]}</span>
+        <span className="min-w-[2rem] text-xs text-muted-foreground">
+          {Math.round(sliderValue[0] * 100)}%
+        </span>
       </div>
     </div>
   );

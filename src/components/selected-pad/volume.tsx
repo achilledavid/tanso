@@ -52,24 +52,28 @@ export default function Volume({ projectUuid }: { projectUuid: string }) {
   if (!selectedPad) return;
 
   return (
-    <div className="flex flex-col gap-2 my-2">
+    <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
-        <Volume2 className="h-4 w-4 text-muted-foreground" />
+        {updatePadMutation.isPending ? (
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+        ) : (
+          <Volume2 className="h-4 w-4 text-muted-foreground" />
+        )}
         <Label htmlFor="is-looped" className="text-sm font-medium">Volume</Label>
       </div>
       <div className="flex items-center gap-2">
-        {updatePadMutation.isPending && (
-          <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
-        )}
         <Slider
           disabled={updatePadMutation.isPending}
           value={sliderValue}
           min={0}
           max={1}
-          step={0.1}
+          step={0.05}
           onValueChange={handleVolumeChange}
           onValueCommit={handleVolumeCommit}
         />
+        <span className="min-w-[2rem] text-xs text-muted-foreground">
+          {Math.round(sliderValue[0] * 100)}%
+        </span>
       </div>
     </div>
   )
