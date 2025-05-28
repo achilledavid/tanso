@@ -4,6 +4,38 @@ import { PropsWithChildren } from "react";
 import { Inter } from "next/font/google";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import localFont from 'next/font/local'
+import { env } from "process";
+import { Metadata } from "next";
+
+const baseUrl = new URL(env.NEXTAUTH_URL || "")
+
+export const metadata: Metadata = {
+  metadataBase: baseUrl,
+  title: {
+    default: 'Tanso by Deezer',
+    template: '%s | Tanso by Deezer',
+  },
+  description: 'Bring your music to life. Compose your music with Tanso.',
+  openGraph: {
+    title: 'Tanso by Deezer',
+    description: 'Bring your music to life. Compose your music with Tanso.',
+    url: baseUrl,
+    siteName: 'Tanso by Deezer',
+    locale: 'en_US',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
 
 const inter = Inter({
   subsets: ["latin"],
