@@ -55,7 +55,7 @@ export default function Project({ params }: { params: Promise<{ uuid: string }> 
             <div className={style.grid}>
               <aside>
                 <div className={style.project}>
-                  <div>
+                  <div className={style.projectContent}>
                     <h1 className={style.title}>{project?.name}</h1>
                     <p>Created by {creator.username}</p>
                     <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{project?.description}</p>

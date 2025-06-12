@@ -49,7 +49,7 @@ export default function Speed({ projectUuid }: { projectUuid: string }) {
   if (!selectedPad) return null;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex md:flex-col gap-2 my-2">
       <div className="flex items-center gap-2">
         {updatePadMutation.isPending ? (
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -58,7 +58,10 @@ export default function Speed({ projectUuid }: { projectUuid: string }) {
         )}
         <Label htmlFor="speed" className="text-sm font-medium">Speed</Label>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 w-full">
+        {updatePadMutation.isPending && (
+          <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+        )}
         <Slider
           disabled={updatePadMutation.isPending}
           value={sliderValue}

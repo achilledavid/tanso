@@ -62,11 +62,11 @@ export default function LinkedFile({ projectUuid }: { projectUuid: string }) {
   if (!selectedPad) return;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex md:flex-col gap-2 items-center md:items-start min-h-10">
       <Label>Linked file</Label>
       {selectedPad.fileName && (
         <Input
-          className="bg-[#00000040] border-none pointer-events-none"
+          className="bg-[#00000040] border-none pointer-events-none w-fit md:w-full"
           value={selectedPad.fileName}
           readOnly
         />
