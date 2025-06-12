@@ -77,24 +77,32 @@ export default function Project({
                     </p>
                   </div>
                   {project?.permissions?.isOwner && (
-                    <div className="mt-auto flex gap-3 items-center">
-                      <Button
-                        onClick={handleGoLive}
-                        variant="primary"
-                        size="sm"
-                        className="bg-red-500 hover:bg-red-600 text-white"
-                      >
-                        <Radio className="w-4 h-4 mr-2" />
-                        Go Live
-                      </Button>
-                      <SettingsDialog project={project} />
-                      <ShareProjectDialog
-                        variants={{ size: "sm" }}
-                        project={project}
-                      >
-                        <Link />
-                        Share
-                      </ShareProjectDialog>
+                    <div className="mt-auto space-y-3">
+                      <div className="flex gap-3 items-center">
+                        <Button
+                          onClick={handleGoLive}
+                          variant="primary"
+                          size="sm"
+                          className="bg-red-500 hover:bg-red-600 text-white"
+                        >
+                          <Radio className="w-4 h-4 mr-2" />
+                          Go Live
+                        </Button>
+                        <SettingsDialog project={project} />
+                        <ShareProjectDialog
+                          variants={{ size: "sm" }}
+                          project={project}
+                        >
+                          <Link />
+                          Share
+                        </ShareProjectDialog>
+                      </div>
+                      <div className="text-xs text-muted-foreground p-2 bg-muted rounded">
+                        💡 Le lien live sera:{" "}
+                        <code className="text-xs">
+                          {window.location.origin}/projects/{uuid}/live
+                        </code>
+                      </div>
                     </div>
                   )}
                 </div>

@@ -12,6 +12,7 @@ declare global {
         avatar?: string;
       };
       isPlaying: boolean;
+      role?: "creator" | "editor" | "viewer";
       // currentPad?: number;
     };
 
@@ -32,12 +33,13 @@ declare global {
     };
 
     // Custom events, for useBroadcastEvent, useEventListener
-    RoomEvent: // | {
-    //     type: "PAD_PLAYED";
-    //     padId: number;
-    //     userId: string;
-    //   }
+    RoomEvent: 
     {
+      type: "PAD_PLAYED";
+      padId: number;
+      userId: string;
+      userName: string;
+    } | {
       type: "SESSION_MESSAGE";
       message: string;
       userId: string;

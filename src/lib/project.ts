@@ -15,6 +15,15 @@ export async function getProject(uuid: string): Promise<Project> {
   return response.data;
 }
 
+export async function getProjectForLive(uuid: string): Promise<Project> {
+  const response = await axiosClient.get(`/api/projects/${uuid}`, {
+    headers: {
+      'x-live-session': 'true'
+    }
+  });
+  return response.data;
+}
+
 export async function deleteProject(uuid: string): Promise<void> {
   const response = await axiosClient.delete(`/api/projects/${uuid}`);
   return response.data;

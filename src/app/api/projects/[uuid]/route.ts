@@ -11,6 +11,10 @@ export async function GET(
     const { uuid } = await params;
     const session = await getServerSession(authOptions);
     const user = session?.user;
+    
+    // Vérifier si c'est une requête pour une session live
+    const isLiveSession = request.nextUrl.pathname.includes('/live') || 
+                         request.headers.get('x-live-session') === 'true';
 
     const project = await prisma.project.findUnique({
       where: {
@@ -36,6 +40,27 @@ export async function GET(
       access.userEmail.toLowerCase() === user.email.toLowerCase()
     ) : false;
 
+    // Pour les sessions live, permettre l'accès même si le projet est privé
+    if (isLiveSession) {
+      // Permettre l'accès aux sessions live pour tous les utilisateurs connectés
+      if (!user) {
+        return NextResponse.json({ error: "Authentication required for live sessions" }, { status: 401 });
+      }
+      
+      return NextResponse.json({
+        ...project,
+        permissions: {
+          isOwner,
+          isEditor,
+          canEdit: isOwner || isEditor,
+          canDelete: isOwner,
+          canRename: isOwner,
+          isLiveViewer: !isOwner && !isEditor // Nouveau flag pour les spectateurs live
+        }
+      });
+    }
+
+    // Logique d'accès normale pour les pages projet non-live
     if (!isPublic && !isOwner && !isEditor && user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

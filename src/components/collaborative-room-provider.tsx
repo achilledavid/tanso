@@ -7,6 +7,8 @@ import {
   ClientSideSuspense,
 } from "@liveblocks/react/suspense";
 import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
+import { getProjectForLive } from "@/lib/project";
 
 interface CollaborativeRoomProviderProps {
   children: ReactNode;
@@ -18,6 +20,13 @@ export function CollaborativeRoomProvider({
   projectUuid,
 }: CollaborativeRoomProviderProps) {
   const { data: session } = useSession();
+
+  // Récupérer les infos du projet pour déterminer le rôle
+  const { data: project } = useQuery({
+    queryKey: ["project-live", projectUuid],
+    queryFn: () => getProjectForLive(projectUuid),
+    enabled: !!session?.user,
+  });
 
   if (!session?.user) {
     return (
@@ -32,6 +41,15 @@ export function CollaborativeRoomProvider({
     );
   }
 
+  const isCreator = session.user.id === project?.userId;
+  const isEditor = project?.AccessAuthorized?.some((access) =>
+    access.userEmail.toLowerCase() === session.user.email.toLowerCase()
+  );
+
+  let role: "creator" | "editor" | "viewer" = "viewer";
+  if (isCreator) role = "creator";
+  else if (isEditor) role = "editor";
+
   return (
     <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
       <RoomProvider
@@ -45,6 +63,7 @@ export function CollaborativeRoomProvider({
             avatar: session.user.avatarUrl || "",
           },
           isPlaying: false,
+          role,
         }}
       >
         <ClientSideSuspense

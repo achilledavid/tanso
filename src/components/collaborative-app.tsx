@@ -21,7 +21,7 @@ export function CollaborativeApp({
 
   const totalUsers = others.length + (self ? 1 : 0);
   const viewers =
-    others.filter((user) => !isCreator).length +
+    others.filter(() => !isCreator).length +
     (self && !isCreator ? 1 : 0);
 
   return (

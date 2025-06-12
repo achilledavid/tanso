@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
       where: { uuid: projectUuid },
       include: {
         user: true,
+        AccessAuthorized: true,
       },
     });
 
@@ -45,19 +46,19 @@ export async function POST(request: NextRequest) {
     const userEmail = session.user.email;
     const isOwner = project.userId === userId;
 
-    // Check if user has shared access using the correct fields from the schema
-    const accessAuthorization = await prisma.accessAuthorized.findFirst({
-      where: {
-        userEmail: userEmail,
-        projectUuid: projectUuid,
-      },
-    });
+    // Check if user has shared access
+    const hasAccess = project.AccessAuthorized.some((access) =>
+      access.userEmail.toLowerCase() === userEmail.toLowerCase()
+    );
 
-    const hasAccess = !!accessAuthorization;
     const isPublic = project.isPublic;
 
+    // Pour les sessions live, permettre l'accès à tous les utilisateurs connectés
+    // même si le projet est privé (ils seront en mode spectateur)
+    const canAccessLive = true; // Tous les utilisateurs connectés peuvent voir les lives
+
     // Check if user has any access to this project
-    if (!isOwner && !hasAccess && !isPublic) {
+    if (!isOwner && !hasAccess && !isPublic && !canAccessLive) {
       return NextResponse.json(
         { error: "Access denied to this project" },
         { status: 403 }
@@ -79,10 +80,11 @@ export async function POST(request: NextRequest) {
       // Owner gets full access to their project
       liveblocksSession.allow(room, liveblocksSession.FULL_ACCESS);
     } else if (hasAccess) {
-      // Shared users get full access (can be modified to READ_ACCESS if needed)
+      // Shared users get full access
       liveblocksSession.allow(room, liveblocksSession.FULL_ACCESS);
-    } else if (isPublic) {
-      // Public projects get read access with presence
+    } else {
+      // Pour les spectateurs live et projets publics, donner accès en lecture avec présence
+      // Cela permet de voir les autres utilisateurs et de recevoir les événements
       liveblocksSession.allow(room, liveblocksSession.READ_ACCESS);
     }
 

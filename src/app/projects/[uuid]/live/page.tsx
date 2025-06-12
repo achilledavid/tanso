@@ -2,7 +2,7 @@
 
 import { use } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getPadsFromProject, getProject } from "@/lib/project";
+import { getPadsFromProject, getProjectForLive } from "@/lib/project";
 import { Room } from "@/components/room";
 import { CollaborativeApp } from "@/components/collaborative-app";
 import { notFound } from "next/navigation";
@@ -32,8 +32,8 @@ function LiveSessionContent({
   const others = useOthers();
   const self = useSelf();
 
-  // Ajouter les raccourcis clavier pour jouer les sons
-  useKeyboardShortcuts(pads);
+  // Seuls les créateurs peuvent jouer les sons via les raccourcis clavier
+  useKeyboardShortcuts(isCreator ? pads : []);
 
   const totalUsers = others.length + (self ? 1 : 0);
   const viewers =
@@ -63,7 +63,7 @@ function LiveSessionContent({
             <PopStagger className={cn(style.pads, !isCreator ? "pointer-events-none opacity-75" : "")}>
               {pads &&
                 !isEmpty(pads) &&
-                pads.map((pad) => <Pad key={`pad-${pad.id}`} pad={pad} />)}
+                pads.map((pad) => <Pad key={`pad-${pad.id}`} pad={pad} disabled={!isCreator} />)}
             </PopStagger>
 
             <aside className={style.rightSidebar}>
@@ -158,8 +158,8 @@ export default function LiveSession({
   const { data: session } = useSession();
 
   const { data: project, isLoading: isLoadingProject } = useQuery({
-    queryKey: ["project", uuid],
-    queryFn: () => getProject(uuid),
+    queryKey: ["project-live", uuid],
+    queryFn: () => getProjectForLive(uuid),
   });
 
   const { data: pads, isLoading: isLoadingPads } = useQuery({

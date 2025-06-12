@@ -1,11 +1,14 @@
 import { useEffect } from 'react';
 import { useSound } from '@/contexts/sound-context';
 
-export function useKeyboardShortcuts(pads: Pad[] | undefined) {
+export function useKeyboardShortcuts(pads: Pad[] = []) {
   const { playPad } = useSound();
 
   useEffect(() => {
-    if (!pads || pads.length === 0) return;
+    // Si aucun pad n'est fourni, ne pas activer les raccourcis
+    if (!pads || pads.length === 0) {
+      return;
+    }
 
     const keyPressTracker = new Map<string, boolean>();
     const padMap = new Map<string, Pad>();
