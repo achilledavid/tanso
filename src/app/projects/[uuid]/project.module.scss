@@ -116,6 +116,7 @@
 @media screen and (max-width: 850px) {
   .wrapper {
     .container {
+      padding: 0.5rem;
       aside {
         flex-direction: column;
 
@@ -146,8 +147,9 @@
       }
 
       .pads {
-        grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
-        gap: 8px;
+        grid-template-columns: repeat(4, minmax(4rem, 1fr));
+        gap: 4px;
+        padding-bottom: 64px;
       }
     }
   }
