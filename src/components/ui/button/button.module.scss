@@ -8,7 +8,7 @@
   white-space: nowrap;
 
   &:focus-visible {
-    outline: 2px solid var(--foreground);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
 
@@ -34,11 +34,19 @@
   &.secondary {
     color: hsl(var(--secondary-foreground));
     background-color: hsl(var(--secondary));
+
+    &:focus-visible {
+      outline-color: hsl(var(--secondary));
+    }
   }
 
   &.tertiary {
     color: hsl(var(--muted-foreground));
     background-color: hsl(var(--muted));
+
+    &:focus-visible {
+      outline-color: hsl(var(--muted));
+    }
   }
 
   &.outline {
@@ -49,6 +57,10 @@
     svg {
       stroke: currentColor;
     }
+
+    &:focus-visible {
+      outline-color: currentColor;
+    }
   }
 
   &.ghost {
@@ -58,6 +70,10 @@
     &:hover {
       background-color: rgb(0, 0, 0, 0.05);
     }
+
+    &:focus-visible {
+      outline-color: currentColor;
+    }
   }
 
   &.link {
@@ -66,11 +82,19 @@
     &:hover {
       text-decoration: underline;
     }
+
+    &:focus-visible {
+      outline-color: currentColor;
+    }
   }
 
   &.destructive {
     color: hsl(var(--destructive-foreground));
     background-color: hsl(var(--destructive));
+
+    &:focus-visible {
+      outline-color: hsl(var(--destructive));
+    }
   }
 
   &.aside {
@@ -80,6 +104,10 @@
 
     &:hover {
       background-color: rgba($color: #fff, $alpha: 0.8);
+    }
+
+    &:focus-visible {
+      outline-color: white;
     }
   }
 }
