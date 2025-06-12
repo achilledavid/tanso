@@ -61,16 +61,19 @@ export default function AccountNewProject() {
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!user) return
+
     const sounds: { url: string, fileName: string }[] = selectedSounds.map(sound => ({
       url: sound.url,
       fileName: sound.pathname || sound.url,
     }));
 
     createMutation.mutate({
+      userId: user.id,
       name: values.projectName,
       description: values.description ?? "",
       isPublic: values.isPublic,
-      sounds,
+      sounds
     });
   }
 

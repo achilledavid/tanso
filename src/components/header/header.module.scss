@@ -24,11 +24,26 @@
     }
 
     .logo {
-      font-family: "Deezer";
-      font-size: 1.75rem;
       place-content: center;
       padding: 0 0.75rem;
+      display: flex;
+      align-items: center;
       margin-right: auto;
+
+      svg {
+        margin-right: 0.75rem;
+      }
+
+      p {
+        font-family: "Deezer";
+        font-size: 1.75rem;
+
+        span {
+          text-transform: uppercase;
+          font-size: 0.75rem;
+        }
+      }
+
     }
 
     nav {

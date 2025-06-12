@@ -1,5 +1,6 @@
 import axiosClient from "./axios";
 import prisma from "@/lib/prisma";
+import { createProject } from "./project";
 
 export async function upsertUser(user: UpsertUserPayload): Promise<User | null> {
   if (!user.email) return null;
@@ -27,7 +28,7 @@ export async function upsertUser(user: UpsertUserPayload): Promise<User | null> 
         suffix++;
       }
 
-      const userSaved =  await prisma.user.create({
+      const userSaved = await prisma.user.create({
         data: {
           ...user,
           username,
@@ -37,7 +38,7 @@ export async function upsertUser(user: UpsertUserPayload): Promise<User | null> 
 
       if (userSaved) {
         const keys = ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Q', 'S', 'D', 'F', 'G', 'H'];
-        for(let i = 0; i < keys.length; i++) {
+        for (let i = 0; i < keys.length; i++) {
           await prisma.userKeyBinding.create({
             data: {
               userId: userSaved.id,
@@ -46,6 +47,27 @@ export async function upsertUser(user: UpsertUserPayload): Promise<User | null> 
               createdAt: new Date(),
             },
           }) as UserKeyBinding;
+        }
+
+        const project = await prisma.project.create({
+          data: {
+            name: "Drumkit example",
+            description: "A default drumkit project to help you get started. Explore, customize, and play your own beats!",
+            isPublic: false,
+            userId: userSaved.id,
+            uuid: require('uuid').v4()
+          }
+        });
+
+        for (let i = 0; i < 16; i++) {
+          await prisma.pad.create({
+            data: {
+              keyBinding: keys[i] || null,
+              projectUuid: project.uuid,
+              url: null,
+              fileName: null,
+            },
+          });
         }
       }
 
