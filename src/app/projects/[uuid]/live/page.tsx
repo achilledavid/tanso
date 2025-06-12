@@ -183,17 +183,26 @@ function LiveSessionContent({
                           <>
                             {messages.map((msg) => (
                               <div key={msg.id} className={style.chatMessage}>
-                                <div>
-                                  <span className={style.userName}>
+                                <div className={style.messageHeader}>
+                                  <span className={style.timestamp}>
+                                    {msg.timestamp.toLocaleTimeString([], { 
+                                      hour: '2-digit', 
+                                      minute: '2-digit' 
+                                    })}
+                                  </span>
+                                  {parseInt(msg.userId) === project?.userId && (
+                                    <Crown className={style.crownIcon} />
+                                  )}
+                                  <span className={`${style.userName} ${
+                                    parseInt(msg.userId) === project?.userId 
+                                      ? 'text-red-400' 
+                                      : 'text-blue-400'
+                                  }`}>
                                     {msg.userName}
                                   </span>
-                                  <span className={style.messageText}>{msg.message}</span>
                                 </div>
-                                <div className={style.timestamp}>
-                                  {msg.timestamp.toLocaleTimeString([], { 
-                                    hour: '2-digit', 
-                                    minute: '2-digit' 
-                                  })}
+                                <div className={style.messageContent}>
+                                  <span className={style.messageText}>{msg.message}</span>
                                 </div>
                               </div>
                             ))}
@@ -236,11 +245,12 @@ function LiveSessionContent({
                       {/* Liste des utilisateurs */}
                       <div className={style.userList}>
                         {self && (
-                          <div className="flex items-center gap-2 text-sm mb-2">
-                            <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">
-                              {self.presence?.user?.name?.[0]?.toUpperCase() || "Y"}
-                            </div>
-                            <span>{self.presence?.user?.name || "You"}</span>
+                          <div className="flex items-center gap-1 text-sm mb-2">
+                            <span className={`${
+                              isCreator ? 'text-red-400' : 'text-blue-400'
+                            } font-medium`}>
+                              {self.presence?.user?.name || "You"}
+                            </span>
                             {isCreator && (
                               <Crown className="w-3 h-3 text-yellow-500" />
                             )}
@@ -249,12 +259,13 @@ function LiveSessionContent({
                         {others.map(({ connectionId, presence }) => (
                           <div
                             key={connectionId}
-                            className="flex items-center gap-2 text-sm mb-2"
+                            className="flex items-center gap-1 text-sm mb-2"
                           >
-                            <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">
-                              {presence?.user?.name?.[0]?.toUpperCase() || "U"}
-                            </div>
-                            <span>{presence?.user?.name || "Anonymous"}</span>
+                            <span className={`${
+                              parseInt(presence?.user?.id) === project?.userId ? 'text-red-400' : 'text-blue-400'
+                            } font-medium`}>
+                              {presence?.user?.name || "Anonymous"}
+                            </span>
                             {parseInt(presence?.user?.id) === project?.userId && (
                               <Crown className="w-3 h-3 text-yellow-500" />
                             )}
