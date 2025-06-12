@@ -77,3 +77,9 @@
     gap: 0.5rem;
   }
 }
+
+@media screen and (max-width: 850px) {
+  .container {
+    display: none;
+  }
+}
