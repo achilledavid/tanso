@@ -82,11 +82,10 @@ export default function Project({
                         <Button
                           onClick={handleGoLive}
                           variant="primary"
-                          size="sm"
+                          size="icon"
                           className="bg-red-500 hover:bg-red-600 text-white"
                         >
-                          <Radio className="w-4 h-4 mr-2" />
-                          Go Live
+                          <Radio className="w-6 h-6" />
                         </Button>
                         <SettingsDialog project={project} />
                         <ShareProjectDialog
@@ -96,12 +95,6 @@ export default function Project({
                           <Link />
                           Share
                         </ShareProjectDialog>
-                      </div>
-                      <div className="text-xs text-muted-foreground p-2 bg-muted rounded">
-                        💡 Le lien live sera:{" "}
-                        <code className="text-xs">
-                          {window.location.origin}/projects/{uuid}/live
-                        </code>
                       </div>
                     </div>
                   )}
