@@ -43,6 +43,11 @@ declare global {
       type: "SESSION_MESSAGE";
       message: string;
       userId: string;
+    } | {
+      type: "CHAT_MESSAGE";
+      message: string;
+      userId: string;
+      userName: string;
     };
 
     // Custom metadata set on threads, for useThreads, useCreateThread, etc.

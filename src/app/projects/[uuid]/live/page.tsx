@@ -7,21 +7,25 @@ import { Room } from "@/components/room";
 import { CollaborativeApp } from "@/components/collaborative-app";
 import { notFound } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Loader2, Radio, Users, Eye, Crown } from "lucide-react";
+import { Loader2, Radio, Users, Eye, Crown, Send } from "lucide-react";
 import Pad from "@/components/pad/pad";
 import { isEmpty } from "lodash";
 import PopStagger from "@/components/pop-stagger";
 import { useUser } from "@/hooks/user";
 import style from "../project.module.scss";
-import { useOthers, useSelf } from "@liveblocks/react/suspense";
+import { useOthers, useSelf, useBroadcastEvent, useEventListener } from "@liveblocks/react/suspense";
 import { cn } from '@/lib/utils';
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { useState, useEffect, useRef } from "react";
+import SelectedPad from "@/components/selected-pad/selected-pad";
+import { useSelectedPad } from "@/contexts/selected-pad";
 
 function LiveSessionContent({
   project,
   pads,
   creator,
   isCreator,
+  uuid,
 }: {
   uuid: string;
   project: Project;
@@ -31,9 +35,74 @@ function LiveSessionContent({
 }) {
   const others = useOthers();
   const self = useSelf();
+  const { selectedPad } = useSelectedPad();
+  const [messages, setMessages] = useState<Array<{
+    id: string;
+    message: string;
+    userId: string;
+    userName: string;
+    timestamp: Date;
+  }>>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [activeTab, setActiveTab] = useState<"chat" | "users">("chat");
+
+  const broadcast = useBroadcastEvent();
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll vers le bas quand de nouveaux messages arrivent
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   // Seuls les créateurs peuvent jouer les sons via les raccourcis clavier
   useKeyboardShortcuts(isCreator ? pads : []);
+
+  // Écouter les messages du chat
+  useEventListener(({ event }) => {
+    if (event.type === "CHAT_MESSAGE") {
+      setMessages(prev => [...prev, {
+        id: `${event.userId}-${Date.now()}`,
+        message: event.message,
+        userId: event.userId,
+        userName: event.userName,
+        timestamp: new Date()
+      }]);
+    }
+  });
+
+  const sendMessage = () => {
+    if (!newMessage.trim()) return;
+
+    const userName = self?.presence?.user?.name || "Anonymous";
+    const userId = self?.presence?.user?.id || "";
+
+    // Ajouter le message localement
+    setMessages(prev => [...prev, {
+      id: `${userId}-${Date.now()}`,
+      message: newMessage,
+      userId,
+      userName,
+      timestamp: new Date()
+    }]);
+
+    // Diffuser le message aux autres utilisateurs
+    broadcast({
+      type: "CHAT_MESSAGE",
+      message: newMessage,
+      userId,
+      userName
+    });
+
+    setNewMessage("");
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
 
   const totalUsers = others.length + (self ? 1 : 0);
   const viewers =
@@ -59,86 +128,161 @@ function LiveSessionContent({
                   </p>
                 </div>
               </div>
+              
+              {isCreator && selectedPad && (
+                <div className={style.pad}>
+                  <p className={style.title}>Selected pad</p>
+                  <SelectedPad projectUuid={uuid} />
+                </div>
+              )}
             </aside>
             <PopStagger className={cn(style.pads, !isCreator ? "pointer-events-none opacity-75" : "")}>
               {pads &&
                 !isEmpty(pads) &&
-                pads.map((pad) => <Pad key={`pad-${pad.id}`} pad={pad} disabled={!isCreator} />)}
+                pads.map((pad) => <Pad key={`pad-${pad.id}`} pad={pad} />)}
             </PopStagger>
 
             <aside className={style.rightSidebar}>
-              <div className={style.liveInfo}>
+              <div className={style.liveContainer}>
+                {/* Header avec indicateur live */}
                 <div className="flex items-center gap-2 mb-4">
                   <Radio className="w-5 h-5 text-red-500 animate-pulse" />
                   <h2 className={style.title}>Live Session</h2>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      <span>Total online</span>
-                    </div>
-                    <span className="font-medium">{totalUsers}</span>
-                  </div>
+                {/* Onglets */}
+                <div className={style.tabs}>
+                  <button
+                    className={`${style.tab} ${activeTab === "chat" ? style.active : ""}`}
+                    onClick={() => setActiveTab("chat")}
+                  >
+                    💬 Chat ({messages.length})
+                  </button>
+                  <button
+                    className={`${style.tab} ${activeTab === "users" ? style.active : ""}`}
+                    onClick={() => setActiveTab("users")}
+                  >
+                    <Users className="w-3 h-3 mr-1" />
+                    Users ({totalUsers})
+                  </button>
+                </div>
 
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <Eye className="w-4 h-4" />
-                      <span>Viewers</span>
-                    </div>
-                    <span className="font-medium">{viewers}</span>
-                  </div>
-
-                  <div className="border-t pt-4 space-y-2">
-                    <p className="text-sm font-medium">Connected users</p>
-                    <div className={`space-y-2 ${style.userList}`}>
-                      {self && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">
-                            {self.presence?.user?.name?.[0]?.toUpperCase() || "Y"}
+                {/* Contenu des onglets */}
+                <div className={style.tabContent}>
+                  {activeTab === "chat" ? (
+                    <div className={style.chatTab}>
+                      {/* Messages */}
+                      <div className={style.chatMessages}>
+                        {messages.length === 0 ? (
+                          <div className={style.emptyState}>
+                            <div className={style.emptyIcon}>💬</div>
+                            <p>Aucun message pour le moment...</p>
+                            <p className="mt-1 opacity-75">Soyez le premier à dire quelque chose !</p>
                           </div>
-                          <span>{self.presence?.user?.name || "You"}</span>
-                          {isCreator && (
-                            <Crown className="w-3 h-3 text-yellow-500" />
-                          )}
-                        </div>
-                      )}
-                      {others.map(({ connectionId, presence }) => (
-                        <div
-                          key={connectionId}
-                          className="flex items-center gap-2 text-sm"
+                        ) : (
+                          <>
+                            {messages.map((msg) => (
+                              <div key={msg.id} className={style.chatMessage}>
+                                <div>
+                                  <span className={style.userName}>
+                                    {msg.userName}
+                                  </span>
+                                  <span className={style.messageText}>{msg.message}</span>
+                                </div>
+                                <div className={style.timestamp}>
+                                  {msg.timestamp.toLocaleTimeString([], { 
+                                    hour: '2-digit', 
+                                    minute: '2-digit' 
+                                  })}
+                                </div>
+                              </div>
+                            ))}
+                            <div ref={messagesEndRef} />
+                          </>
+                        )}
+                      </div>
+
+                      {/* Message Input */}
+                      <div className={style.chatInput}>
+                        <input
+                          type="text"
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          onKeyPress={handleKeyPress}
+                          placeholder="Tapez votre message..."
+                          maxLength={200}
+                        />
+                        <button
+                          onClick={sendMessage}
+                          disabled={!newMessage.trim()}
                         >
-                          <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">
-                            {presence?.user?.name?.[0]?.toUpperCase() || "U"}
-                          </div>
-                          <span>{presence?.user?.name || "Anonymous"}</span>
-                          {parseInt(presence?.user?.id) === project?.userId && (
-                            <Crown className="w-3 h-3 text-yellow-500" />
-                          )}
-                        </div>
-                      ))}
+                          <Send className="w-3 h-3" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className={style.usersTab}>
+                      {/* Stats */}
+                      <div className={style.userStats}>
+                        <div className="flex items-center justify-between text-sm mb-3">
+                          <div className="flex items-center gap-2">
+                            <Eye className="w-4 h-4" />
+                            <span>Viewers</span>
+                          </div>
+                          <span className="font-medium">{viewers}</span>
+                        </div>
+                      </div>
 
-                  <div className="border-t pt-4 text-sm text-muted-foreground">
-                    {isCreator ? (
-                      <div className="space-y-2">
-                        <p className="flex items-center gap-2">
-                          🎛️ <span>You are controlling this session</span>
-                        </p>
-                        <p>Others can watch your performance</p>
+                      {/* Liste des utilisateurs */}
+                      <div className={style.userList}>
+                        {self && (
+                          <div className="flex items-center gap-2 text-sm mb-2">
+                            <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">
+                              {self.presence?.user?.name?.[0]?.toUpperCase() || "Y"}
+                            </div>
+                            <span>{self.presence?.user?.name || "You"}</span>
+                            {isCreator && (
+                              <Crown className="w-3 h-3 text-yellow-500" />
+                            )}
+                          </div>
+                        )}
+                        {others.map(({ connectionId, presence }) => (
+                          <div
+                            key={connectionId}
+                            className="flex items-center gap-2 text-sm mb-2"
+                          >
+                            <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">
+                              {presence?.user?.name?.[0]?.toUpperCase() || "U"}
+                            </div>
+                            <span>{presence?.user?.name || "Anonymous"}</span>
+                            {parseInt(presence?.user?.id) === project?.userId && (
+                              <Crown className="w-3 h-3 text-yellow-500" />
+                            )}
+                          </div>
+                        ))}
                       </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <p className="flex items-center gap-2">
-                          <Eye className="w-4 h-4" />
-                          <span>Watching live session</span>
-                        </p>
-                        <p>Only the creator can interact with pads</p>
+
+                      {/* Status */}
+                      <div className="border-t pt-4 text-sm text-muted-foreground">
+                        {isCreator ? (
+                          <div className="space-y-2">
+                            <p className="flex items-center gap-2">
+                              🎛️ <span>You are controlling this session</span>
+                            </p>
+                            <p>Others can watch your performance</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <p className="flex items-center gap-2">
+                              <Eye className="w-4 h-4" />
+                              <span>Watching live session</span>
+                            </p>
+                            <p>Only the creator can interact with pads</p>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </aside>
