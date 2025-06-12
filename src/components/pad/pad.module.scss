@@ -123,3 +123,20 @@
     outline-offset: 2px;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .container .content .footer {
+    display: none;
+  }
+  
+  .container .content {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .container {
+    border-radius: 8px;
+    padding: 4px;
+  }
+}
