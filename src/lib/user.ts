@@ -1,6 +1,6 @@
 import axiosClient from "./axios";
 import prisma from "@/lib/prisma";
-import { createProject } from "./project";
+import { v4 } from "uuid";
 
 export async function upsertUser(user: UpsertUserPayload): Promise<User | null> {
   if (!user.email) return null;
@@ -51,21 +51,40 @@ export async function upsertUser(user: UpsertUserPayload): Promise<User | null> 
 
         const project = await prisma.project.create({
           data: {
-            name: "Drumkit example",
-            description: "A default drumkit project to help you get started. Explore, customize, and play your own beats!",
+            name: "One More Time",
+            description: "A default project to help you get started. Explore, customize, and play your own beats!",
             isPublic: false,
             userId: userSaved.id,
-            uuid: require('uuid').v4()
+            uuid: v4()
           }
         });
+
+        const padSounds = [
+          "01.wav",
+          "02.wav",
+          "03.wav",
+          "VOICE_01.wav",
+          "VOICE_02.wav",
+          "VOICE_03.wav",
+          "VOICE_04.wav",
+          "VOICE_05.wav",
+          "VOICE_06.wav",
+          "VOICE_07.wav",
+          "VOICE_08.wav",
+          "VOICE_09.wav",
+          "VOICE_10.wav",
+          "CLOSE HAT.wav",
+          "KICK.wav",
+          "SHAKERS.wav",
+        ]
 
         for (let i = 0; i < 16; i++) {
           await prisma.pad.create({
             data: {
               keyBinding: keys[i] || null,
               projectUuid: project.uuid,
-              url: null,
-              fileName: null,
+              url: "https://zi8itvblm2ouiwoh.public.blob.vercel-storage.com/tanso-default-project/" + padSounds[i] || null,
+              fileName: padSounds[i] || null,
             },
           });
         }

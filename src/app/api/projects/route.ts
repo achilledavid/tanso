@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { v4 as uuidv4 } from "uuid";
 import { sendProjectSharedEmail } from "@/lib/email";
 
